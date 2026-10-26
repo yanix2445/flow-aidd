@@ -79,6 +79,8 @@ Après la revue de confiance, le job `tmp_6eaaddc9` ouvre un thread natif éphé
 
 SessionStart a fourni le contexte `flow-aidd · project · S00 · a_faire.`. La vue de suivi, retirée dans le dossier d’essai avant l’exécution, a été restaurée par les hooks. L’état JSON est resté identique ; le premier tour est terminé, le second est interrompu. Aucune séquence supplémentaire ni décision n’a été créée.
 
+Dans ce runtime, réinstaller le ZIP après actualisation de sa documentation a replacé les quatre hooks à `modified`, alors que leurs commandes et handlers étaient inchangés. La revue de confiance doit donc intervenir après la dernière synchronisation du paquet. Ne pas réinstaller le plugin après cette revue pour simplement actualiser un compte rendu.
+
 ## Conservation et limites
 
 Une sauvegarde de **195 fichiers**, vérifiée par SHA-256 avant simplification, reste hors du dépôt :
