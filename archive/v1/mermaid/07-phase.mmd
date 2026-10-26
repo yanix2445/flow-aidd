@@ -1,0 +1,42 @@
+---
+title: "Phase 07 : Préparer les fondations du projet"
+---
+flowchart TB
+  Entree7["Entrée : Les décisions techniques et le plan d’installation"]
+  subgraph Phase7SousPhase1["7.1 · Mettre en place le socle"]
+  Question7Partie1["Question : Quel socle créer ou réutiliser ?"]
+  Reponse7Partie1["Réponse attendue : Dépôt, conventions, dépendances et environnements"]
+  Skills7Partie1["AIDD VCS : 00-repo-init ; AIDD Dev : plan et implement"]
+  Resultat7Partie1["Résultat : Dépôt, code et configuration adaptés à la stack"]
+  end
+  subgraph Phase7SousPhase2["7.2 · Vérifier le chemin de livraison"]
+  Question7Partie2["Question : Une petite tranche fonctionne-t-elle réellement ?"]
+  Reponse7Partie2["Réponse attendue : Un parcours local et de préproduction vérifié"]
+  Skills7Partie2["AIDD Dev : 03-assert et 06-test"]
+  Resultat7Partie2["Résultat : Socle vérifié, configuration et URL de préproduction"]
+  end
+  subgraph Phase7SousPhase3["7.3 · Transmettre le contexte aux agents"]
+  Question7Partie3["Question : Que doit lire un agent pour reprendre le projet ?"]
+  Reponse7Partie3["Réponse attendue : Architecture réelle, règles, commandes et accès"]
+  Skills7Partie3["AIDD Context : 02-project-memory"]
+  Resultat7Partie3["Résultat : Contexte projet et configuration des outils IA"]
+  end
+  Decision7{"Une tranche tourne et se vérifie de façon reproductible ?"}
+  Suite7["Oui : Phase 9 quand UX et demande sont aussi prêtes"]
+  Reprise7["Non ou inconnu : reprendre le point manquant, retour possible en phase 6"]
+
+  Entree7 --> Question7Partie1
+  Question7Partie1 --> Reponse7Partie1
+  Reponse7Partie1 --> Skills7Partie1
+  Skills7Partie1 --> Resultat7Partie1
+  Resultat7Partie1 --> Question7Partie2
+  Question7Partie2 --> Reponse7Partie2
+  Reponse7Partie2 --> Skills7Partie2
+  Skills7Partie2 --> Resultat7Partie2
+  Resultat7Partie2 --> Question7Partie3
+  Question7Partie3 --> Reponse7Partie3
+  Reponse7Partie3 --> Skills7Partie3
+  Skills7Partie3 --> Resultat7Partie3
+  Resultat7Partie3 --> Decision7
+  Decision7 -- "Oui" --> Suite7
+  Decision7 -- "Non ou inconnu" --> Reprise7

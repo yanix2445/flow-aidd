@@ -1,0 +1,42 @@
+---
+title: "Phase 05 : Concevoir et éprouver l’expérience"
+---
+flowchart TB
+  Entree5["Entrée : Le PRD et les contenus disponibles"]
+  subgraph Phase5SousPhase1["5.1 · Structurer le parcours"]
+  Question5Partie1["Question : Quel parcours mène au résultat ?"]
+  Reponse5Partie1["Réponse attendue : Entrée, actions, écrans, décisions et états utiles"]
+  Skills5Partie1["Impeccable : init puis shape"]
+  Resultat5Partie1["Résultat : PRODUCT.md natif + parcours.md proposé"]
+  end
+  subgraph Phase5SousPhase2["5.2 · Choisir une direction d’interface"]
+  Question5Partie2["Question : Quelle direction sert ce parcours ?"]
+  Reponse5Partie2["Réponse attendue : Une direction et des règles d’interface choisies"]
+  Skills5Partie2["Impeccable : direction après shape"]
+  Resultat5Partie2["Résultat : DESIGN.md natif + prototype au chemin choisi"]
+  end
+  subgraph Phase5SousPhase3["5.3 · Tester avant de généraliser"]
+  Question5Partie3["Question : La personne comprend-elle et réussit-elle ?"]
+  Reponse5Partie3["Réponse attendue : Des observations, des corrections et les limites du test"]
+  Skills5Partie3["Interfaces : better-interface ; Impeccable : critique"]
+  Resultat5Partie3["Résultat : Prototype corrigé + retours-ux.md proposé"]
+  end
+  Decision5{"Parcours compréhensible et limites des tests connues ?"}
+  Suite5["Oui : Phase 9 quand socle et demande sont aussi prêts"]
+  Reprise5["Non ou inconnu : reprendre le point manquant, retour possible en phase 4"]
+
+  Entree5 --> Question5Partie1
+  Question5Partie1 --> Reponse5Partie1
+  Reponse5Partie1 --> Skills5Partie1
+  Skills5Partie1 --> Resultat5Partie1
+  Resultat5Partie1 --> Question5Partie2
+  Question5Partie2 --> Reponse5Partie2
+  Reponse5Partie2 --> Skills5Partie2
+  Skills5Partie2 --> Resultat5Partie2
+  Resultat5Partie2 --> Question5Partie3
+  Question5Partie3 --> Reponse5Partie3
+  Reponse5Partie3 --> Skills5Partie3
+  Skills5Partie3 --> Resultat5Partie3
+  Resultat5Partie3 --> Decision5
+  Decision5 -- "Oui" --> Suite5
+  Decision5 -- "Non ou inconnu" --> Reprise5

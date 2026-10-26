@@ -1,0 +1,55 @@
+---
+title: "Vue d’ensemble : de l’idée au premier MVP"
+---
+flowchart TB
+  subgraph Groupe1["Explorer"]
+  Phase1["01 · Clarifier l’idée"]
+  Phase2["02 · Comprendre le besoin"]
+  DecisionBesoin{"Besoin étayé ou risque accepté ?"}
+  Phase3["03 · Positionner le produit"]
+  end
+  subgraph Groupe2["Concevoir"]
+  Phase4["04 · Délimiter le MVP"]
+  Phase5["05 · Concevoir l’UX et l’UI"]
+  Phase6["06 · Valider la technique"]
+  end
+  subgraph Groupe3["Construire"]
+  Phase7["07 · Préparer le socle"]
+  Phase8["08 · Préparer le backlog"]
+  Phase9["09 · Livrer une tranche avec SDLC"]
+  end
+  subgraph Groupe4["Lancer et apprendre"]
+  Phase10["10 · Faire la recette du MVP"]
+  DecisionRecette{"Parcours du MVP validé ?"}
+  Phase11["11 · Ouvrir le MVP"]
+  Phase12["12 · Mesurer et décider"]
+  end
+  RetourIdee["Reprendre 01 : cible ou problème"]
+  RetourMVP["Reprendre 04 : périmètre ou parcours"]
+  RetourTranche["Reprendre 08 : prochaine tranche"]
+  RetourCorrections["Reprendre 09 : corrections"]
+  RetourDecouverte["Reprendre 02 : valeur incertaine"]
+  RetourPriorite["Reprendre 08 : amélioration comprise"]
+
+  Phase1 --> Phase2
+  Phase2 --> DecisionBesoin
+  DecisionBesoin -- "Oui" --> Phase3
+  DecisionBesoin -- "Non" --> RetourIdee
+  Phase3 --> Phase4
+  Phase4 -- "UX et UI" --> Phase5
+  Phase4 -- "Technique" --> Phase6
+  Phase4 -- "Backlog" --> Phase8
+  Phase6 --> Phase7
+  Phase5 --> Phase9
+  Phase7 --> Phase9
+  Phase8 --> Phase9
+  Phase9 --> Phase10
+  Phase10 --> DecisionRecette
+  DecisionRecette -- "Oui" --> Phase11
+  DecisionRecette -- "Non" --> RetourCorrections
+  Phase11 --> Phase12
+  Phase9 -. "Si une autre tranche est nécessaire" .-> RetourTranche
+  Phase5 -. "Si le parcours change" .-> RetourMVP
+  Phase6 -. "Si le périmètre change" .-> RetourMVP
+  Phase12 -. "Si la valeur reste incertaine" .-> RetourDecouverte
+  Phase12 -. "Si la prochaine amélioration est comprise" .-> RetourPriorite

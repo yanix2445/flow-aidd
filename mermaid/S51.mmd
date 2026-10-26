@@ -1,0 +1,19 @@
+---
+title: "S51 — Éprouver le parcours avant de le généraliser"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp, parcours"]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Éprouver le parcours avant de le généraliser"]
+  Sortie["Sortie : prototype"]
+  Preuve["Preuves : epreuve usage, decision ux"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S90"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

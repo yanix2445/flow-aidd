@@ -1,0 +1,19 @@
+---
+title: "S100 — Vérifier le MVP intégré et décider sa préparation"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp, integration"]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Vérifier le MVP intégré et décider sa préparation"]
+  Sortie["Sortie : recette"]
+  Preuve["Preuves : parcours integre, usage qualifie, recette acceptee"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S111"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

@@ -1,0 +1,19 @@
+---
+title: "S71 — Conserver le contexte réellement vérifié"
+---
+flowchart TB
+  Entree["Entrée : cadre, architecture, socle"]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Conserver le contexte réellement vérifié"]
+  Sortie["Sortie : memoire"]
+  Preuve["Preuves : contexte lisible"]
+  Validation{"Validation par coordinateur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S90"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

@@ -1,0 +1,42 @@
+---
+title: "Phase 04 : Délimiter le MVP"
+---
+flowchart TB
+  Entree4["Entrée : Le Product Brief approuvé"]
+  subgraph Phase4SousPhase1["4.1 · Définir la preuve de valeur"]
+  Question4Partie1["Question : Quelle tâche complète prouve la valeur ?"]
+  Reponse4Partie1["Réponse attendue : Un résultat, un indicateur et une fenêtre de mesure"]
+  Skills4Partie1["AIDD PM : 03-prd"]
+  Resultat4Partie1["Résultat : Résultat et mesure dans le PRD natif"]
+  end
+  subgraph Phase4SousPhase2["4.2 · Réduire le périmètre"]
+  Question4Partie2["Question : Que garder et que reporter ?"]
+  Reponse4Partie2["Réponse attendue : Le nécessaire, les exclusions et les règles métier"]
+  Skills4Partie2["AIDD PM : 03-prd"]
+  Resultat4Partie2["Résultat : Périmètre du MVP dans le PRD natif"]
+  end
+  subgraph Phase4SousPhase3["4.3 · Rendre le contrat vérifiable"]
+  Question4Partie3["Question : Quels états ou angles morts restent ouverts ?"]
+  Reponse4Partie3["Réponse attendue : Qualité attendue et lacunes bloquantes traitées"]
+  Skills4Partie3["AIDD Refine : 03-shadow-areas ; AIDD PM : 03-prd"]
+  Resultat4Partie3["Résultat : PRD validé et angles morts traités"]
+  end
+  Decision4{"Parcours complet, périmètre et critères approuvés ?"}
+  Suite4["Oui : Phases 5, 6 et 8 selon leurs dépendances"]
+  Reprise4["Non ou inconnu : reprendre le point manquant, retour possible en phase 3"]
+
+  Entree4 --> Question4Partie1
+  Question4Partie1 --> Reponse4Partie1
+  Reponse4Partie1 --> Skills4Partie1
+  Skills4Partie1 --> Resultat4Partie1
+  Resultat4Partie1 --> Question4Partie2
+  Question4Partie2 --> Reponse4Partie2
+  Reponse4Partie2 --> Skills4Partie2
+  Skills4Partie2 --> Resultat4Partie2
+  Resultat4Partie2 --> Question4Partie3
+  Question4Partie3 --> Reponse4Partie3
+  Reponse4Partie3 --> Skills4Partie3
+  Skills4Partie3 --> Resultat4Partie3
+  Resultat4Partie3 --> Decision4
+  Decision4 -- "Oui" --> Suite4
+  Decision4 -- "Non ou inconnu" --> Reprise4

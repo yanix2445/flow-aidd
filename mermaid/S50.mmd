@@ -1,0 +1,19 @@
+---
+title: "S50 — Concevoir le parcours et l’interface utiles"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp"]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Concevoir le parcours et l’interface utiles"]
+  Sortie["Sortie : parcours"]
+  Preuve["Preuves : parcours coherent, direction confirmee"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S51"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

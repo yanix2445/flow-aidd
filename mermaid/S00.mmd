@@ -1,0 +1,19 @@
+---
+title: "S00 — Cadrer le projet et choisir la profondeur"
+---
+flowchart TB
+  Entree["Entrée : Une intention, une difficulté ou un projet existant à reprendre."]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Cadrer le projet et choisir la profondeur"]
+  Sortie["Sortie : cadre"]
+  Preuve["Preuves : cadre decide"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S10"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

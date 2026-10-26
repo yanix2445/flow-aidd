@@ -1,0 +1,19 @@
+---
+title: "S110 — Préparer l’ouverture, le support et la mesure"
+---
+flowchart TB
+  Entree["Entrée : cadre, brief, mvp"]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Préparer l’ouverture, le support et la mesure"]
+  Sortie["Sortie : ouverture"]
+  Preuve["Preuves : preparation ouverture, cadre ouverture accepte"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S111"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

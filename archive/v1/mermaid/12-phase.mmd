@@ -1,0 +1,42 @@
+---
+title: "Phase 12 : Mesurer, apprendre et choisir la suite"
+---
+flowchart TB
+  Entree12["Entrée : Les usages et retours sur la fenêtre prévue"]
+  subgraph Phase12SousPhase1["12.1 · Observer l’utilisation"]
+  Question12Partie1["Question : Que font réellement les utilisateurs ?"]
+  Reponse12Partie1["Réponse attendue : Mesures et retours avec leur contexte et leurs limites"]
+  Skills12Partie1["Marketing : customer-research ; mesure du projet"]
+  Resultat12Partie1["Résultat : Premiers usages dans bilan-mvp.md, proposé"]
+  end
+  subgraph Phase12SousPhase2["12.2 · Réviser les hypothèses"]
+  Question12Partie2["Question : Quelles hypothèses sont étayées ou contredites ?"]
+  Reponse12Partie2["Réponse attendue : Un bilan et une décision justifiés par les faits"]
+  Skills12Partie2["Marketing : customer-research ; AIDD Refine : 02-challenge"]
+  Resultat12Partie2["Résultat : Bilan de validation et décision dans bilan-mvp.md"]
+  end
+  subgraph Phase12SousPhase3["12.3 · Préparer la prochaine boucle"]
+  Question12Partie3["Question : Quelle est la prochaine priorité utile ?"]
+  Reponse12Partie3["Réponse attendue : Une demande, une recherche ou un arrêt explicite"]
+  Skills12Partie3["AIDD Orchestrator : 02-backlog ; Marketing : product-marketing"]
+  Resultat12Partie3["Résultat : Backlog et contexte marketing mis à jour"]
+  end
+  Decision12{"Décision justifiée et prochaine action explicite ?"}
+  Suite12["Oui : Stabiliser, reprendre le backlog, réorienter ou arrêter"]
+  Reprise12["Non ou inconnu : reprendre le point manquant, retour possible en phase 8"]
+
+  Entree12 --> Question12Partie1
+  Question12Partie1 --> Reponse12Partie1
+  Reponse12Partie1 --> Skills12Partie1
+  Skills12Partie1 --> Resultat12Partie1
+  Resultat12Partie1 --> Question12Partie2
+  Question12Partie2 --> Reponse12Partie2
+  Reponse12Partie2 --> Skills12Partie2
+  Skills12Partie2 --> Resultat12Partie2
+  Resultat12Partie2 --> Question12Partie3
+  Question12Partie3 --> Reponse12Partie3
+  Reponse12Partie3 --> Skills12Partie3
+  Skills12Partie3 --> Resultat12Partie3
+  Resultat12Partie3 --> Decision12
+  Decision12 -- "Oui" --> Suite12
+  Decision12 -- "Non ou inconnu" --> Reprise12

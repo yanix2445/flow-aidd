@@ -1,0 +1,19 @@
+---
+title: "S10 — Transformer l’idée en intention claire"
+---
+flowchart TB
+  Entree["Entrée : cadre"]
+  Responsable["Responsable : coordinateur"]
+  Action["Activer la capacité puis : Transformer l’idée en intention claire"]
+  Sortie["Sortie : idee"]
+  Preuve["Preuves : intention approuvee"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S20"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Sortie
+  Sortie --> Preuve
+  Preuve --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue

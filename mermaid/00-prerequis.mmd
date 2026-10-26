@@ -1,0 +1,48 @@
+---
+title: "Prérequis des séquences — le routage est détaillé dans chaque fiche"
+---
+flowchart TB
+  SequenceS00["S00 · Cadrer le projet et choisir la profondeur"]
+  SequenceS10["S10 · Transformer l’idée en intention claire"]
+  SequenceS20["S20 · Éclairer le besoin avec des observations"]
+  SequenceS30["S30 · Choisir la promesse et sa viabilité"]
+  SequenceS40["S40 · Fixer le parcours du MVP et ses critères"]
+  SequenceS50["S50 · Concevoir le parcours et l’interface utiles"]
+  SequenceS51["S51 · Éprouver le parcours avant de le généraliser"]
+  SequenceS60["S60 · Lever une inconnue technique déterminante"]
+  SequenceS61["S61 · Choisir une architecture suffisante"]
+  SequenceS70["S70 · Faire fonctionner le socle réel"]
+  SequenceS71["S71 · Conserver le contexte réellement vérifié"]
+  SequenceS80["S80 · Préparer une prochaine tranche vérifiable"]
+  SequenceS90["S90 · Livrer une tranche avec le SDLC natif"]
+  SequenceS91["S91 · Intégrer le candidat et vérifier la préproduction"]
+  SequenceS100["S100 · Vérifier le MVP intégré et décider sa préparation"]
+  SequenceS110["S110 · Préparer l’ouverture, le support et la mesure"]
+  SequenceS111["S111 · Déployer puis contrôler l’adresse réellement livrée"]
+  SequenceS112["S112 · Ouvrir l’accès à la première population"]
+  SequenceS120["S120 · Observer les usages sur la fenêtre prévue"]
+  SequenceS121["S121 · Décider de la prochaine priorité ou de l’arrêt"]
+  SequenceS00 --> SequenceS10
+  SequenceS10 --> SequenceS20
+  SequenceS20 --> SequenceS30
+  SequenceS30 --> SequenceS40
+  SequenceS40 -. "Si applicable" .-> SequenceS50
+  SequenceS50 -. "Si applicable" .-> SequenceS51
+  SequenceS00 -. "Si applicable" .-> SequenceS60
+  SequenceS40 --> SequenceS61
+  SequenceS60 --> SequenceS61
+  SequenceS61 --> SequenceS70
+  SequenceS70 --> SequenceS71
+  SequenceS40 --> SequenceS80
+  SequenceS51 --> SequenceS90
+  SequenceS71 --> SequenceS90
+  SequenceS80 --> SequenceS90
+  SequenceS90 --> SequenceS91
+  SequenceS91 --> SequenceS100
+  SequenceS40 --> SequenceS110
+  SequenceS100 --> SequenceS111
+  SequenceS110 --> SequenceS111
+  SequenceS111 --> SequenceS112
+  SequenceS110 --> SequenceS112
+  SequenceS112 --> SequenceS120
+  SequenceS120 --> SequenceS121
