@@ -1,15 +1,19 @@
-# Travailler dans ce dépôt
+# Travailler dans flow-aidd
 
-Ce dépôt contient un modèle de conduite de projet. Une demande d’explication ou de modification du modèle n’autorise pas l’exécution d’un produit, une fusion, un déploiement ou une prise de contact.
+Ce dépôt est directement le plugin, pas un projet produit à initialiser.
 
-- Pour maintenir le flow, modifier `workflow.json`, seule source propriétaire des séquences, règles, rôles, conditions, preuves, glossaire et exemples. Régénérer les vues avec `python3 scripts/flow.py build`, puis contrôler leur cohérence.
-- Pour appliquer le flow à un projet, lire `README.md`, `ORCHESTRATION.md`, son fichier `.flow/etat.json` et la seule fiche de séquence utile dans `sequences/`. Ne pas charger tous les guides et tous les skills par défaut.
-- Le coordinateur conserve l’état après une décision, un contrôle significatif, un livrable versionné et avant interruption. Les preuves citent leur source et la bonne version ; ne pas transformer une hypothèse ou une illustration en fait.
-- Lire le SKILL.md courant avant d’activer une capacité. La présence d’un identifiant dans ce modèle ne prouve ni chargement, ni activation, ni connexion du plugin.
-- Réutiliser une autorisation bornée déjà donnée. Une nouvelle décision produit revient au porteur ; une autorisation manque seulement lorsqu’elle est nécessaire à l’action concrète suivante.
-- Le SDLC possède sa boucle interne. Sa requête interactive commence exactement par `interactive`, avec une source concrète. Ne pas lancer une deuxième boucle de développement à côté.
-- Les instances sous `examples/` sont fictives. Le mode `illustration` et les preuves `simulated: true` ne sont jamais des preuves réelles.
-- `archive/v1/` conserve la version précédente et son audit. Ne pas la modifier pour faire passer les contrôles de la version actuelle.
+- Lire README.md pour les repères et docs/conception.md pour le contrat de fonctionnement.
+- Le plugin est constitué de plugin.json, skills/flow-aidd/ et hooks/. Il n’existe pas de copie de distribution à entretenir.
+- Le guidage se fait dans Codex et les fichiers du projet. Le plugin ne fournit aucune interface web ni serveur local.
+- Modifier le modèle unique dans skills/flow-aidd/references/workflow.json pour les séquences, rôles, règles, preuves et exemples. Régénérer les vues sur place avec python3 -B tools/build.py ; ne pas modifier manuellement les fiches générées.
+- Les instructions et le helper sont directement dans skills/flow-aidd/. Les outils de développement restent dans tools/.
+- Le mode choisi est guidé : une séquence à la fois, avec accord avant la suite. Une proposition de destination n’est pas un accord de passage.
+- L’installation et l’activation dans Codex exigent une demande explicite. Les essais d’intégration utilisent un projet temporaire distinct de ce dépôt.
+- Une explication, une conception ou une modification du plugin n’autorise pas l’exécution d’un produit, une fusion, un déploiement ou une prise de contact.
+- Pour appliquer le flow, lire les consignes et l’état du produit ciblé, la conduite embarquée et la seule fiche utile. Vérifier la disponibilité réelle des skills nécessaires et lire leurs SKILL.md avant emploi.
+- Le coordinateur conserve les décisions, versions, preuves et attentes dans le produit. Les exemples restent fictifs et ne fournissent aucune preuve réelle.
+- Le SDLC natif conserve sa boucle interne ; respecter sa syntaxe courante et le préfixe exact interactive prévu dans le modèle.
+- Les versions antérieures ont été sauvegardées hors du dépôt avant simplification ; voir docs/verification.md. Ne pas réintroduire leurs copies dans l’arborescence active.
 
 <!-- portly:managed-rule:start -->
 ## Development servers

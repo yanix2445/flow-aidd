@@ -1,49 +1,64 @@
-# Flow AIDD — des séquences que l’on peut suivre
+# flow-aidd
 
-Une phase explique une grande intention. Une séquence décrit un travail pilotable. Une étape est une action concrète dans cette séquence.
+Un plugin Codex pour passer d’une idée vague au premier MVP, **une séquence à la fois**, avec résultats, preuves et accord avant la suite.
 
-**Commencer :** lire [SCOPE.md](SCOPE.md), puis [S00 — cadrer le projet](sequences/S00.md). Utiliser [GLOSSAIRE.md](GLOSSAIRE.md) lorsqu’un terme est inconnu.
+**Version locale en développement. Le plugin n’est pas installé dans Codex.**
 
-**Si tu débutes :** utilise le message ci-dessous. Le coordinateur tient les fichiers d’état ; ton rôle est de clarifier ton besoin et de prendre les décisions qui t’appartiennent. Tu n’as pas à éditer le JSON à la main.
+## Fonctionnement
 
-Pour appliquer le parcours à un produit, copier [templates/etat.json](templates/etat.json) dans `{projet}/.flow/etat.json`, puis renseigner progressivement l’instance. Ce dépôt contient le modèle ; aucun projet produit réel n’est initialisé par sa consultation.
+Le guidage se fait dans la conversation Codex. Le coordinateur conduit une séquence, conserve les résultats et leurs preuves, puis attend la décision du porteur : poursuivre, corriger ou attendre.
 
-| Besoin | Document |
+L’avancement est conservé dans les fichiers du projet. Aucune interface web ni serveur local n’est nécessaire au plugin.
+
+## Comprendre les fichiers
+
+Ce dépôt est directement le paquet du plugin. Il n’existe aucune deuxième copie à maintenir.
+
+| Emplacement | Rôle |
 | --- | --- |
-| Voir la carte des phases et séquences | [FLOW.md](FLOW.md) |
-| Conduire une séquence et reprendre une séance | [ORCHESTRATION.md](ORCHESTRATION.md) |
-| Comprendre les sept rubriques | [SCHEMA.md](SCHEMA.md) |
-| Voir un parcours rempli mais fictif | [EXEMPLE.md](EXEMPLE.md) |
-| Lire les schémas et les sources Mermaid | [MERMAID.md](MERMAID.md) |
-| Maintenir le modèle | [workflow.json](workflow.json) |
-| Retrouver la première version et son audit | [archive/v1](archive/v1/ARCHIVE.md) |
+| `plugin.json` | Identité, présentation, accueil et déclaration des hooks. |
+| `skills/flow-aidd/` | Le skill, son modèle unique, ses références, helpers et identité visuelle. |
+| `hooks/` | Événements de reprise et d’actualisation du suivi. |
+| [docs/conception.md](docs/conception.md) | Utilisation, fichiers du produit, distribution et limites. |
+| [docs/verification.md](docs/verification.md) | Vérifications et limites constatées. |
+| `tools/` | Développement, génération des guides, tests et création d’archive. |
+| `AGENTS.md` et `.agents/` | Consignes de ce dépôt et catalogue d’installation ultérieure. |
 
-## Pour l’IA
-
-Lire les règles courtes d’[AGENTS.md](AGENTS.md), l’état du projet et la seule fiche de séquence courante. Charger les sources produit et les SKILL.md au moment où ils deviennent nécessaires.
+Dans le **produit accompagné**, le démarrage crée seulement :
 
 ```text
-Voici mon idée ou l’état actuel du projet : [description].
-Applique le flow version 2 en commençant par S00, ou reprends la séquence consignée dans mon état.
-Distingue faits, hypothèses, décisions et preuves. Aide-moi à répondre ; ne suppose pas mes réponses.
-Conserve l’état après les décisions et propose une prochaine action dans le périmètre autorisé.
+.flow/
+├── etat.json     # État structuré, décisions et références
+└── suivi.md      # Vue humaine régénérable
 ```
 
-## Outils locaux
+Les livrables arrivent ensuite selon les besoins. Les documents existants et les sources natives AIDD sont réutilisés ; aucune pile de documents vides n’est créée.
 
-Le script Python utilise la bibliothèque standard. `check` et `next` lisent les fichiers ; ils ne lancent aucune action du projet. Une recommandation ne certifie pas la réalité des preuves déclarées.
+## Après une installation demandée
+
+Sélectionner `flow-aidd` et écrire normalement :
+
+- « Démarre flow-aidd ici ; mon idée est… »
+- « Reprends flow-aidd sur ce projet. »
+- « Explique-moi la séquence en cours. »
+
+L’accueil aide à choisir le dossier et l’usage. Un contrat satisfait reste sur sa séquence jusqu’à l’accord de passage. Une version modifiée rend un ancien accord obsolète. Les décisions et les reprises survivent à une nouvelle conversation.
+
+Le plugin référence les autres skills utiles et vérifie leur disponibilité ; il ne les installe pas tous et ne copie pas leur code.
+
+## Lire le parcours
+
+[Carte des séquences](skills/flow-aidd/references/FLOW.md) · [S00](skills/flow-aidd/references/sequences/S00.md) · [Glossaire](skills/flow-aidd/references/GLOSSAIRE.md) · [Exemple fictif](skills/flow-aidd/references/EXEMPLE.md) · [Schémas Mermaid](skills/flow-aidd/references/MERMAID.md)
+
+## Maintenir et distribuer
+
+Prérequis des helpers : Python 3.10 ou plus. Ce dépôt utilise Portly pour les tâches bornées. Node et Playwright servent seulement à vérifier les diagrammes Mermaid.
 
 ```sh
-job_id="$(portly temp 'python3 scripts/flow.py check' --path /Users/yanis/Developer/flow-aidd --timeout 30m)"
+job_id="$(portly temp 'python3 -B tools/build.py --check && python3 -B -m unittest discover -s tools -p "test_*.py"' --path . --timeout 30m)"
 portly wait "$job_id"
 ```
 
-Commandes à placer dans un job Portly :
+Les règles des séquences se modifient dans `skills/flow-aidd/references/workflow.json`, puis les vues se régénèrent sur place avec `python3 -B tools/build.py` dans un job Portly.
 
-- `python3 scripts/flow.py build` : régénérer les guides et exemples.
-- `python3 scripts/flow.py build --check` : détecter une divergence des fichiers générés.
-- `python3 scripts/flow.py show S90` : lire un contrat sans charger tout le modèle.
-- `python3 scripts/flow.py check --state <etat.json>` : contrôler la cohérence déclarée.
-- `python3 scripts/flow.py next --state <etat.json>` : suggérer une prochaine action sans modifier l’état.
-
-La compréhension réelle par un novice et l’efficacité sur un projet livré restent à éprouver. Les tests de ce dépôt ne construisent pas le produit de l’exemple.
+`tools/release.py --output CHEMIN_EXTERIEUR_AU_DEPOT.zip` construit une archive autonome sans installation. Le catalogue local pointe sur la racine. Avec ses hooks, cette version vise l’installation manuelle locale ou privée ; elle n’est pas éligible à l’annuaire public selon la [documentation OpenAI](https://developers.openai.com/plugins/build/plugins).

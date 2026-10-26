@@ -1,0 +1,9 @@
+{
+  "description": "Reprise et suivi des seuls projets déjà initialisés avec flow-aidd.",
+  "hooks": {
+    "SessionStart": [{"matcher": "startup|resume|compact|fork", "hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3, "additionalContextLimit": 600, "statusMessage": "Relecture du suivi flow-aidd"}]}],
+    "PostToolUse": [{"matcher": ".*", "hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3, "statusMessage": "Contrôle du suivi flow-aidd"}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3}]}],
+    "Interrupt": [{"hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3}]}]
+  }
+}
