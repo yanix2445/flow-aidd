@@ -65,8 +65,8 @@ Les règles des séquences se modifient dans `skills/flow-aidd/references/workfl
 
 ```sh
 codex plugin marketplace add /chemin/vers/le/paquet-extrait --json
-codex plugin add flow-aidd@flow-aidd-local --json
-codex plugin list --marketplace flow-aidd-local --json
+codex plugin add flow-aidd@flow-aidd --json
+codex plugin list --marketplace flow-aidd --json
 ```
 
 Le paquet exporté exclut l’historique Git, les outils de développement et les caches. Une installation directe depuis le dépôt copie ces fichiers dans le cache de Codex ; utiliser l’archive pour tester la distribution.

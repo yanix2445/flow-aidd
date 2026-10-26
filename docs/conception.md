@@ -95,7 +95,7 @@ Après demande explicite, extraire le ZIP dans un dossier durable extérieur au 
 
 ```sh
 codex plugin marketplace add /chemin/vers/le/paquet-extrait --json
-codex plugin add flow-aidd@flow-aidd-local --json
+codex plugin add flow-aidd@flow-aidd --json
 ```
 
 Codex gère son cache. Installation, activation, présence du skill, accueil déclaré et confiance dans les hooks se vérifient séparément dans une nouvelle session. Le cache installé n’est pas une seconde source à modifier. Les autres plugins et leurs connexions restent gérés séparément.

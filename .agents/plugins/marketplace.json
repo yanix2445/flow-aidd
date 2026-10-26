@@ -1,7 +1,7 @@
 {
-  "name": "flow-aidd-local",
+  "name": "flow-aidd",
   "interface": {
-    "displayName": "Flow AIDD local"
+    "displayName": "flow-aidd"
   },
   "plugins": [
     {

@@ -36,9 +36,11 @@ Les essais utilisent des processus neufs et des conversations éphémères, sur 
 
 ### Installation et découverte
 
-Le catalogue `flow-aidd-local` a été enregistré avec `codex plugin marketplace add`, puis le paquet avec `codex plugin add flow-aidd@flow-aidd-local --json`. `codex plugin list --marketplace flow-aidd-local --json` confirme `installed: true` et `enabled: true`.
+Le catalogue porte désormais le nom `flow-aidd`. Son enregistrement utilise `codex plugin marketplace add`, puis `codex plugin add flow-aidd@flow-aidd --json`. L’installation se contrôle avec `codex plugin list --marketplace flow-aidd --json`.
 
-Le catalogue enregistré pointe vers `~/.codex/plugins/sources/flow-aidd-local-0.2.1`, extrait du ZIP. Codex a installé le paquet sous `~/.codex/plugins/cache/flow-aidd-local/flow-aidd/0.2.1`. Ces emplacements sont des artefacts d’installation ; la source à modifier reste ce dépôt.
+L’installation renommée utilise `~/.codex/plugins/sources/flow-aidd-0.2.1`, extrait du ZIP, puis le cache `~/.codex/plugins/cache/flow-aidd/flow-aidd/0.2.1`. Ces emplacements sont des artefacts d’installation ; la source à modifier reste ce dépôt.
+
+Les jobs cités ci-dessous correspondent aux essais initiaux, avant le renommage du catalogue. Un changement d’identité d’installation nécessite une nouvelle revue native des hooks.
 
 Le paquet et son cache contiennent 65 fichiers, avec les seules entrées `.agents/`, `.codex-plugin/`, `README.md`, `docs/`, `hooks/` et `skills/`. L’installation directe depuis le dépôt copiait également `.git/`, `tools/` et `.DS_Store` ; cet essai a été remplacé par l’installation du ZIP propre.
 
@@ -86,7 +88,7 @@ Dans ce runtime, réinstaller le ZIP après actualisation de sa documentation a 
 Une sauvegarde de **195 fichiers**, vérifiée par SHA-256 avant simplification, reste hors du dépôt :
 [archive avant simplification](/Users/yanis/Developer/.flow-aidd-backups/2026-10-26-avant-simplification-9ec8932d.zip).
 
-La réorganisation, les corrections et ce compte rendu sont conservés dans Git. Aucun dépôt distant n’est configuré et aucun push n’a été réalisé.
+La réorganisation, les corrections et ce compte rendu sont conservés dans Git. Le distant `origin` vise `git@github.com:yanix2445/flow-aidd.git` ; la publication se contrôle séparément avec Git.
 
 La résolution de l’accueil est vérifiée dans le runtime ; son bouton et la présentation graphique n’ont pas été testés visuellement dans l’application. Les essais de cycle de vie confirment cette fois le déclenchement natif des hooks, en complément des tests de handlers.
 
