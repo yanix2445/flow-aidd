@@ -22,7 +22,7 @@ class PluginTests(unittest.TestCase):
         self.base = Path(self.temporary.name).resolve()
         self.plugin = self.base / 'plugin déplace avec espaces'
         self.plugin.mkdir()
-        shutil.copy2(ROOT / 'plugin.json', self.plugin / 'plugin.json')
+        shutil.copytree(ROOT / '.codex-plugin', self.plugin / '.codex-plugin')
         shutil.copytree(ROOT / 'skills', self.plugin / 'skills', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
         self.skill = self.plugin / 'skills/flow-aidd'
         self.script = self.skill / 'scripts/project_flow.py'
@@ -44,12 +44,12 @@ class PluginTests(unittest.TestCase):
         self.state_path().write_text(json.dumps(state), encoding='utf-8')
 
     def test_repository_is_the_only_plugin_and_catalog_targets_it(self):
-        manifest = json.loads((ROOT / 'plugin.json').read_text())
+        manifest = json.loads((ROOT / '.codex-plugin/plugin.json').read_text())
         catalog = json.loads((ROOT / '.agents/plugins/marketplace.json').read_text())
         self.assertEqual(manifest['name'], 'flow-aidd')
         self.assertEqual(catalog['plugins'][0]['name'], manifest['name'])
         self.assertEqual((ROOT / catalog['plugins'][0]['source']['path']).resolve(), ROOT)
-        self.assertEqual([path for path in ROOT.rglob('plugin.json') if '.git' not in path.parts], [ROOT / 'plugin.json'])
+        self.assertEqual([path for path in ROOT.rglob('plugin.json') if '.git' not in path.parts], [ROOT / '.codex-plugin/plugin.json'])
         self.assertFalse((ROOT / 'plugin-src').exists())
         self.assertFalse((ROOT / 'plugins').exists())
 

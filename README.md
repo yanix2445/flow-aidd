@@ -2,7 +2,7 @@
 
 Un plugin Codex pour passer d’une idée vague au premier MVP, **une séquence à la fois**, avec résultats, preuves et accord avant la suite.
 
-**Version locale en développement. Le plugin n’est pas installé dans Codex.**
+**Version locale en développement.** Installation manuelle dans Codex depuis un paquet exporté.
 
 ## Fonctionnement
 
@@ -12,17 +12,17 @@ L’avancement est conservé dans les fichiers du projet. Aucune interface web n
 
 ## Comprendre les fichiers
 
-Ce dépôt est directement le paquet du plugin. Il n’existe aucune deuxième copie à maintenir.
+Ce dépôt contient la source unique du plugin. L’archive exportée contient les fichiers distribués ; le cache d’installation est géré par Codex.
 
-| Emplacement | Rôle |
-| --- | --- |
-| `plugin.json` | Identité, présentation, accueil et déclaration des hooks. |
-| `skills/flow-aidd/` | Le skill, son modèle unique, ses références, helpers et identité visuelle. |
-| `hooks/` | Événements de reprise et d’actualisation du suivi. |
-| [docs/conception.md](docs/conception.md) | Utilisation, fichiers du produit, distribution et limites. |
-| [docs/verification.md](docs/verification.md) | Vérifications et limites constatées. |
-| `tools/` | Développement, génération des guides, tests et création d’archive. |
-| `AGENTS.md` et `.agents/` | Consignes de ce dépôt et catalogue d’installation ultérieure. |
+| Emplacement                                 | Rôle                                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------------ |
+| `.codex-plugin/plugin.json`               | Unique manifeste Codex : identité, présentation, accueil et hooks.           |
+| `skills/flow-aidd/`                       | Le skill, son modèle unique, ses références, helpers et identité visuelle. |
+| `hooks/`                                  | Événements de reprise et d’actualisation du suivi.                          |
+| [docs/conception.md](docs/conception.md)     | Utilisation, fichiers du produit, distribution et limites.                     |
+| [docs/verification.md](docs/verification.md) | Vérifications et limites constatées.                                         |
+| `tools/`                                  | Développement, génération des guides, tests et création d’archive.        |
+| `AGENTS.md` et `.agents/`               | Consignes de ce dépôt et catalogue d’installation locale.                   |
 
 Dans le **produit accompagné**, le démarrage crée seulement :
 
@@ -34,7 +34,7 @@ Dans le **produit accompagné**, le démarrage crée seulement :
 
 Les livrables arrivent ensuite selon les besoins. Les documents existants et les sources natives AIDD sont réutilisés ; aucune pile de documents vides n’est créée.
 
-## Après une installation demandée
+## Utiliser le plugin installé
 
 Sélectionner `flow-aidd` et écrire normalement :
 
@@ -61,4 +61,14 @@ portly wait "$job_id"
 
 Les règles des séquences se modifient dans `skills/flow-aidd/references/workflow.json`, puis les vues se régénèrent sur place avec `python3 -B tools/build.py` dans un job Portly.
 
-`tools/release.py --output CHEMIN_EXTERIEUR_AU_DEPOT.zip` construit une archive autonome sans installation. Le catalogue local pointe sur la racine. Avec ses hooks, cette version vise l’installation manuelle locale ou privée ; elle n’est pas éligible à l’annuaire public selon la [documentation OpenAI](https://developers.openai.com/plugins/build/plugins).
+`tools/release.py --output CHEMIN_EXTERIEUR_AU_DEPOT.zip` construit une archive autonome sans installation. Extraire ce paquet hors du dépôt, puis enregistrer son catalogue et installer le plugin :
+
+```sh
+codex plugin marketplace add /chemin/vers/le/paquet-extrait --json
+codex plugin add flow-aidd@flow-aidd-local --json
+codex plugin list --marketplace flow-aidd-local --json
+```
+
+Le paquet exporté exclut l’historique Git, les outils de développement et les caches. Une installation directe depuis le dépôt copie ces fichiers dans le cache de Codex ; utiliser l’archive pour tester la distribution.
+
+Le manifeste de compatibilité `.codex-plugin/plugin.json` est utilisé seul : Codex 0.164.0-alpha.11.1 charge ses hooks, contrairement au manifeste portable à la racine lors de notre essai. Les hooks restent soumis à la revue de confiance native via `/hooks`. Avec ses hooks, cette version vise l’installation manuelle locale ou privée ; elle n’est pas éligible à l’annuaire public selon la [documentation OpenAI](https://developers.openai.com/plugins/build/plugins).

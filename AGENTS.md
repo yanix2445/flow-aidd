@@ -3,7 +3,7 @@
 Ce dépôt est directement le plugin, pas un projet produit à initialiser.
 
 - Lire README.md pour les repères et docs/conception.md pour le contrat de fonctionnement.
-- Le plugin est constitué de plugin.json, skills/flow-aidd/ et hooks/. Il n’existe pas de copie de distribution à entretenir.
+- Le plugin est constitué de .codex-plugin/plugin.json, skills/flow-aidd/ et hooks/. Conserver un seul manifeste : le format de compatibilité charge réellement les hooks dans Codex 0.164.0-alpha.11.1.
 - Le guidage se fait dans Codex et les fichiers du projet. Le plugin ne fournit aucune interface web ni serveur local.
 - Modifier le modèle unique dans skills/flow-aidd/references/workflow.json pour les séquences, rôles, règles, preuves et exemples. Régénérer les vues sur place avec python3 -B tools/build.py ; ne pas modifier manuellement les fiches générées.
 - Les instructions et le helper sont directement dans skills/flow-aidd/. Les outils de développement restent dans tools/.

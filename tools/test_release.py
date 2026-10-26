@@ -23,7 +23,9 @@ class ReleaseTests(unittest.TestCase):
                 self.assertIn('hooks/hooks.json', archive.namelist())
                 self.assertIn('skills/flow-aidd/assets/icon.svg', archive.namelist())
                 self.assertNotIn('tools/release.py', archive.namelist())
-                self.assertEqual(archive.namelist().count('plugin.json'), 1)
+                self.assertEqual([name for name in archive.namelist() if Path(name).name == 'plugin.json'],
+                                 ['.codex-plugin/plugin.json'])
+                self.assertFalse(any(name.startswith(('.git/', 'tools/', '.impeccable/')) for name in archive.namelist()))
                 archive.extractall(root / 'paquet extrait')
             project = root / 'produit synthétique'
             project.mkdir()

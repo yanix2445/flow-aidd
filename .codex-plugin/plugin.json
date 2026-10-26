@@ -1,0 +1,25 @@
+{
+  "name": "flow-aidd",
+  "version": "0.2.1",
+  "description": "Piloter un projet de l’idée au MVP avec des séquences, preuves et reprises propres au projet.",
+  "skills": "./skills/",
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/flow-aidd/SKILL.md"
+    }
+  },
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "flow-aidd",
+    "shortDescription": "De l’idée au MVP, une séquence à la fois",
+    "longDescription": "Un accompagnement guidé dans Codex pour cadrer une idée, construire le premier MVP et conserver les décisions, livrables et preuves dans les fichiers du projet.",
+    "defaultPrompt": [
+      "Utilise $flow-aidd pour m’expliquer le parcours de l’idée au premier MVP.",
+      "Utilise $flow-aidd pour cadrer mon idée dans ce projet.",
+      "Utilise $flow-aidd pour reprendre ce projet et montrer sa séquence courante."
+    ],
+    "brandColor": "#b9c9e5",
+    "composerIcon": "./skills/flow-aidd/assets/icon.svg",
+    "logo": "./skills/flow-aidd/assets/icon.svg"
+  }
+}

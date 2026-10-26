@@ -1,6 +1,6 @@
 # Fonctionnement de flow-aidd
 
-**Prototype local non installé.** Choix confirmés : nom `flow-aidd` et accompagnement guidé dans Codex avec les fichiers de suivi du projet.
+**Prototype local.** Choix confirmés : nom `flow-aidd` et accompagnement guidé dans Codex avec les fichiers de suivi du projet.
 
 ## Usage
 
@@ -81,25 +81,27 @@ Après déplacement ou clonage, `relocate` rattache explicitement l’instance a
 
 Il fournit un rappel à la reprise et actualise la vue lorsque nécessaire. Il n’initialise pas de produit, n’infère aucun accord depuis un transcript, ne démarre pas de serveur et ne provoque aucune continuation.
 
-Le handler est testé hors de Codex sur des données synthétiques. Son déclenchement natif reste à éprouver après installation et revue de confiance. La [documentation OpenAI](https://developers.openai.com/plugins/build/plugins) précise que les hooks ne sont pas automatiquement approuvés à l’installation et excluent actuellement l’annuaire public.
+Le handler est testé hors de Codex sur des données synthétiques. La découverte et la confiance dans Codex sont contrôlées séparément du test de ce handler ; voir [verification.md](verification.md). La [documentation OpenAI](https://developers.openai.com/plugins/build/plugins) précise que les hooks ne sont pas automatiquement approuvés à l’installation et excluent actuellement l’annuaire public.
 
 ## Identité et distribution
 
-Le dépôt est directement le paquet : `plugin.json`, `skills/flow-aidd/` et `hooks/`. Le catalogue `.agents/plugins/marketplace.json` pointe sur cette racine. Une seule icône SVG sert au manifeste et au skill.
+Le dépôt contient un seul manifeste, `.codex-plugin/plugin.json`, le skill `skills/flow-aidd/` et `hooks/`. Le catalogue `.agents/plugins/marketplace.json` pointe sur cette racine. Une seule icône SVG sert au manifeste et au skill.
+
+Le format de compatibilité Codex est intentionnel : dans Codex 0.164.0-alpha.11.1, les variantes portables essayées chargent le skill mais ne déclarent aucun hook dans `plugin/read`. Le manifeste de compatibilité expose bien les quatre événements. Ne pas ajouter un deuxième manifeste pour contourner ce constat.
 
 `tools/release.py --output CHEMIN_EXTERIEUR.zip` produit un ZIP autonome avec manifeste, catalogue, runtime, références, hooks et documentation. Il exclut les outils de développement et refuse une archive dans le dépôt ou l’écrasement d’un fichier existant.
 
-L’installation demeure reportée. Lorsqu’elle sera demandée :
+Après demande explicite, extraire le ZIP dans un dossier durable extérieur au dépôt puis installer depuis ce paquet. L’installation directe du dépôt copie aussi son historique Git et ses outils dans le cache de Codex.
 
 ```sh
-codex plugin marketplace add /chemin/vers/flow-aidd --json
+codex plugin marketplace add /chemin/vers/le/paquet-extrait --json
 codex plugin add flow-aidd@flow-aidd-local --json
 ```
 
-Codex gère son cache. Installation, activation, présence du skill et confiance dans les hooks seront vérifiées séparément dans une nouvelle session. Les autres plugins et leurs connexions restent gérés séparément.
+Codex gère son cache. Installation, activation, présence du skill, accueil déclaré et confiance dans les hooks se vérifient séparément dans une nouvelle session. Le cache installé n’est pas une seconde source à modifier. Les autres plugins et leurs connexions restent gérés séparément.
 
 ## Limites de ce prototype
 
 Les helpers contrôlent la structure déclarée et les fichiers locaux. Ils ne certifient pas la vérité d’un entretien, un service distant, une identité humaine ou le résultat d’un skill tiers.
 
-L’ensemble du parcours n’a pas encore été appliqué à un vrai produit dans Codex. Cet essai, l’accueil natif, l’affichage des métadonnées et les hooks restent à vérifier lors de l’installation future. Les preuves déjà obtenues et leurs limites sont dans [verification.md](verification.md).
+L’ensemble du parcours n’a pas encore été appliqué à un vrai produit dans Codex. La découverte par le runtime, l’interaction visuelle de l’accueil et le déclenchement des hooks sont des contrôles distincts. Les preuves obtenues et leurs limites sont dans [verification.md](verification.md).

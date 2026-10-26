@@ -7,17 +7,16 @@ import zipfile
 
 from _paths import ROOT
 
-SOURCES = ['plugin.json', '.agents/plugins/marketplace.json', 'skills', 'hooks', 'README.md', 'docs']
+SOURCES = ['.codex-plugin/plugin.json', '.agents/plugins/marketplace.json', 'skills', 'hooks', 'README.md', 'docs']
 
 
 def package(output):
     output = Path(output).expanduser().resolve()
     if output.is_relative_to(ROOT):
         raise ValueError('Choisir une archive hors du dépôt, sans nouvelle copie de distribution interne.')
-    manifest = json.loads((ROOT / 'plugin.json').read_text())
-    extension = manifest['extensions']['com.openai']
-    references = [extension['onboardingSkill'], extension['hooks'],
-                  extension['interface']['composerIcon'], extension['interface']['logo']]
+    manifest = json.loads((ROOT / '.codex-plugin/plugin.json').read_text())
+    references = [manifest['extensions']['com.openai']['onboardingSkill'], manifest['hooks'],
+                  manifest['interface']['composerIcon'], manifest['interface']['logo']]
     for reference in references:
         path = (ROOT / reference).resolve()
         if not path.is_relative_to(ROOT) or not path.is_file():
