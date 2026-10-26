@@ -71,6 +71,24 @@ class PluginTests(unittest.TestCase):
                 self.assertTrue(target.is_relative_to(self.plugin), f'{path}: {link}')
                 self.assertTrue(target.exists(), f'{path}: {link}')
 
+    def test_named_capabilities_resolve_in_the_local_codex_cache(self):
+        cache = Path.home() / '.codex/plugins/cache'
+        if not cache.is_dir():
+            self.skipTest('Aucun cache Codex local : disponibilité des skills non contrôlée.')
+        model = self.helper.engine().load_model()
+        missing = []
+        for seq in model['sequences']:
+            for cap in seq['action']['capabilities']:
+                if cap.get('external'):
+                    continue
+                plugin, skill = cap['id'].split(':')
+                found = list(cache.glob(f'*/{plugin}/*/skills/{skill}/SKILL.md'))
+                if not found:
+                    missing.append(f'{seq["id"]}: {cap["id"]}')
+                elif cap.get('command') and not any((path.parent / f'reference/{cap["command"]}.md').is_file() for path in found):
+                    missing.append(f'{seq["id"]}: {cap["id"]} {cap["command"]}')
+        self.assertEqual(missing, [])
+
     def test_relocated_plugin_initializes_only_a_blank_real_instance(self):
         state = self.initialize()
         self.assertEqual(state['mode'], 'reel')

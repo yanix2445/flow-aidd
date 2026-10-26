@@ -25,7 +25,7 @@ Chaque séquence décrit entrée, responsable, action, sortie, preuve, validatio
 
 Le modèle unique [workflow.json](../skills/flow-aidd/references/workflow.json) définit les 12 phases et 20 séquences. Les fiches, le glossaire, les exemples et Mermaid sont générés depuis cette source.
 
-AIDD conserve ses artefacts et pipelines natifs. Le SDLC conduit sa propre boucle, avec son préfixe `interactive` ; flow-aidd ne lance pas une seconde chaîne parallèle. Marketing, Interfaces et Impeccable interviennent lorsque la séquence le justifie. Une référence de skill n’établit ni installation ni connexion.
+AIDD conserve ses artefacts et pipelines natifs. Le SDLC conduit sa propre boucle, avec son préfixe `interactive` ; flow-aidd ne lance pas une seconde chaîne parallèle. Impeccable est la capacité de design de référence et marketing-skills couvre le public, la promesse, la mesure et le lancement ; ils interviennent lorsque la séquence et sa condition le justifient, en alimentant les artefacts AIDD. Une capacité Impeccable peut nommer sa sous-commande (`shape`, `critique`, `audit`…). Une référence de skill n’établit ni installation ni connexion.
 
 ## Ce qui appartient au plugin et au produit
 

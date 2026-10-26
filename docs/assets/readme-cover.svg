@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="224" viewBox="0 0 960 224" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Idée, preuves, décision</title>
+  <desc id="desc">Un parcours guidé relie une idée à des preuves puis à une décision. Une boucle permet de revenir préciser le travail.</desc>
+  <rect x=".5" y=".5" width="959" height="223" rx="16" fill="#11151B" stroke="#303947"/>
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="44" font-weight="550" text-anchor="middle" fill="#E7EDF5">
+    <text x="108" y="79">Idée</text>
+    <text x="480" y="79">Preuves</text>
+    <text x="828" y="79">Décision</text>
+  </g>
+  <path d="M108 127H828" stroke="#56657A" stroke-width="2"/>
+  <path d="m290 120 8 7-8 7m348-14 8 7-8 7" stroke="#B9C9E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="108" cy="127" r="12" fill="#B9C9E5"/>
+  <circle cx="480" cy="127" r="12" fill="#11151B" stroke="#B9C9E5" stroke-width="2"/>
+  <circle cx="828" cy="127" r="12" fill="#11151B" stroke="#B9C9E5" stroke-width="2"/>
+  <path d="m822 127 4 4 8-9" stroke="#E7EDF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M828 148v12c0 18-10 28-28 28H507c-18 0-27-9-27-27v-12" stroke="#56657A" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="m473 157 7-8 7 8" stroke="#B9C9E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

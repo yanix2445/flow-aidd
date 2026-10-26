@@ -50,6 +50,9 @@ def model_errors(model):
             for target in targets if isinstance(targets, list) else [targets]:
                 if target not in known and target not in model.get('special_targets', {}):
                     errors.append(f'{sid}: destination {target} inconnue pour {outcome}.')
+        uses = [(cap.get('id'), cap.get('command')) for cap in item.get('action', {}).get('capabilities', [])]
+        if len(uses) != len(set(uses)):
+            errors.append(f'{sid}: capacité dupliquée.')
         invocation = item.get('action', {}).get('invocation')
         if invocation and (invocation.get('prefix') != 'interactive' or invocation.get('template', '').split()[0] != 'interactive'):
             errors.append(f'{sid}: requête SDLC interactive mal encodée.')

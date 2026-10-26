@@ -116,7 +116,7 @@ def documents(model):
         if seq.get('input_optional'):
             text += ['**À lire si disponible et pertinent :**', '', artifact_lines(model, seq['input_optional']), '']
         text += ['## 2. Responsable', '', actor_label(model, seq['responsible']), '', f'**Validation par :** {actor_label(model, seq["validation"]["by"])}', '', '## 3. Action', '', seq['action']['summary'], '', '**Capacités à activer selon le besoin :**', '']
-        text += [f'- `{cap["id"]}` — {cap["when"]}' for cap in seq['action']['capabilities']] or ['- Le coordinateur cadre le travail ; aucun skill spécialisé n’est imposé.']
+        text += [f'- `{cap["id"]}`' + (f' · `{cap["command"]}`' if cap.get('command') else '') + f' — {cap["when"]}' for cap in seq['action']['capabilities']] or ['- Le coordinateur cadre le travail ; aucun skill spécialisé n’est imposé.']
         text += ['', '**Étapes :**', '']+[f'{index}. {step}' for index, step in enumerate(seq['action']['steps'], 1)]+['']
         for question in seq['action']['questions']:
             text += ['**Question :** '+question['question'], '', '**Réponse acceptable, illustrative :** '+question['acceptable'], '', '**Réponse insuffisante :** '+question['insufficient'], '']

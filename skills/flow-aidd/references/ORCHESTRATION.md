@@ -29,6 +29,7 @@
 22. Une même réponse réelle peut approuver le livrable et le passage explicitement présentés ; conserver cette source dans les deux enregistrements sans reposer la question. Une décision native manquante reste en attente, sans preuve inventée.
 23. Pour un fichier local, enregistrer son empreinte réelle ; pour un dossier, déclarer les fichiers de code suivis. Un contenu changé prend une nouvelle version et conduit au réexamen de ses validations dépendantes.
 24. Le déplacement d’un projet passe par relocate ; une évolution du modèle passe par migration-plan puis migrate après examen. Conserver l’identité stable, les anciens enregistrements et les références de ces reprises.
+25. AIDD reste la chaîne principale : ses artefacts (PRD, spec, plan, mémoire) portent le besoin et le code. Impeccable est la capacité de design de référence ; il s’appuie sur PRODUCT.md et DESIGN.md du produit. Marketing-skills s’appuie sur .agents/product-marketing.md. Ces sources alimentent les artefacts AIDD sans les dupliquer, et une capacité conditionnelle ne s’active que si sa condition est vraie.
 
 ## Statuts de l’instance
 

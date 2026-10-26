@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "title": "De l’idée au premier MVP, par séquences",
-  "updated": "2026-10-26",
+  "updated": "2026-10-27",
   "scope": {
     "purpose": "Guider un porteur de projet et son coordinateur IA d’une idée vague à un premier parcours utilisable, puis à une décision fondée sur les premiers usages.",
     "start": "Une intention, une difficulté ou un projet existant à reprendre.",
@@ -87,7 +87,8 @@
     "L’accord réel du porteur est conservé avec approve, correct ou pause sur le point de passage et la révision lus. Seul approve avance d’une séquence. Une recommandation, un hook ou le silence ne fournit jamais cet accord.",
     "Une même réponse réelle peut approuver le livrable et le passage explicitement présentés ; conserver cette source dans les deux enregistrements sans reposer la question. Une décision native manquante reste en attente, sans preuve inventée.",
     "Pour un fichier local, enregistrer son empreinte réelle ; pour un dossier, déclarer les fichiers de code suivis. Un contenu changé prend une nouvelle version et conduit au réexamen de ses validations dépendantes.",
-    "Le déplacement d’un projet passe par relocate ; une évolution du modèle passe par migration-plan puis migrate après examen. Conserver l’identité stable, les anciens enregistrements et les références de ces reprises."
+    "Le déplacement d’un projet passe par relocate ; une évolution du modèle passe par migration-plan puis migrate après examen. Conserver l’identité stable, les anciens enregistrements et les références de ces reprises.",
+    "AIDD reste la chaîne principale : ses artefacts (PRD, spec, plan, mémoire) portent le besoin et le code. Impeccable est la capacité de design de référence ; il s’appuie sur PRODUCT.md et DESIGN.md du produit. Marketing-skills s’appuie sur .agents/product-marketing.md. Ces sources alimentent les artefacts AIDD sans les dupliquer, et une capacité conditionnelle ne s’active que si sa condition est vraie."
   ],
   "phases": [
     {
@@ -668,6 +669,10 @@
           {
             "id": "marketing-skills:customer-research",
             "when": "Des retours de cible, sources publiques ou entretiens doivent être analysés."
+          },
+          {
+            "id": "marketing-skills:competitor-profiling",
+            "when": "Profiler les alternatives réellement citées par la cible à partir de leurs adresses ; un profil ne remplace pas une observation."
           }
         ],
         "steps": [
@@ -744,6 +749,18 @@
           {
             "id": "marketing-skills:launch",
             "when": "Le premier canal d’accès à un public externe doit être préparé."
+          },
+          {
+            "id": "marketing-skills:pricing",
+            "when": "Seulement si une viabilité commerciale est recherchée : métrique de valeur, paliers et hypothèse de prix à éprouver."
+          },
+          {
+            "id": "marketing-skills:offers",
+            "when": "Seulement si une viabilité commerciale est recherchée : ce qui est vendu, garantie et cadrage de la valeur, sans promesse non justifiable."
+          },
+          {
+            "id": "marketing-skills:marketing-psychology",
+            "when": "Éclairer le choix de la promesse par les ressorts de décision de la cible ; une hypothèse reste à éprouver à S20 ou S120."
           }
         ],
         "steps": [
@@ -888,7 +905,21 @@
         "capabilities": [
           {
             "id": "impeccable:impeccable",
-            "when": "Pour une interface graphique : context, puis init et shape selon l’état réel du projet ; shape ne code pas."
+            "command": "init",
+            "when": "Capturer le contexte produit durable dans PRODUCT.md à partir des sources approuvées, si Impeccable signale qu’il manque."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "shape",
+            "when": "Planifier le parcours, ses états et la direction avant tout code ; shape ne code pas et son brief est confirmé par le porteur."
+          },
+          {
+            "id": "marketing-skills:copywriting",
+            "when": "Seulement pour une surface de persuasion (page d’accueil, page de lancement) : message et appel à l’action tirés de la promesse validée."
+          },
+          {
+            "id": "marketing-skills:site-architecture",
+            "when": "Seulement pour un site de plusieurs pages : hiérarchie, navigation et adresses avant la conception des écrans."
           }
         ],
         "steps": [
@@ -959,12 +990,28 @@
         "summary": "Choisir un prototype proportionné et examiner la réussite d’une tâche, puis proposer les corrections utiles.",
         "capabilities": [
           {
-            "id": "interfaces:better-interface",
-            "when": "Revue du parcours graphique et des disciplines d’interface ; une revue seule ne modifie pas la source."
+            "id": "impeccable:impeccable",
+            "when": "Construire ou corriger le prototype selon le brief confirmé, dans la direction choisie."
           },
           {
             "id": "impeccable:impeccable",
-            "when": "Construire ou corriger le prototype selon le brief confirmé ; utiliser critique ou les commandes ciblées si utiles."
+            "command": "critique",
+            "when": "Évaluer le parcours avec un score heuristique ; une revue experte ne vaut pas une observation d’usage."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "clarify",
+            "when": "Libellés, erreurs, états vides et confirmations du parcours éprouvé."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "onboard",
+            "when": "Seulement si le premier usage fait partie du parcours : premier lancement, états vides et activation."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "live",
+            "when": "Seulement si un serveur de développement tourne : itérer dans le navigateur sur les éléments choisis."
           }
         ],
         "steps": [
@@ -1268,6 +1315,11 @@
           {
             "id": "aidd-context:02-project-memory",
             "when": "Le projet possède de l’architecture et des pratiques réelles à mémoriser ou à relier aux outils ; respecter ses règles sur la mémoire existante."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "document",
+            "when": "Pour une interface graphique : générer DESIGN.md depuis le code réellement construit, pas depuis les intentions."
           }
         ],
         "steps": [
@@ -1346,6 +1398,11 @@
           {
             "id": "aidd-pm:04-spec",
             "when": "Le contrat de la demande n’est pas déjà assez précis."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "shape",
+            "when": "Seulement si la tranche ajoute ou remplace une surface graphique : confirmer son brief avant la spec ; shape ne code pas."
           }
         ],
         "steps": [
@@ -1507,6 +1564,14 @@
             "id": "integration_du_depot",
             "external": true,
             "when": "Utiliser la politique et les outils réels du dépôt ; aucun des skills VCS cités ne doit être supposé fusionner automatiquement."
+          },
+          {
+            "id": "aidd-vcs:02-pull-request",
+            "when": "Ouvrir la demande de fusion en brouillon si le SDLC n’en a pas produit ; elle ne fusionne pas et ne vaut pas candidat intégré."
+          },
+          {
+            "id": "aidd-vcs:05-resolve-conflict",
+            "when": "Résoudre un conflit déterministe ou un choix déjà approuvé sur la branche du candidat ; un arbitrage entre implémentations reste une décision."
           }
         ],
         "steps": [
@@ -1592,16 +1657,28 @@
             "when": "Écrire ou exécuter les tests développeur pertinents et parcourir la tâche prévue."
           },
           {
-            "id": "interfaces:better-interface",
-            "when": "Examiner une interface graphique rendue."
+            "id": "aidd-refine:02-challenge",
+            "when": "Challenger la confiance dans le résultat contre le contrat et les preuves."
           },
           {
             "id": "impeccable:impeccable",
-            "when": "Audit ou correction graphique ciblée après constat d’un besoin."
+            "command": "audit",
+            "when": "Contrôles techniques de l’interface rendue : accessibilité, performance, responsive."
           },
           {
-            "id": "aidd-refine:02-challenge",
-            "when": "Challenger la confiance dans le résultat contre le contrat et les preuves."
+            "id": "impeccable:impeccable",
+            "command": "critique",
+            "when": "Revue UX du parcours complet sur la révision intégrée."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "harden",
+            "when": "Erreurs, cas limites et textes longs ou traduits du parcours recetté."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "polish",
+            "when": "Passe finale de qualité avant l’ouverture, une fois les écarts bloquants traités."
           }
         ],
         "steps": [
@@ -1681,6 +1758,59 @@
           {
             "id": "marketing-skills:product-marketing",
             "when": "La promesse et le langage partagés doivent être alignés."
+          },
+          {
+            "id": "marketing-skills:analytics",
+            "when": "Définir le plan de mesure : action de valeur, événements nécessaires, fenêtre et outil, sans données superflues."
+          },
+          {
+            "id": "marketing-skills:conversion-tracking",
+            "when": "Seulement si une conversion doit remonter vers un outil publicitaire ou d’analyse ; vérifier le consentement prévu."
+          },
+          {
+            "id": "marketing-skills:onboarding",
+            "when": "Préparer le premier usage et le moment où la personne obtient le bénéfice choisi."
+          },
+          {
+            "id": "marketing-skills:copywriting",
+            "when": "Rédiger les contenus d’ouverture du canal choisi à partir de la promesse validée ; une affirmation reste justifiable."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "onboard",
+            "when": "Concevoir les écrans de premier usage et d’états vides préparés avec la stratégie d’activation."
+          },
+          {
+            "id": "marketing-skills:emails",
+            "when": "Seulement si un contact par courriel est prévu et consenti : séquence de bienvenue et d’activation."
+          },
+          {
+            "id": "marketing-skills:cro",
+            "when": "Seulement si une page d’accueil ou d’inscription porte l’ouverture : lever les freins à l’action de valeur."
+          },
+          {
+            "id": "marketing-skills:signup",
+            "when": "Seulement si la population crée un compte : réduire la friction d’inscription."
+          },
+          {
+            "id": "marketing-skills:seo-audit",
+            "when": "Seulement pour un accès public : indexabilité, métadonnées et structure de la page d’ouverture."
+          },
+          {
+            "id": "marketing-skills:schema",
+            "when": "Seulement pour un accès public : données structurées des pages d’ouverture."
+          },
+          {
+            "id": "marketing-skills:ai-seo",
+            "when": "Seulement pour un accès public : rendre la promesse citable par les moteurs de réponse."
+          },
+          {
+            "id": "marketing-skills:image",
+            "when": "Visuels d’ouverture et de partage cohérents avec la direction de design."
+          },
+          {
+            "id": "marketing-skills:social",
+            "when": "Seulement si un réseau fait partie du canal choisi : contenus de l’ouverture."
           }
         ],
         "steps": [
@@ -1758,6 +1888,14 @@
           {
             "id": "aidd-vcs:03-release-tag",
             "when": "Une version Git est utile ; respecter sa validation de version, notes et fichiers avant le tag."
+          },
+          {
+            "id": "marketing-skills:analytics",
+            "when": "Vérifier que les événements du plan de mesure remontent depuis l’adresse livrée, sans compter les essais internes comme des usages."
+          },
+          {
+            "id": "marketing-skills:seo-audit",
+            "when": "Seulement pour un accès public : contrôler indexabilité et métadonnées sur l’adresse réellement livrée."
           }
         ],
         "steps": [
@@ -1834,6 +1972,26 @@
             "id": "acces_et_support_du_projet",
             "external": true,
             "when": "Outils réels d’accès, de support et de mesure ; ne pas simuler leur fonctionnement."
+          },
+          {
+            "id": "marketing-skills:analytics",
+            "when": "Contrôler que l’action de valeur de la première population est observable dans l’outil réel."
+          },
+          {
+            "id": "marketing-skills:onboarding",
+            "when": "Constater le premier usage réel et corriger un blocage d’activation dans le périmètre autorisé."
+          },
+          {
+            "id": "marketing-skills:emails",
+            "when": "Envoyer seulement les messages autorisés à la population prévue."
+          },
+          {
+            "id": "marketing-skills:social",
+            "when": "Publier seulement les contenus autorisés sur le canal prévu."
+          },
+          {
+            "id": "marketing-skills:directory-submissions",
+            "when": "Seulement pour un accès public et si le porteur l’autorise : référencer le produit dans des annuaires choisis."
           }
         ],
         "steps": [
@@ -1914,6 +2072,18 @@
             "id": "mesure_du_projet",
             "external": true,
             "when": "Lire les données ou observations réellement disponibles selon le protocole autorisé."
+          },
+          {
+            "id": "marketing-skills:analytics",
+            "when": "Lire les événements de la fenêtre et vérifier leur fiabilité avant d’en tirer une observation."
+          },
+          {
+            "id": "marketing-skills:attribution",
+            "when": "Seulement si plusieurs canaux amènent la population : relier les usages à leur source sans surinterpréter."
+          },
+          {
+            "id": "marketing-skills:cro",
+            "when": "Diagnostiquer où les personnes abandonnent avant l’action de valeur, à partir des données de la fenêtre."
           }
         ],
         "steps": [
@@ -1991,6 +2161,26 @@
           {
             "id": "marketing-skills:product-marketing",
             "when": "Des apprentissages approuvés modifient le contexte marketing utilisé."
+          },
+          {
+            "id": "marketing-skills:marketing-plan",
+            "when": "Si la décision est de poursuivre : plan d’acquisition et d’activation proportionné aux observations."
+          },
+          {
+            "id": "marketing-skills:pricing",
+            "when": "Seulement si une viabilité commerciale est recherchée : réviser l’hypothèse de prix avec les observations."
+          },
+          {
+            "id": "marketing-skills:churn-prevention",
+            "when": "Seulement si les observations montrent des abandons après le premier usage."
+          },
+          {
+            "id": "marketing-skills:ab-testing",
+            "when": "Seulement si le trafic permet une expérience significative : préparer la prochaine expérimentation."
+          },
+          {
+            "id": "marketing-skills:marketing-ideas",
+            "when": "Élargir les pistes de croissance à examiner ; une idée n’est pas une priorité décidée."
           }
         ],
         "steps": [
