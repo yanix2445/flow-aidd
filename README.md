@@ -2,7 +2,7 @@
 
 **De l’idée griffonnée aux premiers utilisateurs, une séquence à la fois.**
 
-Un plugin pour **Codex** qui conduit un produit d’une idée floue à un premier MVP utilisé, puis à la décision qui suit. Il pose la question utile, mobilise les bons plugins au bon moment, garde les preuves dans votre projet et attend votre accord avant chaque étape.
+Un plugin pour **Codex** qui conduit un produit d’une idée floue à un premier MVP utilisé, puis à la décision qui suit. Il pose la question utile, fait travailler vos plugins AIDD, Impeccable et marketing-skills au bon moment, garde les preuves dans votre projet et attend votre accord avant chaque étape.
 
 ![Un ticket de caisse portant la note « une appli pour réviser ? » devient une route de vingt et une séquences, de S00 cadrer à S121 décider.](docs/assets/readme-cover.svg)
 
@@ -21,8 +21,6 @@ C’est tout ce qu’elle a : une phrase et une envie. Elle ouvre Codex dans un 
 ```text
 Utilise $flow-aidd pour cadrer mon idée : une appli pour réviser.
 ```
-
-Ce README raconte ce qui se passe ensuite. Léa est fictive ; les mécanismes sont ceux du plugin. [L’exemple MiniRévisions][exemple] en déroule une variante plus sobre, à usage personnel, séquence par séquence.
 
 <a name="comprendre"></a>
 
@@ -68,18 +66,18 @@ Le carnet est tenu avec rigueur :
 
 ## Chapitre 3 : l’équipe autour de la table
 
-Léa n’a pas à choisir les plugins. Codex les appelle quand la séquence en a besoin, et seulement si le projet les justifie : une interface graphique fait entrer le design, un produit commercial fait entrer le prix.
+Léa a installé ces plugins une fois, avant de commencer : flow-aidd ne les fournit pas ([voir l’installation](#installation)). Ensuite, elle n’a pas à les choisir. Codex les appelle quand la séquence en a besoin, et seulement si le projet les justifie : une interface graphique fait entrer le design, un produit commercial fait entrer le prix.
 
-| Qui                   | Ce qu’il apporte à Léa                                                                                                   |
-| :-------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| `aidd-refine`       | Le brainstorm de S10, puis un regard qui challenge et cherche les angles morts.                                          |
-| `aidd-pm`           | Le brief (S30), le PRD (S40), puis l’epic, les stories et la spec de chaque tranche (S80).                               |
-| `aidd-context`      | Le choix de la stack (S61) et la mémoire du projet (S71).                                                                 |
-| `aidd-orchestrator` | Le SDLC natif qui livre une tranche jusqu’à la PR en brouillon (S90), avec sa propre boucle Dev, Refine et VCS.          |
-| `aidd-dev`          | Le socle, la recette et les tests ; pendant la livraison, c’est le SDLC qui l’emploie.                                  |
-| `aidd-vcs`          | Le dépôt, la PR, les conflits et les versions.                                                                           |
+| Qui                   | Ce qu’il apporte à Léa                                                                                                                                                                          |
+| :-------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `aidd-refine`       | Le brainstorm de S10, puis un regard qui challenge et cherche les angles morts.                                                                                                                    |
+| `aidd-pm`           | Le brief (S30), le PRD (S40), puis l’epic, les stories et la spec de chaque tranche (S80).                                                                                                        |
+| `aidd-context`      | Le choix de la stack (S61) et la mémoire du projet (S71).                                                                                                                                         |
+| `aidd-orchestrator` | Le SDLC natif qui livre une tranche jusqu’à la PR en brouillon (S90), avec sa propre boucle Dev, Refine et VCS.                                                                                  |
+| `aidd-dev`          | Le socle, la recette et les tests ; pendant la livraison, c’est le SDLC qui l’emploie.                                                                                                           |
+| `aidd-vcs`          | Le dépôt, la PR, les conflits et les versions.                                                                                                                                                   |
 | `impeccable`        | **Le design** : `PRODUCT.md`, le brief d’interface, la critique, l’audit, la finition, puis `DESIGN.md` tiré de l’interface réellement construite (S50, S51, S80, S91, S100, S110). |
-| `marketing-skills`  | Le public et le ton dans `.agents/product-marketing.md`, les concurrents, la promesse, le prix, la mesure, le lancement et la croissance (S20, S30, S50, S110 à S121). |
+| `marketing-skills`  | Le public et le ton dans `.agents/product-marketing.md`, les concurrents, la promesse, le prix, la mesure, le lancement et la croissance (S20, S30, S50, S110 à S121).                          |
 
 **La chaîne AIDD mène**, dans l’ordre qu’elle prévoit : brainstorm, brief, PRD, stack, mémoire, spec, SDLC. Impeccable et marketing-skills viennent s’y brancher. Chaque sujet a une seule source : le brief et le PRD pour le besoin, `.agents/product-marketing.md` pour le public, `PRODUCT.md` pour le contexte de design, `DESIGN.md` pour l’interface construite. Les autres documents la citent sans la recopier.
 
@@ -98,21 +96,21 @@ Le plugin embarque un modèle de **12 phases et 20 séquences**, plus le cadrage
 
 <!-- Cette vue d’accueil résume le modèle. Les contrats et routages détaillés appartiennent à workflow.json. -->
 
-| Phase                                        |      Séquences      | Ce que Léa rapporte                                                              |
-| :------------------------------------------- | :------------------: | :---------------------------------------------------------------------------------- |
-| Cadrage transversal                          |         S00         | Un objectif, des contraintes et une profondeur de travail.                          |
-| 1 — Clarifier l’idée                         |         S10         | Une intention qu’un inconnu comprend.                                              |
-| 2 — Comprendre le besoin                     |         S20         | Des observations de vrais étudiants et les alternatives qu’ils utilisent.          |
-| 3 — Choisir la promesse et la viabilité      |         S30         | Une proposition de valeur et sa viabilité.                                         |
-| 4 — Délimiter le MVP                         |         S40         | Un parcours central et ses critères de réussite.                                   |
-| 5 — Concevoir et éprouver l’expérience       |      S50 · S51      | Un parcours et une interface essayés avant d’être généralisés.                    |
-| 6 — Valider la faisabilité                   |      S60 · S61      | Les inconnues techniques levées et une architecture suffisante.                    |
-| 7 — Préparer les fondations                  |      S70 · S71      | Un socle qui tourne et un contexte vérifié.                                       |
-| 8 — Préparer la prochaine tranche            |         S80         | Une prochaine unité de travail vérifiable.                                        |
-| 9 — Livrer et intégrer                       |      S90 · S91      | Une PR en brouillon revue, puis intégrée et vérifiée en préproduction.           |
-| 10 — Valider le MVP intégré                  |         S100         | Une décision sur le MVP intégré.                                                 |
-| 11 — Ouvrir le MVP                           | S110 · S111 · S112 | Le support et la mesure prêts, le déploiement contrôlé, les premiers accès.     |
-| 12 — Observer et décider                     |     S120 · S121     | Des usages observés, puis une priorité, une nouvelle boucle ou un arrêt.          |
+| Phase                                      |      Séquences      | Ce que Léa rapporte                                                             |
+| :----------------------------------------- | :------------------: | :------------------------------------------------------------------------------- |
+| Cadrage transversal                        |         S00         | Un objectif, des contraintes et une profondeur de travail.                       |
+| 1 — Clarifier l’idée                    |         S10         | Une intention qu’un inconnu comprend.                                           |
+| 2 — Comprendre le besoin                  |         S20         | Des observations de vrais étudiants et les alternatives qu’ils utilisent.      |
+| 3 — Choisir la promesse et la viabilité  |         S30         | Une proposition de valeur et sa viabilité.                                      |
+| 4 — Délimiter le MVP                     |         S40         | Un parcours central et ses critères de réussite.                               |
+| 5 — Concevoir et éprouver l’expérience |      S50 · S51      | Un parcours et une interface essayés avant d’être généralisés.             |
+| 6 — Valider la faisabilité               |      S60 · S61      | Les inconnues techniques levées et une architecture suffisante.                 |
+| 7 — Préparer les fondations              |      S70 · S71      | Un socle qui tourne et un contexte vérifié.                                    |
+| 8 — Préparer la prochaine tranche        |         S80         | Une prochaine unité de travail vérifiable.                                     |
+| 9 — Livrer et intégrer                   |      S90 · S91      | Une PR en brouillon revue, puis intégrée et vérifiée en préproduction.      |
+| 10 — Valider le MVP intégré             |         S100         | Une décision sur le MVP intégré.                                              |
+| 11 — Ouvrir le MVP                        | S110 · S111 · S112 | Le support et la mesure prêts, le déploiement contrôlé, les premiers accès. |
+| 12 — Observer et décider                 |     S120 · S121     | Des usages observés, puis une priorité, une nouvelle boucle ou un arrêt.      |
 
 **Le MVP est considéré livré à S112**, le jour où les premiers étudiants peuvent utiliser la version vérifiée, accomplir la tâche centrale et signaler un problème. Une PR n’est qu’un candidat : intégration, vérification, déploiement et ouverture restent des étapes distinctes.
 
@@ -123,15 +121,15 @@ Le plugin embarque un modèle de **12 phases et 20 séquences**, plus le cadrage
 
 Chaque fiche répond à sept questions, illustrées ici avec le S00 de Léa :
 
-| Rubrique                  | La question                          | Chez Léa                                                                   |
-| :------------------------ | :----------------------------------- | :------------------------------------------------------------------------- |
-| **Entrée**                | De quoi part-on ?                    | Une note sur un ticket de caisse.                                          |
-| **Responsable**           | Qui conduit ?                        | Codex coordonne ; Léa précise ses choix.                                   |
-| **Action**                | Que fait-on maintenant ?             | Clarifier l’objectif, les contraintes et la profondeur.                    |
-| **Sortie**                | Quel résultat doit exister ?         | Un cadrage du projet.                                                      |
-| **Preuve**                | Qu’est-ce qui l’étaye ?              | Les réponses réelles de Léa et leurs sources.                              |
-| **Validation**            | Qui juge que c’est acceptable ?      | Le validateur prévu par la fiche, puis Léa pour le passage.                |
-| **Prochaine destination** | Où va-t-on ensuite ?                 | S10 si les conditions sont remplies ; une attente ou une correction sinon. |
+| Rubrique                        | La question                      | Chez Léa                                                                  |
+| :------------------------------ | :------------------------------- | :------------------------------------------------------------------------- |
+| **Entrée**               | De quoi part-on ?                | Une note sur un ticket de caisse.                                          |
+| **Responsable**           | Qui conduit ?                    | Codex coordonne ; Léa précise ses choix.                                 |
+| **Action**                | Que fait-on maintenant ?         | Clarifier l’objectif, les contraintes et la profondeur.                   |
+| **Sortie**                | Quel résultat doit exister ?    | Un cadrage du projet.                                                      |
+| **Preuve**                | Qu’est-ce qui l’étaye ?       | Les réponses réelles de Léa et leurs sources.                           |
+| **Validation**            | Qui juge que c’est acceptable ? | Le validateur prévu par la fiche, puis Léa pour le passage.              |
+| **Prochaine destination** | Où va-t-on ensuite ?            | S10 si les conditions sont remplies ; une attente ou une correction sinon. |
 
 Un fichier présent ne suffit pas à déclarer une séquence terminée.
 
@@ -151,9 +149,66 @@ C’est Léa qui répond. Et le ticket de caisse est toujours là, dans `.flow/`
 
 **Version `0.2.1`.** Procédure éprouvée sur macOS avec Codex CLI `0.164.0-alpha.11.1`. Les autres environnements restent à qualifier.
 
-**Il vous faut** Codex avec la prise en charge des plugins, Python 3.10 ou plus (les helpers et les hooks n’utilisent que la bibliothèque standard) et un accès Git au dépôt. Aucune clé d’API propre à flow-aidd.
+> [!IMPORTANT]
+> **flow-aidd n’installe aucun des plugins qu’il fait travailler.** Les plugins AIDD, Impeccable et marketing-skills sont à installer par vous, une fois, avant le premier usage. flow-aidd s’appuie sur leurs skills sans les embarquer : sans eux, le flow s’arrête à la première séquence qui en a besoin et vous dit lequel manque.
 
-### 1. Ajouter la source et installer
+**Il vous faut :**
+
+- Codex avec la prise en charge des plugins ;
+- Python 3.10 ou plus (les helpers et les hooks n’utilisent que la bibliothèque standard) ;
+- un accès Git aux dépôts GitHub ;
+- les trois familles de plugins ci-dessous.
+
+Aucune clé d’API propre à flow-aidd.
+
+### 1. Installer l’équipe : AIDD, Impeccable et marketing-skills
+
+Chaque famille s’installe selon la procédure de son éditeur.
+
+#### AIDD, la chaîne principale (6 plugins)
+
+Téléchargez l’archive `codex-marketplace` de la [dernière version d’AIDD](https://github.com/ai-driven-dev/framework/releases/latest) et décompressez-la dans un dossier durable, par exemple `~/.codex/plugins/sources/`. Codex relit ce dossier : ne le laissez pas dans les téléchargements. Depuis ce dossier :
+
+```bash
+codex plugin marketplace add ./aidd-framework-codex-marketplace-<version>
+```
+
+```bash
+for plugin in aidd-context aidd-refine aidd-pm aidd-dev aidd-vcs aidd-orchestrator; do
+  codex plugin add "$plugin@aidd-framework"
+done
+```
+
+#### marketing-skills
+
+```bash
+codex plugin marketplace add coreyhaines31/marketingskills
+```
+
+```bash
+codex plugin add marketing-skills@marketingskills
+```
+
+Vous pouvez aussi l’installer depuis une session Codex : tapez `/plugins` et choisissez **marketing-skills**.
+
+#### Impeccable, le plugin de design
+
+Impeccable figure dans l’annuaire officiel des plugins de Codex. Dans une session, tapez `/plugins`, cherchez **Impeccable** et installez-le.
+
+<details>
+<summary>Installer Impeccable sans l’annuaire</summary>
+
+Depuis le dossier du produit, l’installeur de l’éditeur installe le skill et son hook de projet :
+
+```bash
+npx impeccable install --providers=codex
+```
+
+Ouvrez ensuite `/hooks` dans Codex pour approuver le hook d’Impeccable.
+
+</details>
+
+### 2. Installer flow-aidd
 
 ```bash
 codex plugin marketplace add yanix2445/flow-aidd --ref main --json
@@ -178,7 +233,7 @@ La commande d’installation ne change pas.
 
 </details>
 
-### 2. Vérifier
+### 3. Vérifier
 
 ```bash
 codex plugin list --marketplace flow-aidd --json
@@ -196,24 +251,22 @@ Cherchez ces trois valeurs (les autres métadonnées sont omises ici) :
 
 Le skill s’appelle `flow-aidd:flow-aidd` ; dans une conversation, `$flow-aidd` suffit.
 
-### 3. Revoir les hooks
+Vérifiez aussi l’équipe avec `codex plugin list --json` : les six plugins `aidd-*@aidd-framework`, `marketing-skills@marketingskills` et Impeccable doivent apparaître installés et activés.
+
+### 4. Revoir les hooks
 
 Ouvrez Codex CLI, tapez `/hooks` et examinez les cinq hooks de `flow-aidd@flow-aidd` avant de leur faire confiance.[^hooks] Ils ne s’activent que dans un projet qui a déjà un `.flow/etat.json`.
 
 | Hook             | Ce qu’il fait                                                                                                  |
-| :--------------- | :------------------------------------------------------------------------------------------------------------- |
-| `SessionStart` | Rappeler la séquence en cours, l’attente, les écarts et la fiche à relire.                                     |
-| `PreToolUse`   | Refuser une écriture directe de `.flow/etat.json` ou `.flow/suivi.md`, en donnant la commande à utiliser.     |
-| `PostToolUse`  | Signaler une fois qu’un livrable suivi a changé et que sa validation est à réexaminer.                         |
-| `Stop`         | Régénérer `suivi.md` en fin de tour s’il n’est plus à jour.                                                     |
-| `Interrupt`    | Faire de même lors d’une interruption.                                                                         |
+| :--------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `SessionStart` | Rappeler la séquence en cours, l’attente, les écarts et la fiche à relire.                                  |
+| `PreToolUse`   | Refuser une écriture directe de `.flow/etat.json` ou `.flow/suivi.md`, en donnant la commande à utiliser. |
+| `PostToolUse`  | Signaler une fois qu’un livrable suivi a changé et que sa validation est à réexaminer.                      |
+| `Stop`         | Régénérer `suivi.md` en fin de tour s’il n’est plus à jour.                                             |
+| `Interrupt`    | Faire de même lors d’une interruption.                                                                        |
 
 > [!IMPORTANT]
 > Refaites cette revue **après chaque installation ou mise à jour**. Pendant les essais, une réinstallation a remis les hooks en attente alors que leurs handlers n’avaient pas changé.
-
-### 4. Rendre les plugins de l’équipe disponibles
-
-flow-aidd référence les skills d’AIDD, d’Impeccable et de marketing-skills sans les embarquer ni les installer. Installez ceux dont votre projet aura besoin ; quand une séquence en réclame un qui manque, Codex vous le dit et explique l’attente.
 
 <details>
 <summary><strong>Distribuer une archive ZIP plutôt que le dépôt</strong></summary>
@@ -245,31 +298,31 @@ Le manifeste unique est `.codex-plugin/plugin.json`, un format de compatibilité
 > [!NOTE]
 > Ouvrez Codex **dans le dossier du produit**, pas dans celui du plugin. Le suivi appartient au produit.
 
-| Vous voulez…               | Écrivez…                                                                                                |
-| :------------------------- | :------------------------------------------------------------------------------------------------------ |
-| Découvrir sans rien créer  | `Utilise $flow-aidd pour m’expliquer le parcours, sans initialiser de projet.`                         |
-| Partir d’une idée          | `Utilise $flow-aidd pour cadrer mon idée : …`                                                          |
-| Reprendre                  | `Utilise $flow-aidd pour reprendre ce projet à partir de son état existant.`                           |
-| Faire le point             | `Utilise $flow-aidd pour montrer la séquence courante, les livrables et ce qui attend une décision.`   |
-| Doser l’effort             | `C’est un projet d’apprentissage. Propose une profondeur adaptée et explique les choix.`               |
-| Passer à la suite          | `Je valide ce cadrage et je suis d’accord pour passer à la séquence proposée.`                         |
-| Corriger                   | `Reprends le cadrage : le premier utilisateur sera moi. Montre-moi les conséquences avant la suite.`    |
-| Mettre en pause            | `Mets ce point en attente : il me manque …`                                                            |
+| Vous voulez…               | Écrivez…                                                                                               |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------- |
+| Découvrir sans rien créer | `Utilise $flow-aidd pour m’expliquer le parcours, sans initialiser de projet.`                        |
+| Partir d’une idée         | `Utilise $flow-aidd pour cadrer mon idée : …`                                                        |
+| Reprendre                   | `Utilise $flow-aidd pour reprendre ce projet à partir de son état existant.`                         |
+| Faire le point              | `Utilise $flow-aidd pour montrer la séquence courante, les livrables et ce qui attend une décision.` |
+| Doser l’effort             | `C’est un projet d’apprentissage. Propose une profondeur adaptée et explique les choix.`            |
+| Passer à la suite          | `Je valide ce cadrage et je suis d’accord pour passer à la séquence proposée.`                     |
+| Corriger                    | `Reprends le cadrage : le premier utilisateur sera moi. Montre-moi les conséquences avant la suite.`  |
+| Mettre en pause             | `Mets ce point en attente : il me manque …`                                                           |
 
 <a name="depannage"></a>
 
 ## Si quelque chose coince
 
-| Situation                                                 | Que faire                                                                                                                                                        |
-| :-------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `codex plugin` est inconnu                              | Vérifier que votre CLI prend en charge les plugins ; comparer avec la version qualifiée plus haut.                                                              |
-| `flow-aidd` n’apparaît pas                              | Lancer `codex plugin list --marketplace flow-aidd --json`, puis ouvrir un nouveau chat. Dans l’application, voir la procédure de rafraîchissement d’[OpenAI][openai-plugins]. |
-| Les hooks sont ignorés ou marqués modifiés              | Ouvrir `/hooks` et revoir les définitions du paquet installé.                                                                                                    |
-| Une source `flow-aidd` existe déjà ailleurs             | Examiner `codex plugin marketplace list --json` avant de remplacer l’enregistrement.                                                                            |
-| L’export refuse le ZIP                                   | Choisir un chemin hors du dépôt et un nom d’archive libre.                                                                                                      |
-| Un plugin nécessaire manque                              | Lire la capacité demandée ; l’installer ou examiner l’alternative que la fiche autorise.                                                                         |
-| Le projet a été déplacé ou cloné                        | Demander à rattacher son état avec `relocate`, après examen du dossier et des versions.                                                                         |
-| Le modèle du plugin a changé                             | Demander un `migration-plan` et examiner les impacts avant `migrate`.                                                                                            |
+| Situation                                       | Que faire                                                                                                                                                                           |
+| :---------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `codex plugin` est inconnu                    | Vérifier que votre CLI prend en charge les plugins ; comparer avec la version qualifiée plus haut.                                                                                |
+| `flow-aidd` n’apparaît pas                  | Lancer `codex plugin list --marketplace flow-aidd --json`, puis ouvrir un nouveau chat. Dans l’application, voir la procédure de rafraîchissement d’[OpenAI][openai-plugins]. |
+| Les hooks sont ignorés ou marqués modifiés   | Ouvrir `/hooks` et revoir les définitions du paquet installé.                                                                                                                   |
+| Une source `flow-aidd` existe déjà ailleurs | Examiner `codex plugin marketplace list --json` avant de remplacer l’enregistrement.                                                                                             |
+| L’export refuse le ZIP                         | Choisir un chemin hors du dépôt et un nom d’archive libre.                                                                                                                       |
+| Un plugin nécessaire manque                    | flow-aidd ne l’installe pas : l’installer selon l’[étape 1](#installation), ou examiner l’alternative que la fiche autorise. |
+| Le projet a été déplacé ou cloné           | Demander à rattacher son état avec `relocate`, après examen du dossier et des versions.                                                                                        |
+| Le modèle du plugin a changé                  | Demander un `migration-plan` et examiner les impacts avant `migrate`.                                                                                                           |
 
 <details>
 <summary><strong>Questions fréquentes</strong></summary>
@@ -344,13 +397,13 @@ Le détail des preuves et de leurs limites est dans [le compte rendu de vérific
 
 ## Pour aller plus loin
 
-| Je cherche…                    | Je lis…                                                                                                         |
-| :----------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| La première séquence           | [La fiche S00](skills/flow-aidd/references/sequences/S00.md)                                                    |
-| Les règles de conduite         | [Le socle](skills/flow-aidd/references/socle.md) et [les règles complètes](skills/flow-aidd/references/regles.md) |
-| Les mots du parcours           | [Le glossaire](skills/flow-aidd/references/glossaire.md)                                                        |
-| Un cas déroulé en entier       | [MiniRévisions][exemple]                                                                                        |
-| Les choix de fonctionnement    | [La conception](docs/conception.md)                                                                             |
+| Je cherche…                | Je lis…                                                                                                          |
+| :-------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| La première séquence      | [La fiche S00](skills/flow-aidd/references/sequences/S00.md)                                                       |
+| Les règles de conduite     | [Le socle](skills/flow-aidd/references/socle.md) et [les règles complètes](skills/flow-aidd/references/regles.md) |
+| Les mots du parcours        | [Le glossaire](skills/flow-aidd/references/glossaire.md)                                                           |
+| Un cas déroulé en entier  | [MiniRévisions][exemple]                                                                                         |
+| Les choix de fonctionnement | [La conception](docs/conception.md)                                                                                |
 
 Code et évolutions : https://github.com/yanix2445/flow-aidd
 
@@ -358,13 +411,12 @@ Code et évolutions : https://github.com/yanix2445/flow-aidd
 
 [Revenir au début](#flow-aidd)
 
-[^hooks]: La [documentation des hooks Codex][openai-hooks] décrit la revue native des définitions avant leur exécution. L’installation et la confiance dans les hooks sont contrôlées séparément.
-
-[^compatibilite]: Ce choix repose sur les essais décrits dans [verification.md][verification]. Sa prise en charge est documentée par [OpenAI][openai-plugins] ; elle ne prouve pas la compatibilité de tous les clients ou de toutes les versions.
-
 [carte]: skills/flow-aidd/references/parcours.md
 [schemas]: docs/schemas/schemas.md
 [exemple]: docs/exemple/exemple.md
 [verification]: docs/verification.md
 [openai-plugins]: https://developers.openai.com/plugins/build/plugins
 [openai-hooks]: https://learn.chatgpt.com/docs/hooks
+[^hooks]: La [documentation des hooks Codex][openai-hooks] décrit la revue native des définitions avant leur exécution. L’installation et la confiance dans les hooks sont contrôlées séparément.
+    
+[^compatibilite]: Ce choix repose sur les essais décrits dans [verification.md][verification]. Sa prise en charge est documentée par [OpenAI][openai-plugins] ; elle ne prouve pas la compatibilité de tous les clients ou de toutes les versions.
