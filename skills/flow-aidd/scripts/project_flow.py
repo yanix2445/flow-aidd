@@ -580,6 +580,7 @@ def inspect(project):
     recommendation = {'result': 'etat_a_corriger'} if errors else runtime.recommend(model, state)
     if pending and not errors:
         recommendation = {'result': 'attente_validation', 'sequence': current, 'proposed_target': pending['target']}
+    working = next((item for item in model['sequences'] if item['id'] == (recommendation.get('sequence') or current)), sequence)
     return {
         'initialized': True, 'project': state.get('project'), 'project_id': state.get('project_id'),
         'state_path': str(target), 'mode': state.get('mode'), 'revision': state.get('revision', 0),
@@ -589,6 +590,7 @@ def inspect(project):
         'feedback': state.get('sequences', {}).get(current, {}).get('reason'),
         'pending_transition': pending, 'checkpoint_stale': stale, 'completed': state.get('completed', False),
         'recommendation': recommendation, 'errors': list(dict.fromkeys(errors)),
+        'capabilities': {'sequence': working.get('id'), **runtime.capability_plan(model, working, state)} if working else None,
         'artifacts': state.get('artifacts', {}), 'evidence': state.get('evidence', {}),
         'approver': state.get('actors', {}).get('porteur'),
         'sequences': [{'id': seq['id'], 'title': seq['title'], 'phase': seq['phase'],

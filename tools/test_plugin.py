@@ -107,6 +107,12 @@ class PluginTests(unittest.TestCase):
         self.assertFalse(result['created'])
         self.assertEqual(self.state_path().read_bytes(), before)
 
+    def test_status_sorts_the_capabilities_of_the_working_sequence(self):
+        self.initialize()
+        plan = self.helper.inspect(self.project)['capabilities']
+        self.assertEqual(plan['sequence'], 'S00')
+        self.assertEqual(set(plan), {'sequence', 'utiliser', 'selon_le_cas', 'a_confirmer', 'ecartees'})
+
     def test_status_without_state_does_not_initialize_a_project(self):
         self.assertFalse(self.helper.inspect(self.project)['initialized'])
         self.assertEqual(list(self.project.iterdir()), [])

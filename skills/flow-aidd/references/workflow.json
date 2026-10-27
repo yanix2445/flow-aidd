@@ -752,11 +752,19 @@
           },
           {
             "id": "marketing-skills:pricing",
-            "when": "Seulement si une viabilité commerciale est recherchée : métrique de valeur, paliers et hypothèse de prix à éprouver."
+            "if": {
+              "field": "commercial",
+              "equals": true
+            },
+            "when": "Métrique de valeur, paliers et hypothèse de prix à éprouver."
           },
           {
             "id": "marketing-skills:offers",
-            "when": "Seulement si une viabilité commerciale est recherchée : ce qui est vendu, garantie et cadrage de la valeur, sans promesse non justifiable."
+            "if": {
+              "field": "commercial",
+              "equals": true
+            },
+            "when": "Ce qui est vendu, garantie et cadrage de la valeur, sans promesse non justifiable."
           },
           {
             "id": "marketing-skills:marketing-psychology",
@@ -915,11 +923,13 @@
           },
           {
             "id": "marketing-skills:copywriting",
-            "when": "Seulement pour une surface de persuasion (page d’accueil, page de lancement) : message et appel à l’action tirés de la promesse validée."
+            "if_text": "une surface de persuasion (page d’accueil, page de lancement)",
+            "when": "Message et appel à l’action tirés de la promesse validée."
           },
           {
             "id": "marketing-skills:site-architecture",
-            "when": "Seulement pour un site de plusieurs pages : hiérarchie, navigation et adresses avant la conception des écrans."
+            "if_text": "un site de plusieurs pages",
+            "when": "Hiérarchie, navigation et adresses avant la conception des écrans."
           }
         ],
         "steps": [
@@ -1006,12 +1016,14 @@
           {
             "id": "impeccable:impeccable",
             "command": "onboard",
-            "when": "Seulement si le premier usage fait partie du parcours : premier lancement, états vides et activation."
+            "if_text": "le premier usage fait partie du parcours",
+            "when": "Premier lancement, états vides et activation."
           },
           {
             "id": "impeccable:impeccable",
             "command": "live",
-            "when": "Seulement si un serveur de développement tourne : itérer dans le navigateur sur les éléments choisis."
+            "if_text": "un serveur de développement tourne",
+            "when": "Itérer dans le navigateur sur les éléments choisis."
           }
         ],
         "steps": [
@@ -1319,7 +1331,11 @@
           {
             "id": "impeccable:impeccable",
             "command": "document",
-            "when": "Pour une interface graphique : générer DESIGN.md depuis le code réellement construit, pas depuis les intentions."
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
+            "when": "Générer DESIGN.md depuis le code réellement construit, pas depuis les intentions."
           }
         ],
         "steps": [
@@ -1402,7 +1418,12 @@
           {
             "id": "impeccable:impeccable",
             "command": "shape",
-            "when": "Seulement si la tranche ajoute ou remplace une surface graphique : confirmer son brief avant la spec ; shape ne code pas."
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
+            "if_text": "la tranche ajoute ou remplace une surface graphique",
+            "when": "Confirmer son brief avant la spec ; shape ne code pas."
           }
         ],
         "steps": [
@@ -1663,21 +1684,37 @@
           {
             "id": "impeccable:impeccable",
             "command": "audit",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
             "when": "Contrôles techniques de l’interface rendue : accessibilité, performance, responsive."
           },
           {
             "id": "impeccable:impeccable",
             "command": "critique",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
             "when": "Revue UX du parcours complet sur la révision intégrée."
           },
           {
             "id": "impeccable:impeccable",
             "command": "harden",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
             "when": "Erreurs, cas limites et textes longs ou traduits du parcours recetté."
           },
           {
             "id": "impeccable:impeccable",
             "command": "polish",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
             "when": "Passe finale de qualité avant l’ouverture, une fois les écarts bloquants traités."
           }
         ],
@@ -1765,7 +1802,8 @@
           },
           {
             "id": "marketing-skills:conversion-tracking",
-            "when": "Seulement si une conversion doit remonter vers un outil publicitaire ou d’analyse ; vérifier le consentement prévu."
+            "if_text": "une conversion doit remonter vers un outil publicitaire ou d’analyse",
+            "when": "Relier la conversion à l’outil choisi et vérifier le consentement prévu."
           },
           {
             "id": "marketing-skills:onboarding",
@@ -1778,31 +1816,50 @@
           {
             "id": "impeccable:impeccable",
             "command": "onboard",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
             "when": "Concevoir les écrans de premier usage et d’états vides préparés avec la stratégie d’activation."
           },
           {
             "id": "marketing-skills:emails",
-            "when": "Seulement si un contact par courriel est prévu et consenti : séquence de bienvenue et d’activation."
+            "if_text": "un contact par courriel est prévu et consenti",
+            "when": "Séquence de bienvenue et d’activation."
           },
           {
             "id": "marketing-skills:cro",
-            "when": "Seulement si une page d’accueil ou d’inscription porte l’ouverture : lever les freins à l’action de valeur."
+            "if_text": "une page d’accueil ou d’inscription porte l’ouverture",
+            "when": "Lever les freins à l’action de valeur."
           },
           {
             "id": "marketing-skills:signup",
-            "when": "Seulement si la population crée un compte : réduire la friction d’inscription."
+            "if_text": "la population crée un compte",
+            "when": "Réduire la friction d’inscription."
           },
           {
             "id": "marketing-skills:seo-audit",
-            "when": "Seulement pour un accès public : indexabilité, métadonnées et structure de la page d’ouverture."
+            "if": {
+              "field": "public_users",
+              "equals": true
+            },
+            "when": "Indexabilité, métadonnées et structure de la page d’ouverture."
           },
           {
             "id": "marketing-skills:schema",
-            "when": "Seulement pour un accès public : données structurées des pages d’ouverture."
+            "if": {
+              "field": "public_users",
+              "equals": true
+            },
+            "when": "Données structurées des pages d’ouverture."
           },
           {
             "id": "marketing-skills:ai-seo",
-            "when": "Seulement pour un accès public : rendre la promesse citable par les moteurs de réponse."
+            "if": {
+              "field": "public_users",
+              "equals": true
+            },
+            "when": "Rendre la promesse citable par les moteurs de réponse."
           },
           {
             "id": "marketing-skills:image",
@@ -1810,7 +1867,8 @@
           },
           {
             "id": "marketing-skills:social",
-            "when": "Seulement si un réseau fait partie du canal choisi : contenus de l’ouverture."
+            "if_text": "un réseau fait partie du canal choisi",
+            "when": "Contenus de l’ouverture."
           }
         ],
         "steps": [
@@ -1895,7 +1953,11 @@
           },
           {
             "id": "marketing-skills:seo-audit",
-            "when": "Seulement pour un accès public : contrôler indexabilité et métadonnées sur l’adresse réellement livrée."
+            "if": {
+              "field": "public_users",
+              "equals": true
+            },
+            "when": "Contrôler indexabilité et métadonnées sur l’adresse réellement livrée."
           }
         ],
         "steps": [
@@ -1991,7 +2053,12 @@
           },
           {
             "id": "marketing-skills:directory-submissions",
-            "when": "Seulement pour un accès public et si le porteur l’autorise : référencer le produit dans des annuaires choisis."
+            "if": {
+              "field": "public_users",
+              "equals": true
+            },
+            "if_text": "le porteur autorise ce référencement",
+            "when": "Référencer le produit dans des annuaires choisis."
           }
         ],
         "steps": [
@@ -2079,7 +2146,8 @@
           },
           {
             "id": "marketing-skills:attribution",
-            "when": "Seulement si plusieurs canaux amènent la population : relier les usages à leur source sans surinterpréter."
+            "if_text": "plusieurs canaux amènent la population",
+            "when": "Relier les usages à leur source sans surinterpréter."
           },
           {
             "id": "marketing-skills:cro",
@@ -2168,15 +2236,21 @@
           },
           {
             "id": "marketing-skills:pricing",
-            "when": "Seulement si une viabilité commerciale est recherchée : réviser l’hypothèse de prix avec les observations."
+            "if": {
+              "field": "commercial",
+              "equals": true
+            },
+            "when": "Réviser l’hypothèse de prix avec les observations."
           },
           {
             "id": "marketing-skills:churn-prevention",
-            "when": "Seulement si les observations montrent des abandons après le premier usage."
+            "if_text": "les observations montrent des abandons après le premier usage",
+            "when": "Comprendre et réduire ces abandons avant d’acquérir davantage."
           },
           {
             "id": "marketing-skills:ab-testing",
-            "when": "Seulement si le trafic permet une expérience significative : préparer la prochaine expérimentation."
+            "if_text": "le trafic permet une expérience significative",
+            "when": "Préparer la prochaine expérimentation."
           },
           {
             "id": "marketing-skills:marketing-ideas",

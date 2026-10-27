@@ -24,6 +24,48 @@ class FlowTests(unittest.TestCase):
     def test_model_contracts_are_complete(self):
         self.assertEqual(flow.model_errors(self.model), [])
 
+    def plan(self, sid, **context):
+        state = deepcopy(self.state)
+        state['context'] = {**state['context'], **context}
+        sequence = next(item for item in self.model['sequences'] if item['id'] == sid)
+        return flow.capability_plan(self.model, sequence, state)
+
+    def names(self, entries):
+        return {(entry['id'], entry.get('command')) for entry in entries}
+
+    def test_capabilities_follow_the_project_context(self):
+        public = self.plan('S110', public_users=True, has_graphical_ui=True)
+        self.assertIn(('marketing-skills:seo-audit', None), self.names(public['utiliser']))
+        self.assertIn(('impeccable:impeccable', 'onboard'), self.names(public['utiliser']))
+        self.assertEqual(public['ecartees'], [])
+        private = self.plan('S110', public_users=False, has_graphical_ui=False)
+        self.assertNotIn(('marketing-skills:seo-audit', None), self.names(private['utiliser']))
+        self.assertIn(('marketing-skills:seo-audit', None), self.names(private['ecartees']))
+        self.assertIn('public_users = false', next(item['reason'] for item in private['ecartees'] if item['id'] == 'marketing-skills:seo-audit'))
+        self.assertIn(('marketing-skills:launch', None), self.names(private['utiliser']))
+
+    def test_an_unknown_answer_asks_instead_of_dropping_a_capability(self):
+        plan = self.plan('S30', commercial=None)
+        pending = {entry['id']: entry for entry in plan['a_confirmer']}
+        self.assertIn('marketing-skills:pricing', pending)
+        self.assertEqual(pending['marketing-skills:pricing']['field'], 'commercial')
+        self.assertTrue(pending['marketing-skills:pricing']['question'])
+        self.assertEqual(plan['ecartees'], [])
+
+    def test_judgement_conditions_stay_with_the_coordinator(self):
+        plan = self.plan('S80', has_graphical_ui=True)
+        self.assertIn('la tranche ajoute', next(item['si'] for item in plan['selon_le_cas'] if item.get('command') == 'shape'))
+        self.assertNotIn(('impeccable:impeccable', 'shape'), self.names(plan['utiliser']))
+        self.assertIn(('impeccable:impeccable', 'shape'), self.names(self.plan('S80', has_graphical_ui=False)['ecartees']))
+
+    def test_capability_conditions_must_name_a_context_field(self):
+        cap = self.model['sequences'][1]['action']['capabilities'][0]
+        cap['if'] = {'field': 'inconnu', 'equals': True}
+        cap['if_text'] = ' '
+        messages = flow.model_errors(self.model)
+        self.assertTrue(any('condition de capacité inconnue' in message for message in messages))
+        self.assertTrue(any('condition de jugement vide' in message for message in messages))
+
     def test_unknown_route_is_rejected(self):
         self.model['sequences'][0]['next']['valide'] = 'S9999'
         self.assertTrue(any('destination' in message for message in flow.model_errors(self.model)))

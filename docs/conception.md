@@ -25,7 +25,9 @@ Chaque séquence décrit entrée, responsable, action, sortie, preuve, validatio
 
 Le modèle unique [workflow.json](../skills/flow-aidd/references/workflow.json) définit les 12 phases et 20 séquences. Les fiches, le glossaire, les exemples et Mermaid sont générés depuis cette source.
 
-AIDD conserve ses artefacts et pipelines natifs. Le SDLC conduit sa propre boucle, avec son préfixe `interactive` ; flow-aidd ne lance pas une seconde chaîne parallèle. Impeccable est la capacité de design de référence et marketing-skills couvre le public, la promesse, la mesure et le lancement ; ils interviennent lorsque la séquence et sa condition le justifient, en alimentant les artefacts AIDD. Une capacité Impeccable peut nommer sa sous-commande (`shape`, `critique`, `audit`…). Une référence de skill n’établit ni installation ni connexion.
+AIDD conserve ses artefacts et pipelines natifs. Le SDLC conduit sa propre boucle, avec son préfixe `interactive` ; flow-aidd ne lance pas une seconde chaîne parallèle. Impeccable est la capacité de design de référence et marketing-skills couvre le public, la promesse, la mesure et le lancement ; ils interviennent lorsque la séquence et sa condition le justifient, en alimentant les artefacts AIDD. Une capacité Impeccable peut nommer sa sous-commande (`shape`, `critique`, `audit`…).
+
+Une capacité peut dépendre du contexte du projet (`if`, par exemple `public_users` ou `commercial`) ou d’une condition à juger au cas par cas (`if_text`). `status` et `next` renvoient `capabilities` pour la séquence de travail : `utiliser`, `selon_le_cas`, `a_confirmer` (réponse de contexte encore inconnue, avec sa question) et `ecartees` (avec la raison). Une inconnue ne vaut jamais « non » : elle laisse la capacité à confirmer. Les fiches regroupent les mêmes capacités par condition. Une référence de skill n’établit ni installation ni connexion.
 
 ## Ce qui appartient au plugin et au produit
 

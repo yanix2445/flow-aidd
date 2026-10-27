@@ -20,6 +20,31 @@ def artifact_lines(model, keys):
     return paragraph_list([f'**{key} — {model["artifacts"][key]["title"]}** : `{model["artifacts"][key]["path"]}` ({model["artifacts"][key]["origin"]}). {model["artifacts"][key]["description"]}' for key in keys])
 
 
+def capability_lines(model, capabilities):
+    """Group a sheet's capabilities the way `next` sorts them for a real project."""
+    def line(cap):
+        text = f'- `{cap["id"]}`' + (f' · `{cap["command"]}`' if cap.get('command') else '')
+        if cap.get('if_text'):
+            text += f' — *seulement si {cap["if_text"]}* : {cap["when"][:1].lower()}{cap["when"][1:]}'
+        else:
+            text += f' — {cap["when"]}'
+        return text
+    unconditional = [cap for cap in capabilities if not cap.get('if')]
+    if not capabilities:
+        return ['**Capacités à activer :**', '', '- Le coordinateur cadre le travail ; aucun skill spécialisé n’est imposé.']
+    lines = ['**Capacités à activer :**', ''] + [line(cap) for cap in unconditional] + [''] if unconditional else []
+    fields = {}
+    for cap in capabilities:
+        if cap.get('if'):
+            fields.setdefault((cap['if']['field'], cap['if']['equals']), []).append(cap)
+    for (field, equals), caps in fields.items():
+        question = model['context_fields'][field]['description']
+        lines += [f'**Si `{field}` = `{str(equals).lower()}`** ({question}) :', ''] + [line(cap) for cap in caps] + ['']
+    if fields:
+        lines += ['`next` et `status` trient ces capacités selon le contexte du projet ; une réponse encore inconnue les laisse à confirmer, jamais écartées.']
+    return lines[:-1] if lines and lines[-1] == '' else lines
+
+
 def sequence_mermaid(model, seq):
     sid = seq['id']
     title = json.dumps(f'{sid} — {seq["title"]}', ensure_ascii=False)
@@ -115,8 +140,8 @@ def documents(model):
         text += ['## 1. Entrée', '', artifact_lines(model, seq['input']) or model['scope']['start'], '']
         if seq.get('input_optional'):
             text += ['**À lire si disponible et pertinent :**', '', artifact_lines(model, seq['input_optional']), '']
-        text += ['## 2. Responsable', '', actor_label(model, seq['responsible']), '', f'**Validation par :** {actor_label(model, seq["validation"]["by"])}', '', '## 3. Action', '', seq['action']['summary'], '', '**Capacités à activer selon le besoin :**', '']
-        text += [f'- `{cap["id"]}`' + (f' · `{cap["command"]}`' if cap.get('command') else '') + f' — {cap["when"]}' for cap in seq['action']['capabilities']] or ['- Le coordinateur cadre le travail ; aucun skill spécialisé n’est imposé.']
+        text += ['## 2. Responsable', '', actor_label(model, seq['responsible']), '', f'**Validation par :** {actor_label(model, seq["validation"]["by"])}', '', '## 3. Action', '', seq['action']['summary'], '']
+        text += capability_lines(model, seq['action']['capabilities'])
         text += ['', '**Étapes :**', '']+[f'{index}. {step}' for index, step in enumerate(seq['action']['steps'], 1)]+['']
         for question in seq['action']['questions']:
             text += ['**Question :** '+question['question'], '', '**Réponse acceptable, illustrative :** '+question['acceptable'], '', '**Réponse insuffisante :** '+question['insufficient'], '']
