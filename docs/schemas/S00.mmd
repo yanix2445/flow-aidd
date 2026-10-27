@@ -2,22 +2,71 @@
 title: "S00 — Cadrer le projet et choisir la profondeur"
 ---
 flowchart TB
-  Entree["Entrée : Une intention, une difficulté ou un projet existant à reprendre."]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Cadrer le projet et choisir la profondeur"]
-  Sortie["Sortie : cadre"]
-  Preuve["Preuves : cadre decide"]
-  Controle["Contrôle indépendant : verificateur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S10"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
+  subgraph Entrees["1 · Entrées"]
+    EntreeIntention["Une intention, une difficulté ou un projet existant à reprendre."]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Cadrer le projet et choisir la profondeur"]
+    direction TB
+    Etape1["1. Lire l’idée ou l’état existant sans transformer une demande …"]
+    Etape2["2. Préciser type de produit …"]
+    Etape3["3. Identifier les livrables déjà fiables, le pilote et le porteur …"]
+    Etape4["4. Conserver le périmètre autorisé et faire confirmer les décisions qui …"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieCadre["Cadrage du projet"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveCadreDecide["Le cadrage indique les choix, les inconnues, les responsabilités et l’autorisation de travail"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS10["S10 · Transformer l’idée en intention claire"]
+  VersS00["S00 · reprendre cette séquence"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
   Action --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS10 ~~~ VersS00
+  VersS00 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide" ==> VersS10
+  Validation -- "à préciser" --> VersS00
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeIntention entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class SortieCadre sortie
+  class PreuveCadreDecide preuve
+  class AgentVerificateur controle
+  class Validation validation
+  class VersS10 ok
+  class VersS00 retour
+  class VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

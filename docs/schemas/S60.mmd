@@ -2,26 +2,89 @@
 title: "S60 — Lever une inconnue technique déterminante"
 ---
 flowchart TB
-  Entree["Entrée : cadre"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Lever une inconnue technique déterminante"]
-  Plugins["AIDD : pm/05-spike"]
-  Sortie["Sortie : spike"]
-  Preuve["Preuves : essai borne, conclusion risque"]
-  Controle["Contrôle indépendant : verificateur"]
-  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : RESUME"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Lever une inconnue technique déterminante"]
+    direction TB
+    Etape1["1. Conserver resume_sequence lorsqu’un travail est interrompu pour ce …"]
+    Etape2["2. Définir la question, la durée maximale et la preuve de sortie avant …"]
+    Etape3["3. Réaliser le minimum d’essai nécessaire sans en faire du code de …"]
+    Etape4["4. Conclure : faisable avec limites …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsAidd["AIDD : pm/05-spike"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieSpike["Conclusion de faisabilité"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveEssaiBorne["L’essai répond à la question prévue ; commandes ou observations, durée et limites sont liées au résultat"]
+    PreuveConclusionRisque["La conclusion indique l’effet sur le périmètre et la prochaine action"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+  end
+  Validation{"7 · Validation par verificateur"}
+  VersRESUME["Reprendre la séquence mémorisée"]
+  VersS61["S61 · Choisir une architecture suffisante"]
+  VersS40["S40 · Fixer le parcours du MVP et ses critères"]
+  VersS60["S60 · reprendre cette séquence"]
+  VersWAIT_INFO["Attendre une information"]
+  VersWAIT_ACCESS["Attendre un accès"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersRESUME ~~~ VersS61
+  VersS61 ~~~ VersS40
+  VersS40 ~~~ VersS60
+  VersS60 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersWAIT_ACCESS
+  VersWAIT_ACCESS ~~~ VersSTOP
+  Validation == "valide" ==> VersRESUME
+  Validation -- "non applicable" --> VersS61
+  Validation -- "modifier le périmètre" --> VersS40
+  Validation -- "à préciser" --> VersS60
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "attendre un accès" --> VersWAIT_ACCESS
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef aidd fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsAidd aidd
+  class SortieSpike sortie
+  class PreuveEssaiBorne,PreuveConclusionRisque preuve
+  class AgentVerificateur controle
+  class Validation validation
+  class VersRESUME ok
+  class VersS61,VersS40,VersS60 retour
+  class VersWAIT_INFO,VersWAIT_ACCESS attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

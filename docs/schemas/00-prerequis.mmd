@@ -1,48 +1,111 @@
 ---
-title: "Prérequis des séquences — le routage est détaillé dans chaque fiche"
+title: "Parcours flow-aidd — phases, séquences et plugins mobilisés"
 ---
 flowchart TB
-  SequenceS00["S00 · Cadrer le projet et choisir la profondeur"]
-  SequenceS10["S10 · Transformer l’idée en intention claire"]
-  SequenceS20["S20 · Éclairer le besoin avec des observations"]
-  SequenceS30["S30 · Choisir la promesse et sa viabilité"]
-  SequenceS40["S40 · Fixer le parcours du MVP et ses critères"]
-  SequenceS50["S50 · Concevoir le parcours et l’interface utiles"]
-  SequenceS51["S51 · Éprouver le parcours avant de le généraliser"]
-  SequenceS60["S60 · Lever une inconnue technique déterminante"]
-  SequenceS61["S61 · Choisir une architecture suffisante"]
-  SequenceS70["S70 · Faire fonctionner le socle réel"]
-  SequenceS71["S71 · Conserver le contexte réellement vérifié"]
-  SequenceS80["S80 · Préparer une prochaine tranche vérifiable"]
-  SequenceS90["S90 · Livrer une tranche avec le SDLC natif"]
-  SequenceS91["S91 · Intégrer le candidat et vérifier la préproduction"]
-  SequenceS100["S100 · Vérifier le MVP intégré et décider sa préparation"]
-  SequenceS110["S110 · Préparer l’ouverture, le support et la mesure"]
-  SequenceS111["S111 · Déployer puis contrôler l’adresse réellement livrée"]
-  SequenceS112["S112 · Ouvrir l’accès à la première population"]
-  SequenceS120["S120 · Observer les usages sur la fenêtre prévue"]
-  SequenceS121["S121 · Décider de la prochaine priorité ou de l’arrêt"]
+  subgraph PhaseCadrage["Cadrage transversal"]
+    SequenceS00["S00 · Cadrer le projet et choisir la profondeur"]
+  end
+  subgraph Phase1["Phase 1 · Clarifier l’idée"]
+    SequenceS10["S10 · Transformer l’idée en intention claire · AIDD"]
+  end
+  subgraph Phase2["Phase 2 · Comprendre le besoin"]
+    SequenceS20["S20 · Éclairer le besoin avec des observations · Marketing"]
+  end
+  subgraph Phase3["Phase 3 · Choisir la promesse et la viabilité"]
+    SequenceS30["S30 · Choisir la promesse et sa viabilité · AIDD, Marketing"]
+  end
+  subgraph Phase4["Phase 4 · Délimiter le MVP"]
+    SequenceS40["S40 · Fixer le parcours du MVP et ses critères · AIDD"]
+  end
+  subgraph Phase5["Phase 5 · Concevoir et éprouver l’expérience"]
+    SequenceS50["S50 · Concevoir le parcours et l’interface utiles · Impeccable, Marketing"]
+    SequenceS51["S51 · Éprouver le parcours avant de le généraliser · Impeccable"]
+  end
+  subgraph Phase6["Phase 6 · Valider la faisabilité"]
+    SequenceS60["S60 · Lever une inconnue technique déterminante · AIDD"]
+    SequenceS61["S61 · Choisir une architecture suffisante · AIDD"]
+  end
+  subgraph Phase7["Phase 7 · Préparer les fondations"]
+    SequenceS70["S70 · Faire fonctionner le socle réel · AIDD"]
+    SequenceS71["S71 · Conserver le contexte réellement vérifié · AIDD"]
+  end
+  subgraph Phase8["Phase 8 · Préparer la prochaine tranche"]
+    SequenceS80["S80 · Préparer une prochaine tranche vérifiable · AIDD, Impeccable"]
+  end
+  subgraph Phase9["Phase 9 · Livrer et intégrer"]
+    SequenceS90["S90 · Livrer une tranche avec le SDLC natif · AIDD"]
+    SequenceS91["S91 · Intégrer le candidat et vérifier la préproduction · AIDD, Impeccable"]
+  end
+  subgraph Phase10["Phase 10 · Valider le MVP intégré"]
+    SequenceS100["S100 · Vérifier le MVP intégré et décider sa préparation · AIDD, Impeccable"]
+  end
+  subgraph Phase11["Phase 11 · Ouvrir le MVP"]
+    SequenceS110["S110 · Préparer l’ouverture, le support et la mesure · Impeccable, Marketing"]
+    SequenceS111["S111 · Déployer puis contrôler l’adresse réellement livrée · AIDD, Marketing"]
+    SequenceS112["S112 · Ouvrir l’accès à la première population · Marketing"]
+  end
+  subgraph Phase12["Phase 12 · Observer et décider"]
+    SequenceS120["S120 · Observer les usages sur la fenêtre prévue · Marketing"]
+    SequenceS121["S121 · Décider de la prochaine priorité ou de l’arrêt · AIDD, Marketing"]
+  end
+  PhaseCadrage ~~~ Phase1
+  Phase1 ~~~ Phase2
+  Phase2 ~~~ Phase3
+  Phase3 ~~~ Phase4
+  Phase4 ~~~ Phase5
+  Phase5 ~~~ Phase6
+  Phase6 ~~~ Phase7
+  Phase7 ~~~ Phase8
+  Phase8 ~~~ Phase9
+  Phase9 ~~~ Phase10
+  Phase10 ~~~ Phase11
+  Phase11 ~~~ Phase12
   SequenceS00 --> SequenceS10
   SequenceS10 --> SequenceS20
   SequenceS20 --> SequenceS30
   SequenceS30 --> SequenceS40
-  SequenceS40 -. "Si applicable" .-> SequenceS50
-  SequenceS50 -. "Si applicable" .-> SequenceS51
-  SequenceS00 -. "Si applicable" .-> SequenceS60
-  SequenceS40 --> SequenceS61
+  SequenceS40 -. "si applicable" .-> SequenceS50
+  SequenceS50 -. "si applicable" .-> SequenceS51
+  SequenceS00 -. "si applicable" .-> SequenceS60
+  SequenceS40 -.-> SequenceS61
   SequenceS60 --> SequenceS61
   SequenceS61 --> SequenceS70
   SequenceS70 --> SequenceS71
-  SequenceS40 --> SequenceS80
-  SequenceS51 --> SequenceS90
-  SequenceS71 --> SequenceS90
+  SequenceS40 -.-> SequenceS80
+  SequenceS51 -.-> SequenceS90
+  SequenceS71 -.-> SequenceS90
   SequenceS80 --> SequenceS90
   SequenceS90 --> SequenceS91
   SequenceS91 --> SequenceS100
-  SequenceS40 --> SequenceS110
+  SequenceS40 -.-> SequenceS110
   SequenceS100 --> SequenceS111
   SequenceS110 --> SequenceS111
   SequenceS111 --> SequenceS112
   SequenceS110 --> SequenceS112
   SequenceS112 --> SequenceS120
   SequenceS120 --> SequenceS121
+  classDef cadrage fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef decouvrir fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320
+  classDef concevoir fill:#ffe8cc,stroke:#d9822b,color:#3d2600
+  classDef construire fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef ouvrir fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef observer fill:#d5f2f2,stroke:#2f8f8f,color:#0b3030
+  class SequenceS00 cadrage
+  class SequenceS10,SequenceS20,SequenceS30,SequenceS40 decouvrir
+  class SequenceS50,SequenceS51 concevoir
+  class SequenceS60,SequenceS61,SequenceS70,SequenceS71,SequenceS80,SequenceS90,SequenceS91 construire
+  class SequenceS100,SequenceS110,SequenceS111,SequenceS112 ouvrir
+  class SequenceS120,SequenceS121 observer
+  style PhaseCadrage fill:#fbfcfe,stroke:#cbd5e1
+  style Phase1 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase2 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase3 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase4 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase5 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase6 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase7 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase8 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase9 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase10 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase11 fill:#fbfcfe,stroke:#cbd5e1
+  style Phase12 fill:#fbfcfe,stroke:#cbd5e1

@@ -2,26 +2,100 @@
 title: "S40 — Fixer le parcours du MVP et ses critères"
 ---
 flowchart TB
-  Entree["Entrée : cadre, brief, besoin"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Fixer le parcours du MVP et ses critères"]
-  Plugins["AIDD : pm/03-prd, refine/03-shadow-areas"]
-  Sortie["Sortie : mvp"]
-  Preuve["Preuves : contrat verifiable, perimetre approuve"]
-  Controle["Contrôle indépendant : verificateur, relecteur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S50, S61, S80, S110"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeBrief["Brief produit"]
+    EntreeBesoin["Preuves du besoin"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Fixer le parcours du MVP et ses critères"]
+    direction TB
+    Etape1["1. Décrire le plus petit parcours utile complet …"]
+    Etape2["2. Choisir une note courte si elle exprime toutes les exigences sans ambiguïté …"]
+    Etape3["3. Définir règles, états d’erreur, droits et exigences de qualité …"]
+    Etape4["4. Définir action de valeur, méthode de mesure et fenêtre d’observation"]
+    Etape5["5. Relier chaque réserve ou risque accepté à une vérification future"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsAidd["AIDD : pm/03-prd, refine/03-shadow-areas"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieMvp["Contrat du MVP"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveContratVerifiable["Une source unique contient parcours, exclusions, comportements et critères observables"]
+    PreuvePerimetreApprouve["Le porteur approuve la révision exacte du périmètre et les réserves éventuelles"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+    AgentRelecteur["flow_aidd_relecteur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS50["S50 · Concevoir le parcours et l’interface utiles"]
+  VersS61["S61 · Choisir une architecture suffisante"]
+  VersS80["S80 · Préparer une prochaine tranche vérifiable"]
+  VersS110["S110 · Préparer l’ouverture, le support et la mesure"]
+  VersS30["S30 · Choisir la promesse et sa viabilité"]
+  VersS40["S40 · reprendre cette séquence"]
+  VersS60["S60 · Lever une inconnue technique déterminante"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Etape4 --> Etape5
+  Action -- "mobilise" --> Plugins
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS50 ~~~ VersS61
+  VersS61 ~~~ VersS80
+  VersS80 ~~~ VersS110
+  VersS110 ~~~ VersS30
+  VersS30 ~~~ VersS40
+  VersS40 ~~~ VersS60
+  VersS60 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide" ==> VersS50
+  Validation == "valide" ==> VersS61
+  Validation == "valide" ==> VersS80
+  Validation == "valide" ==> VersS110
+  Validation -- "modifier le périmètre" --> VersS30
+  Validation -- "à préciser" --> VersS40
+  Validation -- "risque technique" --> VersS60
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef aidd fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeBrief,EntreeBesoin entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4,Etape5 etape
+  class PluginsAidd aidd
+  class SortieMvp sortie
+  class PreuveContratVerifiable,PreuvePerimetreApprouve preuve
+  class AgentVerificateur,AgentRelecteur controle
+  class Validation validation
+  class VersS50,VersS61,VersS80,VersS110 ok
+  class VersS30,VersS40,VersS60 retour
+  class VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

@@ -2,26 +2,103 @@
 title: "S100 — Vérifier le MVP intégré et décider sa préparation"
 ---
 flowchart TB
-  Entree["Entrée : cadre, mvp, integration"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Vérifier le MVP intégré et décider sa préparation"]
-  Plugins["AIDD : dev/03-assert, dev/06-test, refine/02-challenge<br/>Impeccable : audit*, critique*, harden*, polish*, document*"]
-  Sortie["Sortie : recette"]
-  Preuve["Preuves : parcours integre, usage qualifie, recette acceptee"]
-  Controle["Contrôle indépendant : verificateur, relecteur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S111"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeMvp["Contrat du MVP"]
+    EntreeIntegration["Candidat intégré"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Vérifier le MVP intégré et décider sa préparation"]
+    direction TB
+    Etape1["1. Reprendre les critères définis à S40 sur la révision intégrée de S91"]
+    Etape2["2. Tester tâche, persistance, erreurs, accès et intégrations réellement …"]
+    Etape3["3. Examiner l’interface rendue et une tâche utilisateur lorsque pertinents …"]
+    Etape4["4. Traiter les écarts bloquants …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsAidd["AIDD : dev/03-assert, dev/06-test, refine/02-challenge"]
+  end
+  subgraph PluginsCas["Plugins selon le cas"]
+    direction TB
+    PluginsCasImpeccable1["Impeccable (1/2) : audit, critique, harden, polish"]
+    PluginsCasImpeccable2["Impeccable (2/2) : document"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieRecette["Recette du MVP"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveParcoursIntegre["La tâche centrale et les erreurs importantes ont été vérifiées sur la révision intégrée"]
+    PreuveUsageQualifie["Les contrôles de qualité et la nature de la recette d’usage sont explicités, avec les limites non testées"]
+    PreuveRecetteAcceptee["Le porteur accepte la version et les réserves restantes, dans une population d’ouverture définie"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+    AgentRelecteur["flow_aidd_relecteur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS111["S111 · Déployer puis contrôler l’adresse réellement livrée"]
+  VersS90["S90 · Livrer une tranche avec le SDLC natif"]
+  VersS40["S40 · Fixer le parcours du MVP et ses critères"]
+  VersS100["S100 · reprendre cette séquence"]
+  VersWAIT_INFO["Attendre une information"]
+  VersWAIT_ACCESS["Attendre un accès"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action -. "selon le cas" .-> PluginsCas
+  PluginsCasImpeccable1 ~~~ PluginsCasImpeccable2
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS111 ~~~ VersS90
+  VersS90 ~~~ VersS40
+  VersS40 ~~~ VersS100
+  VersS100 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersWAIT_ACCESS
+  VersWAIT_ACCESS ~~~ VersSTOP
+  Validation == "valide" ==> VersS111
+  Validation -- "réparer" --> VersS90
+  Validation -- "modifier le périmètre" --> VersS40
+  Validation -- "à préciser" --> VersS100
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "attendre un accès" --> VersWAIT_ACCESS
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef aidd fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554
+  classDef impeccable fill:#ffe8cc,stroke:#d9822b,color:#3d2600
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeMvp,EntreeIntegration entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsAidd aidd
+  class PluginsCasImpeccable1,PluginsCasImpeccable2 impeccable
+  class SortieRecette sortie
+  class PreuveParcoursIntegre,PreuveUsageQualifie,PreuveRecetteAcceptee preuve
+  class AgentVerificateur,AgentRelecteur controle
+  class Validation validation
+  class VersS111 ok
+  class VersS90,VersS40,VersS100 retour
+  class VersWAIT_INFO,VersWAIT_ACCESS attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style PluginsCas fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

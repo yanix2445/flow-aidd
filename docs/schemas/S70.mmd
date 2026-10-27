@@ -2,26 +2,88 @@
 title: "S70 — Faire fonctionner le socle réel"
 ---
 flowchart TB
-  Entree["Entrée : cadre, mvp, architecture"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Faire fonctionner le socle réel"]
-  Plugins["AIDD : vcs/00-repo-init, dev/01-plan, dev/02-implement, dev/03-assert"]
-  Sortie["Sortie : socle"]
-  Preuve["Preuves : socle execute, preproduction socle"]
-  Controle["Contrôle indépendant : verificateur"]
-  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S71"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeMvp["Contrat du MVP"]
+    EntreeArchitecture["Choix techniques"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Faire fonctionner le socle réel"]
+    direction TB
+    Etape1["1. Réutiliser ou initialiser le dépôt dans le périmètre autorisé"]
+    Etape2["2. Créer les fichiers et configurations réellement nécessaires …"]
+    Etape3["3. Rendre build, démarrage et contrôles pertinents reproductibles"]
+    Etape4["4. Vérifier un petit chemin et la configuration de préproduction …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsAidd["AIDD : vcs/00-repo-init, dev/01-plan, dev/02-implement, dev/03-assert"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieSocle["Socle vérifié"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveSocleExecute["Les commandes réellement lancées et leurs codes de sortie sont rattachés à la révision du socle"]
+    PreuvePreproductionSocle["La configuration et l’adresse de préproduction sont vérifiées …"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+  end
+  Validation{"7 · Validation par verificateur"}
+  VersS71["S71 · Conserver le contexte réellement vérifié"]
+  VersS70["S70 · reprendre cette séquence"]
+  VersS61["S61 · Choisir une architecture suffisante"]
+  VersWAIT_ACCESS["Attendre un accès"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS71 ~~~ VersS70
+  VersS70 ~~~ VersS61
+  VersS61 ~~~ VersWAIT_ACCESS
+  VersWAIT_ACCESS ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide" ==> VersS71
+  Validation -- "réparer" --> VersS70
+  Validation -- "modifier le périmètre" --> VersS61
+  Validation -- "attendre un accès" --> VersWAIT_ACCESS
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef aidd fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeMvp,EntreeArchitecture entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsAidd aidd
+  class SortieSocle sortie
+  class PreuveSocleExecute,PreuvePreproductionSocle preuve
+  class AgentVerificateur controle
+  class Validation validation
+  class VersS71 ok
+  class VersS70,VersS61 retour
+  class VersWAIT_ACCESS,VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1
