@@ -563,14 +563,55 @@ def migrate(project, reference, expected_revision):
     return mutate(project, expected_revision, operation, check_binding=False)
 
 
+def guidance(state, working, pending, stale, binding, errors, capabilities, agents):
+    """Name the only references to read now and the next actions, like a context loader."""
+    sid = (working or {}).get('id')
+    load, directives = [], []
+    if binding:
+        load.append('references/rattacher.md')
+        directives.append('Rattacher l’état avant tout travail : ' + ' '.join(binding[:2]))
+    if sid:
+        load.append(f'references/sequences/{sid}.md')
+    if pending:
+        load.append('references/checkpoint.md')
+        if stale:
+            directives.append(f'Point de passage {pending["id"]} périmé : record puis nouveau checkpoint avant de le présenter.')
+        else:
+            directives.append(f'Accord attendu sur {pending["id"]} ({state.get("current_sequence")} → {pending["target"]}) : '
+                              'présenter le résultat et attendre la réponse du porteur ; ne pas commencer la séquence suivante.')
+    waiting = state.get('sequences', {}).get(sid, {}).get('waiting_for') if sid else None
+    if waiting and not pending:
+        directives.append(f'Attente : {waiting}')
+    other = [error for error in errors if error not in binding]
+    if other:
+        directives.append('Examiner avant de continuer : ' + ' '.join(other[:2]))
+    if capabilities and any(capabilities[key] for key in ['utiliser', 'selon_le_cas', 'a_confirmer']):
+        load.append('references/capacites.md')
+    for item in (capabilities or {}).get('a_confirmer', []):
+        directives.append(f'Demander au porteur : {item["question"]} (`{item["field"]}`), puis record context.')
+    if capabilities and capabilities['a_confirmer']:
+        load += ['references/entretien.md', 'references/record.md']
+    if sid and not pending and not binding and (working.get('validation', {}).get('by') == 'porteur' or working['action'].get('questions')):
+        load.append('references/entretien.md')
+    if sid and not pending and not binding:
+        directives.append(f'Conduire {sid} selon sa fiche, record au fil du travail'
+                          + (', puis lancer ' + ' et '.join(agent['codex'] for agent in agents) if agents else '')
+                          + ' avant checkpoint (references/checkpoint.md).')
+        load += ['references/record.md', 'references/socle.md']
+    return list(dict.fromkeys(load)), directives
+
+
 def inspect(project):
     root, target = state_path(project)
     if not target.exists():
-        return {'initialized': False, 'project': str(root), 'next_action': 'Initialiser S00 à la demande du porteur.', 'errors': []}
+        return {'initialized': False, 'project': str(root), 'next_action': 'Initialiser S00 à la demande du porteur.', 'errors': [],
+                'skill_root': str(SKILL_ROOT), 'load': ['references/init.md'],
+                'directives': ['Aucun suivi ici : expliquer, ou lancer init seulement si le porteur démarre ce projet.']}
     runtime = engine()
     model = runtime.load_model()
     state = read_state(target)
-    errors = binding_errors(state, root, model)
+    binding = binding_errors(state, root, model)
+    errors = list(binding)
     errors += freshness_errors(state, root)
     errors += runtime.state_errors(model, state)
     current = state.get('current_sequence')
@@ -581,6 +622,9 @@ def inspect(project):
     if pending and not errors:
         recommendation = {'result': 'attente_validation', 'sequence': current, 'proposed_target': pending['target']}
     working = next((item for item in model['sequences'] if item['id'] == (recommendation.get('sequence') or current)), sequence)
+    capabilities = {'sequence': working.get('id'), **runtime.capability_plan(model, working, state)} if working else None
+    agents = runtime.review_agents(model, working['id']) if working else []
+    load, directives = guidance(state, working, pending, stale, binding, errors, capabilities, agents)
     return {
         'initialized': True, 'project': state.get('project'), 'project_id': state.get('project_id'),
         'state_path': str(target), 'mode': state.get('mode'), 'revision': state.get('revision', 0),
@@ -590,7 +634,8 @@ def inspect(project):
         'feedback': state.get('sequences', {}).get(current, {}).get('reason'),
         'pending_transition': pending, 'checkpoint_stale': stale, 'completed': state.get('completed', False),
         'recommendation': recommendation, 'errors': list(dict.fromkeys(errors)),
-        'capabilities': {'sequence': working.get('id'), **runtime.capability_plan(model, working, state)} if working else None,
+        'skill_root': str(SKILL_ROOT), 'load': load, 'directives': directives,
+        'capabilities': capabilities, 'agents': agents,
         'artifacts': state.get('artifacts', {}), 'evidence': state.get('evidence', {}),
         'approver': state.get('actors', {}).get('porteur'),
         'sequences': [{'id': seq['id'], 'title': seq['title'], 'phase': seq['phase'],

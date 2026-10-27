@@ -7,8 +7,8 @@ const os = require('node:os');
 const {chromium} = require(process.env.FLOW_PLAYWRIGHT_MODULE || 'playwright');
 
 (async () => {
-  const root = path.resolve(__dirname,'../skills/flow-aidd/references');
-  const model = JSON.parse(fs.readFileSync(path.join(root,'workflow.json'),'utf8'));
+  const root = path.resolve(__dirname,'../docs');
+  const model = JSON.parse(fs.readFileSync(path.resolve(__dirname,'../skills/flow-aidd/references/workflow.json'),'utf8'));
   const files = ['00-prerequis.mmd',...model.sequences.map(sequence => sequence.id+'.mmd')];
   const browser = await chromium.launch({headless:true,...(process.env.FLOW_BROWSER_EXECUTABLE ? {executablePath:process.env.FLOW_BROWSER_EXECUTABLE} : {})});
   const out = process.env.FLOW_RENDER_DIR || fs.mkdtempSync(path.join(os.tmpdir(),'flow-aidd-mermaid-'));
@@ -19,7 +19,7 @@ const {chromium} = require(process.env.FLOW_PLAYWRIGHT_MODULE || 'playwright');
     await page.addScriptTag({url:'https://cdn.jsdelivr.net/npm/mermaid@10.9.5/dist/mermaid.min.js'});
     await page.evaluate(() => mermaid.initialize({startOnLoad:false,securityLevel:'strict',suppressErrorRendering:true}));
     for (const [index,file] of files.entries()) {
-      const source = fs.readFileSync(path.join(root,'mermaid',file),'utf8');
+      const source = fs.readFileSync(path.join(root,'schemas',file),'utf8');
       assert(source.startsWith('---\ntitle:'));
       assert(!source.includes('\\n') && !source.includes('<br'));
       const {svg} = await page.evaluate(async ({source,index}) => {

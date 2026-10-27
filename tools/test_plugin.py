@@ -113,6 +113,62 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(plan['sequence'], 'S00')
         self.assertEqual(set(plan), {'sequence', 'utiliser', 'selon_le_cas', 'a_confirmer', 'ecartees'})
 
+    def test_status_names_only_the_references_to_load(self):
+        self.assertEqual(self.helper.inspect(self.project)['load'], ['references/init.md'])
+        self.initialize()
+        report = self.helper.inspect(self.project)
+        self.assertEqual(report['load'][0], 'references/sequences/S00.md')
+        self.assertIn('references/socle.md', report['load'])
+        for relative in report['load']:
+            self.assertTrue((self.skill / relative).is_file(), relative)
+        self.assertIn('flow_aidd_verificateur', report['directives'][-1])
+        self.assertEqual(Path(report['skill_root']), self.skill.resolve())
+
+    def test_readme_map_matches_the_model_phases_and_sequences(self):
+        readme = (ROOT / 'README.md').read_text(encoding='utf-8')
+        start = readme.index('| Phase ')
+        table = readme[start:readme.index('**Le MVP est considéré livré', start)]
+        model = self.helper.engine().load_model()
+        for phase in model['phases']:
+            row = next(line for line in table.splitlines() if line.startswith(f'| {phase["id"]} — '))
+            self.assertIn(phase['title'], row)
+            expected = [seq['id'] for seq in model['sequences'] if seq['phase'] == phase['id']]
+            self.assertEqual(re.findall(r'S\d+', row), expected, phase['title'])
+        self.assertIn(f'{len(model["phases"])} phases et {len(model["sequences"])} séquences', readme)
+
+    def test_record_reference_example_is_accepted_by_the_helper(self):
+        self.initialize()
+        (self.project / '.flow/cadre.md').write_text('Cadrage réel de test.')
+        text = (self.skill / 'references/record.md').read_text(encoding='utf-8')
+        patch = json.loads(re.search(r'```json\n(.*?)```', text, re.S).group(1))
+        self.helper.record(self.project, patch, 0)
+        report = self.helper.inspect(self.project)
+        self.assertEqual((report['revision'], report['errors']), (1, []))
+
+    def test_status_loads_the_interview_guide_for_owner_questions(self):
+        self.initialize()
+        self.assertIn('references/entretien.md', self.helper.inspect(self.project)['load'])
+
+    def test_hand_written_references_follow_one_template(self):
+        for name in ['init', 'status', 'record', 'checkpoint', 'rattacher', 'capacites', 'hooks', 'entretien']:
+            text = (self.skill / f'references/{name}.md').read_text(encoding='utf-8')
+            self.assertTrue(text.startswith('# '), name)
+            self.assertIn('**Contexte nécessaire :**', text, name)
+            self.assertIn('## Avant de terminer', text, name)
+            self.assertNotIn('rédigée à la main', text, name)
+
+    def test_shipped_agents_match_the_model_and_have_a_fallback(self):
+        import tomllib
+        model = self.helper.engine().load_model()
+        for agent in model['agents'].values():
+            definition = tomllib.loads((self.skill / 'agents' / f'{agent["codex"]}.toml').read_text(encoding='utf-8'))
+            self.assertEqual(definition['name'], agent['codex'])
+            for key in ['description', 'model_reasoning_effort', 'developer_instructions']:
+                self.assertTrue(definition.get(key), key)
+            fallback = (self.skill / agent['degraded']).read_text(encoding='utf-8')
+            self.assertIn(definition['developer_instructions'].strip()[:80], fallback)
+            self.assertIn('Ne pas modifier', fallback)
+
     def test_status_without_state_does_not_initialize_a_project(self):
         self.assertFalse(self.helper.inspect(self.project)['initialized'])
         self.assertEqual(list(self.project.iterdir()), [])

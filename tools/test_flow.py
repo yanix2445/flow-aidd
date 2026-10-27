@@ -13,7 +13,7 @@ import sys
 
 from _paths import ROOT, MODEL_ROOT, SKILL_ROOT
 import flow
-from flow_docs import build, documents, example_state
+from flow_docs import build, doc_pages, documents, example_state
 
 
 class FlowTests(unittest.TestCase):
@@ -65,6 +65,49 @@ class FlowTests(unittest.TestCase):
         messages = flow.model_errors(self.model)
         self.assertTrue(any('condition de capacité inconnue' in message for message in messages))
         self.assertTrue(any('condition de jugement vide' in message for message in messages))
+
+    def test_review_agents_follow_the_model(self):
+        self.assertEqual([agent['name'] for agent in flow.review_agents(self.model, 'S30')], ['verificateur', 'relecteur'])
+        self.assertEqual(flow.review_agents(self.model, 'S90'), [], 'le SDLC garde son propre relecteur')
+        self.model['agents']['relecteur']['sequences'].append('S9999')
+        self.assertTrue(any('agent relecteur' in message for message in flow.model_errors(self.model)))
+
+    def test_sheets_end_with_a_finish_check_and_owner_cadence(self):
+        generated = documents(self.model)
+        for seq in self.model['sequences']:
+            sheet = generated[f'sequences/{seq["id"]}.md']
+            self.assertIn('## Avant de terminer', sheet)
+            self.assertIn('checkpoint.md', sheet)
+            if seq['validation']['by'] == 'porteur':
+                self.assertIn('**Cadence :**', sheet)
+        self.assertIn('flow_aidd_relecteur', generated['sequences/S30.md'].split('## Avant de terminer')[1])
+        self.assertNotIn('flow_aidd', generated['sequences/S90.md'].split('## Avant de terminer')[1])
+
+    def test_flow_follows_the_order_of_aidd_impeccable_and_marketing(self):
+        sequences = {seq['id']: seq for seq in self.model['sequences']}
+        def uses(sid):
+            return {(cap['id'], cap.get('command')) for cap in sequences[sid]['action']['capabilities']}
+        aidd = ['aidd-refine:01-brainstorm', 'aidd-pm:06-product-brief', 'aidd-pm:03-prd', 'aidd-context:01-bootstrap',
+                'aidd-context:02-project-memory', 'aidd-pm:04-spec', 'aidd-orchestrator:01-sdlc']
+        order = [next(sid for sid in sequences if (name, None) in uses(sid)) for name in aidd]
+        self.assertEqual(order, ['S10', 'S30', 'S40', 'S61', 'S71', 'S80', 'S90'])
+        self.assertIn(('impeccable:impeccable', 'init'), uses('S50'))
+        self.assertIn(('impeccable:impeccable', 'shape'), uses('S50'))
+        self.assertNotIn(('impeccable:impeccable', 'document'), uses('S71'), 'DESIGN.md ne précède pas l’interface construite')
+        for sid in ['S91', 'S100']:
+            self.assertIn(('impeccable:impeccable', 'document'), uses(sid))
+        commands = [cap.get('command') for cap in sequences['S100']['action']['capabilities'] if cap['id'] == 'impeccable:impeccable']
+        self.assertLess(commands.index('polish'), commands.index('document'))
+        self.assertEqual(next(cap['id'] for cap in sequences['S20']['action']['capabilities'] if cap['id'].startswith('marketing-skills:')),
+                         'marketing-skills:product-marketing')
+
+    def test_delivery_request_cites_the_sources_of_truth(self):
+        template = next(seq for seq in self.model['sequences'] if seq['id'] == 'S90')['action']['invocation']['template']
+        self.assertTrue(template.startswith('interactive '))
+        for source in ['PRODUCT.md', 'DESIGN.md', '.agents/product-marketing.md', '{brief_shape_de_la_tranche}']:
+            self.assertIn(source, template)
+        for key in ['contexte_marketing', 'design_system']:
+            self.assertIn(key, self.model['artifacts'])
 
     def test_unknown_route_is_rejected(self):
         self.model['sequences'][0]['next']['valide'] = 'S9999'
@@ -212,9 +255,11 @@ class FlowTests(unittest.TestCase):
     def test_current_generated_tree_matches_the_single_source(self):
         for name, expected in documents(self.model).items():
             self.assertEqual((flow.ROOT / name).read_text(), expected, name)
+        for name, expected in doc_pages(self.model).items():
+            self.assertEqual((ROOT / 'docs' / name).read_text(), expected, name)
 
     def test_read_only_cli_contracts(self):
-        state = str(flow.ROOT / 'examples/minirevisions.etat.json')
+        state = str(ROOT / 'docs/exemple/minirevisions.etat.json')
         check = subprocess.run([sys.executable, str(SKILL_ROOT/'scripts/flow.py'), 'check', '--state', state], capture_output=True, text=True, check=True)
         self.assertTrue(json.loads(check.stdout)['coherent'])
         next_result = subprocess.run([sys.executable, str(SKILL_ROOT/'scripts/flow.py'), 'next', '--state', state], capture_output=True, text=True, check=True)

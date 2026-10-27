@@ -1,0 +1,27 @@
+---
+title: "S50 — Concevoir le parcours et l’interface utiles"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Concevoir le parcours et l’interface utiles"]
+  Plugins["Impeccable : init, shape<br/>Marketing : copywriting*, site-architecture*"]
+  Sortie["Sortie : parcours"]
+  Preuve["Preuves : parcours coherent, direction confirmee"]
+  Controle["Contrôle indépendant : verificateur, relecteur"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S51"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

@@ -23,17 +23,30 @@ Un dossier suffit pour l’idéation. Le démarrage n’impose ni application, n
 
 Chaque séquence décrit entrée, responsable, action, sortie, preuve, validation et prochaine destination. Son responsable conduit le travail ; son validateur contrôle le résultat ; le porteur confirme le passage.
 
-Le modèle unique [workflow.json](../skills/flow-aidd/references/workflow.json) définit les 12 phases et 20 séquences. Les fiches, le glossaire, les exemples et Mermaid sont générés depuis cette source.
+Le modèle unique [workflow.json](../skills/flow-aidd/references/workflow.json) définit les 12 phases et 20 séquences. Les fiches, le parcours, le glossaire, les règles, les versions de secours des agents, et dans `docs/` les schémas et l’exemple, sont générés depuis cette source.
+
+L’ordre suit celui que prévoient les plugins eux-mêmes. AIDD : brainstorm (S10), brief (S30), PRD (S40), stack (S61), mémoire du projet (S71), epic, stories et spec (S80), puis SDLC jusqu’à la PR en brouillon (S90) et intégration (S91). Impeccable : `init` et `shape` (S50), prototype et `critique` (S51), `shape` de chaque tranche (S80), `document` après l’interface réellement intégrée (S91), puis `audit`, `critique`, `harden`, `polish` et `document` (S100). marketing-skills : `product-marketing` avant tout autre skill (S20), puis recherche, offre, mesure, lancement et croissance (S20 à S121).
 
 AIDD conserve ses artefacts et pipelines natifs. Le SDLC conduit sa propre boucle, avec son préfixe `interactive` ; flow-aidd ne lance pas une seconde chaîne parallèle. Impeccable est la capacité de design de référence et marketing-skills couvre le public, la promesse, la mesure et le lancement ; ils interviennent lorsque la séquence et sa condition le justifient, en alimentant les artefacts AIDD. Une capacité Impeccable peut nommer sa sous-commande (`shape`, `critique`, `audit`…).
 
 Une capacité peut dépendre du contexte du projet (`if`, par exemple `public_users` ou `commercial`) ou d’une condition à juger au cas par cas (`if_text`). `status` et `next` renvoient `capabilities` pour la séquence de travail : `utiliser`, `selon_le_cas`, `a_confirmer` (réponse de contexte encore inconnue, avec sa question) et `ecartees` (avec la raison). Une inconnue ne vaut jamais « non » : elle laisse la capacité à confirmer. Les fiches regroupent les mêmes capacités par condition. Une référence de skill n’établit ni installation ni connexion.
 
+## Organisation du skill
+
+Le skill suit la structure d’Impeccable :
+
+- **SKILL.md court** : trois principes, la mise en route, un tableau des commandes du helper avec leur référence, et les agents de contrôle.
+- **Une référence par commande**, rédigée à la main : `init.md`, `status.md`, `record.md`, `checkpoint.md`, `rattacher.md`. Quatre références transversales : `socle.md` (relu avant chaque `record` et `checkpoint`), `entretien.md` (rythme des questions au porteur), `capacites.md` et `hooks.md`. Toutes suivent le même gabarit : but, contexte nécessaire, étapes avec les cas selon la situation, pannes fréquentes, avant de terminer.
+- **Un chargeur de contexte** : `status` renvoie `load` (les seules références à lire maintenant), `directives` (les actions immédiates), `capabilities` (les skills triés pour ce projet) et `agents` (les contrôles à lancer avant le `checkpoint`). Le hook SessionStart transmet les mêmes consignes à la reprise.
+- **Des agents pour les rôles indépendants** : `flow_aidd_verificateur` contrôle preuves, versions et critères ; `flow_aidd_relecteur` confronte le livrable à la promesse, au contrat du MVP et aux réponses du porteur. Ils ne modifient rien, sont lancés à neuf sans l’historique, et rendent un verdict. La clé `agents` de `workflow.json` dit avant quelles séquences les lancer ; S90 garde le relecteur natif du SDLC.
+- **Vues générées utiles à l’action seulement** : `parcours.md` (carte, équivalent du routage), `glossaire.md` (termes et rôles), `regles.md` (rubriques, règles, statuts et boucles, pour le vérificateur et les cas de doute) et les fiches `sequences/`. La fiche S00 porte la section « Adapter la profondeur ». Les schémas Mermaid et l’exemple complet MiniRévisions, destinés aux humains, sont générés dans `docs/schemas/` et `docs/exemple/`, hors du skill installé ; chaque fiche garde son cas d’école.
+- **Une version de secours par agent** : `references/degraded/*.md`, générée par `build.py` depuis `agents/*.toml`, sert uniquement quand aucun sous-agent n’est possible ; la substitution est dite au porteur.
+
 ## Ce qui appartient au plugin et au produit
 
 | Propriétaire | Contenu |
 | --- | --- |
-| Plugin | Modèle, fiches, gabarits, exemples, instructions, helpers, identité visuelle et hooks. |
+| Plugin | Modèle, fiches, références, agents de contrôle, gabarits, helpers, identité visuelle et hooks ; schémas et exemple dans `docs/`. |
 | Produit | Besoin, décisions, architecture, design, code, sources natives, preuves et avancement. |
 | Environnement | Plugins disponibles, accès, secrets et règles d’exécution. |
 
@@ -56,9 +69,9 @@ L’initialisation ne modifie pas AGENTS.md, .gitignore ou la configuration de C
 
 L’état sépare `execution_mode: guide` du `mode: reel` ou `illustration`. Il conserve une identité stable, la provenance du modèle, le dossier, la révision, les résultats et l’historique.
 
-1. Lire `status` et la fiche courante.
-2. Conduire le travail, conserver acteurs, contexte, sources, preuves et résultat natif avec `record`.
-3. Contrôler les critères et les versions. Une preuve simulée ne valide jamais une instance réelle.
+1. Lire `status`, suivre ses `directives` et lire seulement les fichiers de `load`, dont la fiche courante.
+2. Conduire le travail avec les capacités triées (`capabilities`) et l’entretien du porteur, conserver acteurs, contexte, sources, preuves et résultat natif avec `record`.
+3. Contrôler les critères et les versions, puis lancer les agents de `agents` (vérificateur, et relecteur selon la séquence) ; un verdict à reprendre se corrige avant de continuer. Une preuve simulée ne valide jamais une instance réelle.
 4. Créer `checkpoint` lorsque le contrat est satisfait : résumé présenté, destination, identifiant et empreinte du résultat. La séquence reste courante.
 5. Le porteur confirme, corrige ou attend. `approve` avance d’une seule séquence ; `correct` conserve le retour et reprend le travail ; `pause` garde le point et son attente.
 6. Poursuivre dans Codex. `focus` rejoint seulement le prérequis recommandé lorsque le travail courant nécessite un retour.
@@ -98,11 +111,11 @@ Le handler est testé hors de Codex sur des données synthétiques. La découver
 
 Le dépôt contient un seul manifeste, `.codex-plugin/plugin.json`, le skill `skills/flow-aidd/` et `hooks/`. Le catalogue `.agents/plugins/marketplace.json` pointe sur cette racine. Une seule icône SVG sert au manifeste et au skill.
 
-Le format de compatibilité Codex est intentionnel : dans Codex 0.164.0-alpha.11.1, les variantes portables essayées chargent le skill mais ne déclarent aucun hook dans `plugin/read`. Le manifeste de compatibilité expose bien les quatre événements. Ne pas ajouter un deuxième manifeste pour contourner ce constat.
+Le format de compatibilité Codex est intentionnel : dans Codex 0.164.0-alpha.11.1, les variantes portables essayées chargent le skill mais ne déclarent aucun hook dans `plugin/read`. Le manifeste de compatibilité exposait bien les quatre événements alors déclarés ; PreToolUse, ajouté ensuite, reste à vérifier dans Codex. Ne pas ajouter un deuxième manifeste pour contourner ce constat.
 
 `tools/release.py --output CHEMIN_EXTERIEUR.zip` produit un ZIP autonome avec manifeste, catalogue, runtime, références, hooks et documentation. Il exclut les outils de développement et refuse une archive dans le dépôt ou l’écrasement d’un fichier existant.
 
-Après demande explicite, extraire le ZIP dans un dossier durable extérieur au dépôt puis installer depuis ce paquet. L’installation directe du dépôt copie aussi son historique Git et ses outils dans le cache de Codex.
+Deux installations sont possibles, toujours sur demande explicite. Depuis GitHub (`codex plugin marketplace add yanix2445/flow-aidd`), la plus simple, décrite dans le README ; ce qu’elle copie dans le cache de Codex n’a pas encore été vérifié. Depuis le ZIP extrait dans un dossier durable extérieur au dépôt, qui n’embarque que le paquet : lors des essais, une installation depuis le dossier du dépôt copiait aussi son historique Git et ses outils dans le cache de Codex.
 
 ```sh
 codex plugin marketplace add /chemin/vers/le/paquet-extrait --json

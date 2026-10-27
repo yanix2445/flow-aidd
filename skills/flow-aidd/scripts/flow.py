@@ -62,6 +62,11 @@ def model_errors(model):
         invocation = item.get('action', {}).get('invocation')
         if invocation and (invocation.get('prefix') != 'interactive' or invocation.get('template', '').split()[0] != 'interactive'):
             errors.append(f'{sid}: requête SDLC interactive mal encodée.')
+    for name, agent in model.get('agents', {}).items():
+        if agent.get('role') not in roles or not agent.get('codex') or not agent.get('degraded'):
+            errors.append(f'agent {name}: rôle, nom Codex ou version de secours manquant.')
+        if any(sid not in known for sid in agent.get('sequences', [])):
+            errors.append(f'agent {name}: séquence inconnue.')
     graph = {item['id']: item.get('requires', []) for item in sequences}
     def walk(sid, trail):
         if sid in trail:
@@ -105,6 +110,12 @@ def capability_plan(model, sequence, state):
         else:
             plan['utiliser'].append(entry)
     return plan
+
+
+def review_agents(model, sid):
+    """Independent controls to spawn before presenting this sequence's checkpoint."""
+    return [{'name': name, 'codex': agent['codex'], 'degraded': agent['degraded'], 'purpose': agent['purpose']}
+            for name, agent in model.get('agents', {}).items() if sid in agent.get('sequences', [])]
 
 
 def record_errors(model, state, sid, trail=()):
@@ -320,7 +331,9 @@ def main():
         return 1
     if args.command == 'build':
         from flow_docs import build
-        return build(model, ROOT, check=args.check_generated)
+        repository = ROOT.parents[2]
+        docs_root = repository / 'docs' if (repository / '.codex-plugin').is_dir() and (repository / 'tools').is_dir() else None
+        return build(model, ROOT, check=args.check_generated, docs_root=docs_root)
     if args.command == 'show':
         sequence = next((item for item in model['sequences'] if item['id'] == args.sequence), None)
         if sequence is None:

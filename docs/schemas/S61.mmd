@@ -1,0 +1,27 @@
+---
+title: "S61 — Choisir une architecture suffisante"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Choisir une architecture suffisante"]
+  Plugins["AIDD : context/01-bootstrap, dev/01-plan"]
+  Sortie["Sortie : architecture"]
+  Preuve["Preuves : choix trace, architecture acceptee"]
+  Controle["Contrôle indépendant : verificateur, relecteur"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S70"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

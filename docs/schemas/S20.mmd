@@ -1,0 +1,27 @@
+---
+title: "S20 — Éclairer le besoin avec des observations"
+---
+flowchart TB
+  Entree["Entrée : cadre, idee"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Éclairer le besoin avec des observations"]
+  Plugins["Marketing : product-marketing, customer-research, competitor-profiling"]
+  Sortie["Sortie : besoin"]
+  Preuve["Preuves : sources, decision besoin"]
+  Controle["Contrôle indépendant : verificateur, relecteur"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S30"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

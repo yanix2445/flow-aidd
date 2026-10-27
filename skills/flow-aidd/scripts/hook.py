@@ -197,19 +197,10 @@ def session_start(project):
     import project_flow as flow
     report = flow.inspect(project)
     current = report.get('current_sequence')
-    parts = [f'flow-aidd · {report.get("project")} · {current} {report.get("title") or ""}'.rstrip() + f' · {report.get("status")}.']
-    pending = report.get('pending_transition')
-    if pending:
-        parts.append(f'Accord de passage encore attendu sur {pending.get("id")} ({current} → {pending.get("target")}) ; '
-                     'aucune nouvelle séquence autorisée par cette attente.')
-        if report.get('checkpoint_stale'):
-            parts.append('Ce point est périmé : refaire record puis checkpoint avant de le présenter.')
-    elif report.get('waiting_for'):
-        parts.append(f'Attente : {report["waiting_for"]}')
-    if report.get('errors'):
-        parts.append('À examiner avec check : ' + ' '.join(report['errors'][:2]))
-    elif not pending and current:
-        parts.append(f'Reprendre avec la fiche references/sequences/{current}.md.')
+    head = f'flow-aidd · {report.get("project")} · {current} {report.get("title") or ""}'.rstrip() + f' · {report.get("status")}.'
+    parts = [head] + list(report.get('directives') or [])
+    if report.get('load'):
+        parts.append('Lire seulement : ' + ', '.join(report['load']) + f' (dans {report.get("skill_root")}).')
     return {'hookSpecificOutput': {'hookEventName': 'SessionStart', 'additionalContext': ' '.join(parts)[:600]}}
 
 

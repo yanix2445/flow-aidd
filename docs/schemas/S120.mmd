@@ -1,0 +1,27 @@
+---
+title: "S120 — Observer les usages sur la fenêtre prévue"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp, ouverture, acces"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Observer les usages sur la fenêtre prévue"]
+  Plugins["Marketing : customer-research, analytics, attribution*, cro<br/>Outils du projet : mesure du projet"]
+  Sortie["Sortie : observations"]
+  Preuve["Preuves : usage date, limites mesure"]
+  Controle["Contrôle indépendant : verificateur"]
+  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S121"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

@@ -1,0 +1,27 @@
+---
+title: "S30 — Choisir la promesse et sa viabilité"
+---
+flowchart TB
+  Entree["Entrée : cadre, idee, besoin"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Choisir la promesse et sa viabilité"]
+  Plugins["AIDD : pm/06-product-brief<br/>Marketing : product-marketing, launch, pricing*, offers*, marketing-psychology"]
+  Sortie["Sortie : brief"]
+  Preuve["Preuves : opportunite approuvee"]
+  Controle["Contrôle indépendant : verificateur, relecteur"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S40"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

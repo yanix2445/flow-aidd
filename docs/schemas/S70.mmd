@@ -1,0 +1,27 @@
+---
+title: "S70 — Faire fonctionner le socle réel"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp, architecture"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Faire fonctionner le socle réel"]
+  Plugins["AIDD : vcs/00-repo-init, dev/01-plan, dev/02-implement, dev/03-assert"]
+  Sortie["Sortie : socle"]
+  Preuve["Preuves : socle execute, preproduction socle"]
+  Controle["Contrôle indépendant : verificateur"]
+  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S71"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

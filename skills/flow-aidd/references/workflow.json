@@ -64,7 +64,7 @@
     "next": "Destination selon le résultat : avancer, préciser, réparer, attendre, réorienter ou arrêter."
   },
   "policies": [
-    "Le coordinateur lit les consignes du projet, ORCHESTRATION.md, l’état du projet et la seule fiche de séquence utile. Les autres sources sont chargées lorsqu’elles sont nécessaires.",
+    "Le coordinateur lit les consignes du projet, socle.md, l’état du projet et la seule fiche de séquence utile. Les autres sources sont chargées lorsqu’elles sont nécessaires.",
     "Avant de travailler : vérifier l’applicabilité, les entrées, leurs versions et les dépendances. Une donnée inconnue ne devient jamais fausse par défaut.",
     "Une inconnue prévue n’empêche pas l’idéation. Les champs de contexte sont résolus progressivement, au plus tard aux séquences required_at ; le coordinateur aide à les préciser sans inventer de réponse.",
     "Activer la capacité responsable avant le dialogue, la recherche ou la production. Poser quelques questions utiles à la fois et attendre les réponses nécessaires.",
@@ -88,7 +88,7 @@
     "Une même réponse réelle peut approuver le livrable et le passage explicitement présentés ; conserver cette source dans les deux enregistrements sans reposer la question. Une décision native manquante reste en attente, sans preuve inventée.",
     "Pour un fichier local, enregistrer son empreinte réelle ; pour un dossier, déclarer les fichiers de code suivis. Un contenu changé prend une nouvelle version et conduit au réexamen de ses validations dépendantes.",
     "Le déplacement d’un projet passe par relocate ; une évolution du modèle passe par migration-plan puis migrate après examen. Conserver l’identité stable, les anciens enregistrements et les références de ces reprises.",
-    "AIDD reste la chaîne principale : ses artefacts (PRD, spec, plan, mémoire) portent le besoin et le code. Impeccable est la capacité de design de référence ; il s’appuie sur PRODUCT.md et DESIGN.md du produit. Marketing-skills s’appuie sur .agents/product-marketing.md. Ces sources alimentent les artefacts AIDD sans les dupliquer, et une capacité conditionnelle ne s’active que si sa condition est vraie."
+    "AIDD reste la chaîne principale : ses artefacts (brief, PRD, epic, stories, spec, plan, mémoire) portent le besoin, le périmètre et le code, et le SDLC conduit la livraison. Chaque contexte a une seule source qui fait foi : le brief et le PRD pour le besoin et le périmètre, .agents/product-marketing.md (marketing-skills) pour le public, le positionnement et le ton, PRODUCT.md (Impeccable init) pour le contexte de design, rédigé à partir des deux premiers et y renvoyant, DESIGN.md (Impeccable document) pour le langage visuel réellement construit. Une source cite les autres sans les recopier ; une capacité conditionnelle ne s’active que si sa condition est vraie."
   ],
   "phases": [
     {
@@ -175,7 +175,7 @@
       "title": "Parcours et contexte produit",
       "path": "{projet}/PRODUCT.md et brief de parcours",
       "origin": "natif_conditionnel",
-      "description": "PRODUCT.md si Impeccable est utilisé ; la source produit détaillée reste liée au contrat du MVP."
+      "description": "PRODUCT.md, rédigé par impeccable init à partir du brief, du PRD et du contexte marketing auxquels il renvoie, plus le brief shape du parcours. Le contrat du MVP reste la source du périmètre."
     },
     "prototype": {
       "title": "Prototype et retours UX",
@@ -260,6 +260,18 @@
       "path": "{projet}/docs/decisions.md",
       "origin": "propose",
       "description": "Faits, décision, auteur, réserves et prochaine priorité ou arrêt."
+    },
+    "contexte_marketing": {
+      "title": "Contexte marketing partagé",
+      "path": "{projet}/.agents/product-marketing.md",
+      "origin": "natif_conditionnel",
+      "description": "Créé par marketing-skills:product-marketing ; fait foi pour le public, le positionnement et le ton. Le brief, le PRD et PRODUCT.md le citent sans le recopier."
+    },
+    "design_system": {
+      "title": "Système de design",
+      "path": "{projet}/DESIGN.md",
+      "origin": "natif_conditionnel",
+      "description": "Généré par impeccable document depuis l’interface réellement construite ; fait foi pour le langage visuel. Les specs et les tranches le citent sans le recopier."
     }
   },
   "glossary": [
@@ -664,7 +676,7 @@
         "capabilities": [
           {
             "id": "marketing-skills:product-marketing",
-            "when": "Un contexte marketing partagé est utile ; le créer provisoirement avant les autres skills marketing."
+            "when": "Créer .agents/product-marketing.md avant les autres skills marketing, à partir du cadrage et de l’intention ; il fera foi pour le public, le positionnement et le ton."
           },
           {
             "id": "marketing-skills:customer-research",
@@ -744,7 +756,7 @@
           },
           {
             "id": "marketing-skills:product-marketing",
-            "when": "Un public ou un positionnement partagé est nécessaire."
+            "when": "Mettre à jour .agents/product-marketing.md avec la promesse et le public choisis ; le brief le cite plutôt que de le recopier."
           },
           {
             "id": "marketing-skills:launch",
@@ -811,7 +823,10 @@
         "attendre_information": "WAIT_INFO",
         "arreter": "STOP"
       },
-      "example": "Promesse fictive : retrouver ses propres fiches dans un outil simple. Le modèle économique est non pertinent pour ce MVP personnel ; la maintenance reste une contrainte."
+      "example": "Promesse fictive : retrouver ses propres fiches dans un outil simple. Le modèle économique est non pertinent pour ce MVP personnel ; la maintenance reste une contrainte.",
+      "input_optional": [
+        "contexte_marketing"
+      ]
     },
     {
       "id": "S40",
@@ -890,7 +905,10 @@
         "attendre_information": "WAIT_INFO",
         "arreter": "STOP"
       },
-      "example": "Le MVP fictif crée et liste des fiches avec persistance locale. Comptes, paiement, partage et synchronisation entre appareils sont exclus. Les critères de recette sont écrits avant le code."
+      "example": "Le MVP fictif crée et liste des fiches avec persistance locale. Comptes, paiement, partage et synchronisation entre appareils sont exclus. Les critères de recette sont écrits avant le code.",
+      "input_optional": [
+        "contexte_marketing"
+      ]
     },
     {
       "id": "S50",
@@ -914,7 +932,7 @@
           {
             "id": "impeccable:impeccable",
             "command": "init",
-            "when": "Capturer le contexte produit durable dans PRODUCT.md à partir des sources approuvées, si Impeccable signale qu’il manque."
+            "when": "Si Impeccable signale qu’il manque, rédiger PRODUCT.md à partir du brief, du PRD et de .agents/product-marketing.md, en y renvoyant plutôt qu’en les recopiant."
           },
           {
             "id": "impeccable:impeccable",
@@ -977,7 +995,10 @@
         "attendre_information": "WAIT_INFO",
         "arreter": "STOP"
       },
-      "example": "Le cas d’école comporte un écran de liste, un formulaire et un message d’erreur. La direction vise la lisibilité ; aucun système de design exhaustif n’est exigé."
+      "example": "Le cas d’école comporte un écran de liste, un formulaire et un message d’erreur. La direction vise la lisibilité ; aucun système de design exhaustif n’est exigé.",
+      "input_optional": [
+        "contexte_marketing"
+      ]
     },
     {
       "id": "S51",
@@ -1327,20 +1348,11 @@
           {
             "id": "aidd-context:02-project-memory",
             "when": "Le projet possède de l’architecture et des pratiques réelles à mémoriser ou à relier aux outils ; respecter ses règles sur la mémoire existante."
-          },
-          {
-            "id": "impeccable:impeccable",
-            "command": "document",
-            "if": {
-              "field": "has_graphical_ui",
-              "equals": true
-            },
-            "when": "Générer DESIGN.md depuis le code réellement construit, pas depuis les intentions."
           }
         ],
         "steps": [
           "Recenser les commandes et conventions qui viennent d’être vérifiées.",
-          "Lier les sources produit, design et architecture sans dupliquer leurs décisions.",
+          "Lier les sources produit, design et architecture sans dupliquer leurs décisions : brief, PRD, .agents/product-marketing.md, PRODUCT.md et DESIGN.md quand ils existent.",
           "Résoudre les emplacements de mémoire avec le skill courant et conserver les règles de reprise.",
           "Mettre à jour l’état du flow avec la prochaine séquence utile."
         ],
@@ -1393,7 +1405,8 @@
       "input_optional": [
         "parcours",
         "prototype",
-        "architecture"
+        "architecture",
+        "design_system"
       ],
       "responsible": "coordinateur",
       "action": {
@@ -1493,7 +1506,8 @@
       ],
       "input_optional": [
         "parcours",
-        "prototype"
+        "prototype",
+        "design_system"
       ],
       "responsible": "coordinateur",
       "action": {
@@ -1507,11 +1521,12 @@
         "invocation": {
           "capability": "aidd-orchestrator:01-sdlc",
           "prefix": "interactive",
-          "template": "interactive Réalise {source_concrete_de_la_tranche} en utilisant aidd-orchestrator:01-sdlc et les contextes liés. Conserve les pauses sur contrat, plan et résultat ; fournis les preuves du candidat."
+          "template": "interactive Réalise {source_concrete_de_la_tranche} en utilisant aidd-orchestrator:01-sdlc et les contextes liés : {contrat_du_mvp}, {memoire_du_projet}, et si la tranche touche l’interface ou le message {brief_shape_de_la_tranche}, PRODUCT.md, DESIGN.md, .agents/product-marketing.md. Conserve les pauses sur contrat, plan et résultat ; fournis les preuves du candidat."
         },
         "steps": [
           "Lire la version courante du skill et vérifier ses capacités réelles avant appel.",
           "Remplacer la source générique par la demande concrète ; la requête fournie au SDLC commence exactement par interactive.",
+          "Citer dans la requête les sources qui font foi pour la tranche : contrat du MVP et mémoire du projet, plus, si elle touche l’interface ou le message, le brief shape de S80, PRODUCT.md, DESIGN.md et le contexte marketing ; le SDLC les suit sans qu’Impeccable ou marketing-skills lancent une chaîne parallèle.",
           "Laisser Frame préciser seulement le contrat manquant, Deliver construire et vérifier, puis Check revoir indépendamment.",
           "Conserver contrat, plan, validations, révision et conclusions de revue ; ne pas lancer une chaîne concurrente.",
           "Terminer par le candidat revu et la PR en brouillon si le dépôt distant le permet ; ne pas considérer la fusion comme déjà faite."
@@ -1593,6 +1608,16 @@
           {
             "id": "aidd-vcs:05-resolve-conflict",
             "when": "Résoudre un conflit déterministe ou un choix déjà approuvé sur la branche du candidat ; un arbitrage entre implémentations reste une décision."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "document",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
+            "if_text": "la tranche intégrée ajoute ou modifie de l’interface",
+            "when": "Mettre à jour DESIGN.md depuis la révision intégrée et l’enregistrer comme design_system ; il ne décrit que ce qui est réellement construit."
           }
         ],
         "steps": [
@@ -1663,7 +1688,9 @@
         "integration"
       ],
       "input_optional": [
-        "prototype"
+        "prototype",
+        "design_system",
+        "parcours"
       ],
       "responsible": "coordinateur",
       "action": {
@@ -1716,6 +1743,15 @@
               "equals": true
             },
             "when": "Passe finale de qualité avant l’ouverture, une fois les écarts bloquants traités."
+          },
+          {
+            "id": "impeccable:impeccable",
+            "command": "document",
+            "if": {
+              "field": "has_graphical_ui",
+              "equals": true
+            },
+            "when": "Après polish, aligner DESIGN.md sur l’interface recettée et l’enregistrer comme design_system."
           }
         ],
         "steps": [
@@ -1916,7 +1952,11 @@
         "attendre_validation": "WAIT_APPROVAL",
         "arreter": "STOP"
       },
-      "example": "MiniRévisions prévoit un usage privé par le porteur fictif. Une campagne marketing et des emails ne sont donc pas requis ; le plan conserve support et observation de la tâche."
+      "example": "MiniRévisions prévoit un usage privé par le porteur fictif. Une campagne marketing et des emails ne sont donc pas requis ; le plan conserve support et observation de la tâche.",
+      "input_optional": [
+        "contexte_marketing",
+        "design_system"
+      ]
     },
     {
       "id": "S111",
@@ -2111,7 +2151,10 @@
         "attendre_validation": "WAIT_APPROVAL",
         "arreter": "STOP"
       },
-      "example": "La livraison fictive concerne seulement le porteur. Le statut de MVP livré du récit n’est pas une affirmation de livraison réelle de l’application."
+      "example": "La livraison fictive concerne seulement le porteur. Le statut de MVP livré du récit n’est pas une affirmation de livraison réelle de l’application.",
+      "input_optional": [
+        "contexte_marketing"
+      ]
     },
     {
       "id": "S120",
@@ -2303,7 +2346,10 @@
         "attendre_information": "WAIT_INFO",
         "arreter": "STOP"
       },
-      "example": "Le cas d’école choisit fictivement de stabiliser la version personnelle et de reporter le partage. Cette décision illustre un raisonnement ; elle ne démontre aucun résultat de marché."
+      "example": "Le cas d’école choisit fictivement de stabiliser la version personnelle et de reporter le partage. Cette décision illustre un raisonnement ; elle ne démontre aucun résultat de marché.",
+      "input_optional": [
+        "contexte_marketing"
+      ]
     }
   ],
   "example": {
@@ -2455,5 +2501,53 @@
     "STOP": "Arrêter explicitement la branche.",
     "END": "Terminer la boucle de travail décidée.",
     "RESUME": "Revenir à resume_sequence ; sans cible conservée, demander la destination plutôt que l’inventer."
+  },
+  "agents": {
+    "verificateur": {
+      "role": "verificateur",
+      "codex": "flow_aidd_verificateur",
+      "degraded": "references/degraded/verificateur.md",
+      "purpose": "Contrôler, sans rien modifier, que les critères de la fiche sont couverts par des preuves réelles rattachées aux bonnes versions.",
+      "sequences": [
+        "S00",
+        "S10",
+        "S20",
+        "S30",
+        "S40",
+        "S50",
+        "S51",
+        "S60",
+        "S61",
+        "S70",
+        "S71",
+        "S80",
+        "S91",
+        "S100",
+        "S110",
+        "S111",
+        "S112",
+        "S120",
+        "S121"
+      ]
+    },
+    "relecteur": {
+      "role": "relecteur",
+      "codex": "flow_aidd_relecteur",
+      "degraded": "references/degraded/relecteur.md",
+      "purpose": "Relire, sans rien modifier, le livrable contre la promesse, le contrat du MVP et les réponses confirmées du porteur.",
+      "sequences": [
+        "S10",
+        "S20",
+        "S30",
+        "S40",
+        "S50",
+        "S51",
+        "S61",
+        "S80",
+        "S100",
+        "S110",
+        "S121"
+      ]
+    }
   }
 }
