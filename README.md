@@ -147,7 +147,7 @@ C’est Léa qui répond. Et le ticket de caisse est toujours là, dans `.flow/`
 
 ## À votre tour : installer flow-aidd dans Codex
 
-**Version `0.2.1`.** Procédure éprouvée sur macOS avec Codex CLI `0.164.0-alpha.11.1`. Les autres environnements restent à qualifier.
+**Version `0.3.0`.** La procédure d’installation a été éprouvée avec la version `0.2.1`, sur macOS et Codex CLI `0.164.0-alpha.11.1`. Les autres environnements restent à qualifier.
 
 > [!IMPORTANT]
 > **flow-aidd n’installe aucun des plugins qu’il fait travailler.** Les plugins AIDD, Impeccable et marketing-skills sont à installer par vous, une fois, avant le premier usage. flow-aidd s’appuie sur leurs skills sans les embarquer : sans eux, le flow s’arrête à la première séquence qui en a besoin et vous dit lequel manque.
@@ -277,16 +277,16 @@ Ouvrez Codex CLI, tapez `/hooks` et examinez les cinq hooks de `flow-aidd@flow-a
 Utile pour diffuser une sélection de fichiers. Il faut Git, Python et Portly. Depuis la racine du dépôt cloné :
 
 ```bash
-job_id="$(portly temp 'python3 -B tools/release.py --output ../flow-aidd-0.2.1.zip' --path . --timeout 30m)"
+job_id="$(portly temp 'python3 -B tools/release.py --output ../flow-aidd-0.3.0.zip' --path . --timeout 30m)"
 portly wait "$job_id"
 ```
 
 L’export exclut les outils de développement, l’historique Git et les caches, et refuse d’écraser une archive existante. Pour l’installer :
 
 ```bash
-mkdir -p "$HOME/.codex/plugins/sources/flow-aidd-0.2.1"
-python3 -m zipfile -e ../flow-aidd-0.2.1.zip "$HOME/.codex/plugins/sources/flow-aidd-0.2.1"
-codex plugin marketplace add "$HOME/.codex/plugins/sources/flow-aidd-0.2.1" --json
+mkdir -p "$HOME/.codex/plugins/sources/flow-aidd-0.3.0"
+python3 -m zipfile -e ../flow-aidd-0.3.0.zip "$HOME/.codex/plugins/sources/flow-aidd-0.3.0"
+codex plugin marketplace add "$HOME/.codex/plugins/sources/flow-aidd-0.3.0" --json
 codex plugin add flow-aidd@flow-aidd --json
 ```
 

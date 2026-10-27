@@ -1,6 +1,6 @@
 {
   "name": "flow-aidd",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Piloter un projet de l’idée au MVP avec des séquences, preuves et reprises propres au projet.",
   "skills": "./skills/",
   "extensions": {
