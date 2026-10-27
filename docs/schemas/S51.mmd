@@ -2,26 +2,92 @@
 title: "S51 — Éprouver le parcours avant de le généraliser"
 ---
 flowchart TB
-  Entree["Entrée : cadre, mvp, parcours"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Éprouver le parcours avant de le généraliser"]
-  Plugins["Impeccable : impeccable, critique, clarify, onboard*, live*"]
-  Sortie["Sortie : prototype"]
-  Preuve["Preuves : epreuve usage, decision ux"]
-  Controle["Contrôle indépendant : verificateur, relecteur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S90"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeMvp["Contrat du MVP"]
+    EntreeParcours["Parcours et contexte produit"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Éprouver le parcours avant de le généraliser"]
+    direction TB
+    Etape1["1. Préciser quelle inconnue d’usage justifie le prototype et choisir sa …"]
+    Etape2["2. Faire réaliser une tâche représentative si une personne de la cible est …"]
+    Etape3["3. Distinguer observation réelle …"]
+    Etape4["4. Corriger les blocages et faire décider d’une révision du périmètre …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsImpeccable["Impeccable : $impeccable, critique, clarify"]
+  end
+  subgraph PluginsCas["Plugins selon le cas"]
+    direction TB
+    PluginsCasImpeccable["Impeccable : onboard, live"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortiePrototype["Prototype et retours UX"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveEpreuveUsage["La tâche, la version, le protocole, les observations et la nature réelle ou simulée de l’épreuve sont …"]
+    PreuveDecisionUx["Les blocages sont corrigés ou une réserve explicite est acceptée sans prétendre à une validation utilisateur …"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+    AgentRelecteur["flow_aidd_relecteur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS90["S90 · Livrer une tranche avec le SDLC natif"]
+  VersS51["S51 · reprendre cette séquence"]
+  VersS40["S40 · Fixer le parcours du MVP et ses critères"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action -. "selon le cas" .-> PluginsCas
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS90 ~~~ VersS51
+  VersS51 ~~~ VersS40
+  VersS40 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide / non applicable" ==> VersS90
+  Validation -- "réparer" --> VersS51
+  Validation -- "modifier le périmètre" --> VersS40
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef impeccable fill:#ffe8cc,stroke:#d9822b,color:#3d2600
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeMvp,EntreeParcours entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsImpeccable,PluginsCasImpeccable impeccable
+  class SortiePrototype sortie
+  class PreuveEpreuveUsage,PreuveDecisionUx preuve
+  class AgentVerificateur,AgentRelecteur controle
+  class Validation validation
+  class VersS90 ok
+  class VersS51,VersS40 retour
+  class VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style PluginsCas fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

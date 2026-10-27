@@ -65,72 +65,195 @@ def capability_lines(model, capabilities):
     return lines[:-1] if lines and lines[-1] == '' else lines
 
 
+CLASSES = {
+    'entree': 'fill:#eef2f7,stroke:#8a9bb0,color:#1f2933',
+    'responsable': 'fill:#f3f4f6,stroke:#9ca3af,color:#1f2933',
+    'etape': 'fill:#e0ecff,stroke:#4a78c2,color:#10243f',
+    'aidd': 'fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554',
+    'impeccable': 'fill:#ffe8cc,stroke:#d9822b,color:#3d2600',
+    'marketing': 'fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320',
+    'outil': 'fill:#ececec,stroke:#8c8c8c,color:#262626',
+    'sortie': 'fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44',
+    'preuve': 'fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247',
+    'controle': 'fill:#f6efe3,stroke:#b08a4f,color:#3a2a10',
+    'validation': 'fill:#fff4c2,stroke:#c9a227,color:#3a2e00',
+    'ok': 'fill:#d6f5d6,stroke:#2f8f46,color:#0d3318',
+    'retour': 'fill:#eef2f7,stroke:#8a9bb0,color:#1f2933',
+    'attente': 'fill:#fff0d6,stroke:#c98a2b,color:#3a2600',
+    'stop': 'fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f',
+}
+FAMILIES = {
+    'cadrage': ('Cadrage', 'fill:#f3f4f6,stroke:#9ca3af,color:#1f2933'),
+    'decouvrir': ('Découvrir', 'fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320'),
+    'concevoir': ('Concevoir', 'fill:#ffe8cc,stroke:#d9822b,color:#3d2600'),
+    'construire': ('Construire', 'fill:#e0ecff,stroke:#4a78c2,color:#10243f'),
+    'ouvrir': ('Valider et ouvrir', 'fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247'),
+    'observer': ('Observer', 'fill:#d5f2f2,stroke:#2f8f8f,color:#0b3030'),
+}
+OUTCOME_LABELS = {'valide': 'valide', 'non_applicable': 'non applicable', 'a_preciser': 'à préciser', 'reparer': 'réparer',
+                  'modifier_perimetre': 'modifier le périmètre', 'reorienter': 'réorienter', 'risque_technique': 'risque technique',
+                  'clarifier_contrat': 'clarifier le contrat', 'mvp_integre': 'MVP intégré', 'autre_tranche': 'autre tranche',
+                  'stabiliser': 'stabiliser', 'ameliorer': 'améliorer', 'attendre_information': 'attendre une information',
+                  'attendre_acces': 'attendre un accès', 'attendre_validation': 'attendre une décision', 'arreter': 'arrêter'}
+SPECIAL_LABELS = {'WAIT_INFO': 'Attendre une information', 'WAIT_ACCESS': 'Attendre un accès',
+                  'WAIT_APPROVAL': 'Attendre une décision', 'STOP': 'Arrêter la branche',
+                  'END': 'Fin de la boucle', 'RESUME': 'Reprendre la séquence mémorisée'}
+
+
+def family(seq):
+    phase = seq['phase']
+    if phase is None:
+        return 'cadrage'
+    return 'decouvrir' if phase <= 4 else 'concevoir' if phase == 5 else 'construire' if phase <= 9 else 'ouvrir' if phase <= 11 else 'observer'
+
+
+def quote(text):
+    return json.dumps(text, ensure_ascii=False)
+
+
+def short(text, limit=72):
+    """Keep the first meaningful clause; fall back to a word boundary. The sheet keeps the full text."""
+    text = text.rstrip('.')
+    if len(text) <= limit:
+        return text
+    for separator in [' ; ', ' : ', ', puis ', ', ']:
+        index = text.find(separator)
+        if 24 <= index <= limit + 10:
+            return text[:index] + ' …'
+    return text[:limit].rsplit(' ', 1)[0] + ' …'
+
+
 def plugin_groups(model, seq):
-    """Name the plugins a sequence relies on, grouped like the flow: AIDD first, then Impeccable, marketing, project tools."""
-    groups = {'AIDD': [], 'Impeccable': [], 'Marketing': [], 'Outils du projet': []}
+    """Plugins a sequence relies on: AIDD first, then Impeccable, marketing, project tools; always-on and case-by-case apart."""
+    order = [('aidd', 'AIDD'), ('impeccable', 'Impeccable'), ('marketing', 'Marketing'), ('outil', 'Outils du projet')]
+    groups = {}
     for cap in seq['action']['capabilities']:
-        mark = '*' if cap.get('if') or cap.get('if_text') else ''
         plugin, _, skill = cap['id'].partition(':')
-        if cap.get('external'):
-            groups['Outils du projet'].append(cap['id'].replace('_', ' '))
-        elif plugin.startswith('aidd-'):
-            groups['AIDD'].append(f'{plugin.removeprefix("aidd-")}/{skill}{mark}')
-        elif plugin == 'impeccable':
-            groups['Impeccable'].append((cap.get('command') or 'impeccable') + mark)
-        elif plugin == 'marketing-skills':
-            groups['Marketing'].append(skill + mark)
-    return [(name, items) for name, items in groups.items() if items]
+        kind = 'outil' if cap.get('external') else 'aidd' if plugin.startswith('aidd-') else 'impeccable' if plugin == 'impeccable' else 'marketing' if plugin == 'marketing-skills' else 'outil'
+        name = (cap['id'].replace('_', ' ') if kind == 'outil' else f'{plugin.removeprefix("aidd-")}/{skill}' if kind == 'aidd'
+                else cap.get('command') or '$impeccable' if kind == 'impeccable' else skill)
+        conditional = bool(cap.get('if') or cap.get('if_text'))
+        groups.setdefault((kind, conditional), []).append(name)
+    return [(kind, label, conditional, groups[(kind, conditional)]) for kind, label in order for conditional in (False, True) if (kind, conditional) in groups]
 
 
 def sequence_mermaid(model, seq):
+    """One sequence contract, top to bottom, in the seven numbered rubrics."""
     sid = seq['id']
-    title = json.dumps(f'{sid} — {seq["title"]}', ensure_ascii=False)
-    success = seq['next'].get('valide', next(iter(seq['next'].values())))
-    success_label = ', '.join(success) if isinstance(success, list) else success
+    titles = {item['id']: item['title'] for item in model['sequences']}
+    out = ['---', f'title: {quote(f"{sid} — {seq["title"]}")}', '---', 'flowchart TB']
+    classes = {}
+    def node(name, label, cls, shape='[]'):
+        open_, close = shape[0], shape[1]
+        out.append(f'    {name}{open_}{quote(label)}{close}')
+        classes.setdefault(cls, []).append(name)
+    out.append(f'  subgraph Entrees[{quote("1 · Entrées")}]')
+    inputs = seq['input'] or ['intention']
+    for key in inputs:
+        node(f'Entree{key.capitalize()}', model['artifacts'][key]['title'] if key in model['artifacts'] else model['scope']['start'], 'entree')
+    out.append('  end')
+    out.append(f'  Responsable[{quote("2 · Responsable : " + seq["responsible"])}]')
+    classes.setdefault('responsable', []).append('Responsable')
+    out.append(f'  subgraph Action[{quote("3 · Action : " + seq["title"])}]')
+    out.append('    direction TB')
+    steps = seq['action']['steps']
+    for index, step in enumerate(steps, 1):
+        node(f'Etape{index}', f'{index}. {short(step)}', 'etape')
+    out.append('  end')
     groups = plugin_groups(model, seq)
-    agents = [name for name, agent in model.get('agents', {}).items() if sid in agent.get('sequences', [])]
-    nodes = [
-        ('Entree', 'Entrée : ' + (', '.join(seq['input']) or model['scope']['start'])),
-        ('Responsable', 'Responsable : ' + seq['responsible']),
-        ('Action', 'Action : ' + seq['title']),
-    ]
-    if groups:
-        nodes.append(('Plugins', '<br/>'.join(f'{name} : {", ".join(items)}' for name, items in groups)))
-    nodes += [
-        ('Sortie', 'Sortie : ' + ', '.join(seq['output'])),
-        ('Preuve', 'Preuves : ' + ', '.join(item['id'].replace('_', ' ') for item in seq['evidence'])),
-    ]
-    if agents:
-        nodes.append(('Controle', 'Contrôle indépendant : ' + ', '.join(agents)))
-    elif sid == 'S90':
-        nodes.append(('Controle', 'Contrôle indépendant : relecteur natif du SDLC'))
-    nodes += [
-        ('Validation', 'Validation par ' + seq['validation']['by'] + ' : critères et preuves satisfaits ?'),
-        ('Destination', 'Suite validée : ' + success_label),
-        ('AutreIssue', 'Sinon : préciser, réparer ou attendre selon le tableau'),
-    ]
-    out = ['---', f'title: {title}', '---', 'flowchart TB']
-    for name, label in nodes:
-        quoted = json.dumps(label, ensure_ascii=False)
-        out.append(f'  {name}{{{quoted}}}' if name == 'Validation' else f'  {name}[{quoted}]')
-    chain = [name for name, _ in nodes if name not in ('Destination', 'AutreIssue')]
-    out += [f'  {a} --> {b}' for a, b in zip(chain, chain[1:])]
-    out += ['  Validation -- "Oui" --> Destination', '  Validation -- "Non ou inconnu" --> AutreIssue']
-    if groups:
-        out += ['  classDef plugins fill:#eef3fb,stroke:#7f9cc7', '  class Plugins plugins']
+    plugin_blocks = []
+    for conditional, title in [(False, 'Plugins mobilisés'), (True, 'Plugins selon le cas')]:
+        members = [(kind, label, items) for kind, label, cond, items in groups if cond == conditional]
+        if not members:
+            continue
+        block = 'PluginsCas' if conditional else 'Plugins'
+        out.append(f'  subgraph {block}[{quote(title)}]')
+        out.append('    direction TB')
+        block_nodes = []
+        for kind, label, items in members:
+            chunks = [items[index:index + 4] for index in range(0, len(items), 4)]
+            for part, chunk in enumerate(chunks, 1):
+                suffix = f' ({part}/{len(chunks)})' if len(chunks) > 1 else ''
+                block_nodes.append(f'{block}{kind.capitalize()}{part if len(chunks) > 1 else ""}')
+                node(block_nodes[-1], f'{label}{suffix} : {", ".join(chunk)}', kind)
+        out.append('  end')
+        plugin_blocks.append((block, block_nodes, conditional))
+    out.append(f'  subgraph Sortie[{quote("4 · Sortie")}]')
+    for key in seq['output']:
+        node(f'Sortie{key.capitalize()}', model['artifacts'][key]['title'], 'sortie')
+    out.append('  end')
+    out.append(f'  subgraph Preuves[{quote("5 · Preuves")}]')
+    for proof in seq['evidence']:
+        node(f'Preuve{"".join(part.capitalize() for part in proof["id"].split("_"))}', short(proof['description'], 110), 'preuve')
+    out.append('  end')
+    agents = [(name, agent['codex']) for name, agent in model.get('agents', {}).items() if sid in agent.get('sequences', [])]
     if agents or sid == 'S90':
-        out += ['  classDef controle fill:#f6f0e6,stroke:#b08a4f', '  class Controle controle']
+        out.append(f'  subgraph Controle[{quote("6 · Contrôle indépendant")}]')
+        for name, codex in agents or [('sdlc', 'relecteur natif du SDLC')]:
+            node(f'Agent{name.capitalize()}', codex, 'controle')
+        out.append('  end')
+    out.append(f'  Validation{{{quote("7 · Validation par " + seq["validation"]["by"])}}}')
+    classes.setdefault('validation', []).append('Validation')
+    targets = {}
+    for outcome, destinations in seq['next'].items():
+        for target in destinations if isinstance(destinations, list) else [destinations]:
+            targets.setdefault(target, []).append(OUTCOME_LABELS.get(outcome, outcome.replace('_', ' ')))
+    for target, outcomes in targets.items():
+        name = f'Vers{target}'
+        label = (f'{sid} · reprendre cette séquence' if target == sid else f'{target} · {titles[target]}' if target in titles
+                 else SPECIAL_LABELS[target])
+        cls = ('ok' if 'valide' in outcomes or 'MVP intégré' in outcomes else 'stop' if target == 'STOP'
+               else 'attente' if target.startswith('WAIT') else 'retour')
+        out.append(f'  {name}[{quote(label)}]')
+        classes.setdefault(cls, []).append(name)
+    out += ['  Entrees --> Responsable', '  Responsable -- "conduit" --> Action']
+    out += [f'  Etape{index} --> Etape{index + 1}' for index in range(1, len(steps))]
+    for block, block_nodes, conditional in plugin_blocks:
+        out.append(f'  Action -. "selon le cas" .-> {block}' if conditional else f'  Action -- "mobilise" --> {block}')
+        out += [f'  {upper} ~~~ {lower}' for upper, lower in zip(block_nodes, block_nodes[1:])]
+    out += ['  Action --> Sortie', '  Sortie --> Preuves']
+    out += ['  Preuves --> Controle', '  Controle --> Validation'] if agents or sid == 'S90' else ['  Preuves --> Validation']
+    ordered = sorted(targets, key=lambda target: 0 if ('valide' in targets[target] or 'MVP intégré' in targets[target]) else 2 if target in SPECIAL_LABELS else 1)
+    out += [f'  Vers{upper} ~~~ Vers{lower}' for upper, lower in zip(ordered, ordered[1:])]
+    for target, outcomes in targets.items():
+        arrow = '==>' if 'valide' in outcomes or 'MVP intégré' in outcomes else '-->'
+        out.append(f'  Validation {arrow[:2]} {quote(" / ".join(outcomes))} {arrow} Vers{target}' if arrow == '==>' else f'  Validation -- {quote(" / ".join(outcomes))} --> Vers{target}')
+    out += [f'  classDef {name} {CLASSES[name]}' for name in classes]
+    out += [f'  class {",".join(names)} {name}' for name, names in classes.items()]
+    for group in ['Entrees', 'Action', 'Plugins', 'PluginsCas', 'Sortie', 'Preuves', 'Controle']:
+        if f'subgraph {group}[' in '\n'.join(out):
+            out.append(f'  style {group} fill:#fbfcfe,stroke:#cbd5e1')
     return '\n'.join(out) + '\n'
 
 
 def overview_mermaid(model):
-    out = ['---', 'title: "Prérequis des séquences — le routage est détaillé dans chaque fiche"', '---', 'flowchart TB']
-    for seq in model['sequences']:
-        out.append(f'  Sequence{seq["id"]}[{json.dumps(seq["id"] + " · " + seq["title"], ensure_ascii=False)}]')
+    """All sequences grouped by phase, colored by stage, with the plugin families they mobilise."""
+    out = ['---', 'title: "Parcours flow-aidd — phases, séquences et plugins mobilisés"', '---', 'flowchart TB']
+    phases = [(None, 'Cadrage transversal')] + [(phase['id'], f'Phase {phase["id"]} · {phase["title"]}') for phase in model['phases']]
+    members = {}
+    for phase_id, label in phases:
+        sequences = [seq for seq in model['sequences'] if seq['phase'] == phase_id]
+        group = f'Phase{phase_id if phase_id is not None else "Cadrage"}'
+        out.append(f'  subgraph {group}[{quote(label)}]')
+        for seq in sequences:
+            plugins = ', '.join(dict.fromkeys(label for _, label, _, _ in plugin_groups(model, seq) if label != 'Outils du projet'))
+            out.append(f'    Sequence{seq["id"]}[{quote(seq["id"] + " · " + seq["title"] + (" · " + plugins if plugins else ""))}]')
+            members.setdefault(family(seq), []).append(f'Sequence{seq["id"]}')
+        out.append('  end')
+    groups = [f'Phase{phase_id if phase_id is not None else "Cadrage"}' for phase_id, _ in phases]
+    out += [f'  {upper} ~~~ {lower}' for upper, lower in zip(groups, groups[1:])]
+    phase_of = {seq['id']: seq['phase'] or 0 for seq in model['sequences']}
     for seq in model['sequences']:
         for dep in seq['requires']:
-            condition = seq.get('applicability')
-            out.append(f'  Sequence{dep} -. "Si applicable" .-> Sequence{seq["id"]}' if condition else f'  Sequence{dep} --> Sequence{seq["id"]}')
+            if seq.get('applicability'):
+                out.append(f'  Sequence{dep} -. "si applicable" .-> Sequence{seq["id"]}')
+            elif phase_of[seq['id']] - phase_of[dep] > 1:
+                out.append(f'  Sequence{dep} -.-> Sequence{seq["id"]}')
+            else:
+                out.append(f'  Sequence{dep} --> Sequence{seq["id"]}')
+    out += [f'  classDef {name} {FAMILIES[name][1]}' for name in members]
+    out += [f'  class {",".join(names)} {name}' for name, names in members.items()]
+    out += [f'  style Phase{phase_id if phase_id is not None else "Cadrage"} fill:#fbfcfe,stroke:#cbd5e1' for phase_id, _ in phases]
     return '\n'.join(out) + '\n'
 
 
@@ -250,7 +373,7 @@ def doc_pages(model):
     generated = '> Généré depuis `skills/flow-aidd/references/workflow.json` par `tools/build.py`. Ne pas modifier à la main.\n\n'
     overview = overview_mermaid(model)
     files['schemas/00-prerequis.mmd'] = overview
-    schemas = ['# Schémas des séquences', '', generated, 'Les flèches du premier schéma montrent les prérequis, pas une validation automatique. Pour une séquence conditionnelle, une non-applicabilité tracée peut satisfaire le prérequis. Les tables de chaque fiche portent les retours et attentes. Dans chaque contrat, le bloc bleu nomme les plugins mobilisés (AIDD, Impeccable, marketing-skills, outils du projet) et le bloc beige les agents de contrôle ; `*` signale une capacité activée seulement selon le contexte ou le cas.', '', '```mermaid', overview.rstrip(), '```', '', '## Contrats détaillés', '']
+    schemas = ['# Schémas des séquences', '', generated, 'Le premier schéma montre tout le parcours de haut en bas : un bloc par phase, dans l’ordre, chaque séquence avec les plugins qu’elle mobilise. Les flèches pleines suivent la ligne principale ; un pointillé simple relie un prérequis éloigné de plusieurs phases, un pointillé « si applicable » une séquence conditionnelle. Couleurs des séquences : gris cadrage, vert découvrir (phases 1 à 4), orange concevoir (5), bleu construire (6 à 9), violet valider et ouvrir (10 et 11), turquoise observer (12).', '', 'Chaque contrat se lit de haut en bas, dans l’ordre des sept rubriques : 1 entrées, 2 responsable, 3 action et ses étapes, avec à côté les plugins mobilisés (indigo AIDD, orange Impeccable, vert marketing-skills, gris outils du projet), dans un bloc « Plugins mobilisés » relié par une flèche pleine et un bloc « Plugins selon le cas » relié en pointillés, 4 sortie, 5 preuves, 6 contrôle indépendant, 7 validation. Les flèches qui partent de la validation montrent toutes les suites possibles : en vert et en trait épais la suite validée, en gris un retour, en orange une attente, en rouge un arrêt. La fiche de chaque séquence reste la référence complète.', '', '```mermaid', overview.rstrip(), '```', '', '## Contrats détaillés', '']
     for seq in model['sequences']:
         diagram = sequence_mermaid(model, seq)
         files[f'schemas/{seq["id"]}.mmd'] = diagram

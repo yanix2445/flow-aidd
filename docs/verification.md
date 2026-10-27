@@ -92,7 +92,7 @@ Les changements suivants sont vérifiés localement, hors de Codex, et restent �
 - Agents `flow_aidd_verificateur` et `flow_aidd_relecteur` (`skills/flow-aidd/agents/*.toml`) et leurs versions de secours générées ; leur chargement par Codex depuis le plugin n’est pas encore vérifié.
 - Cinq hooks déclarés : PreToolUse est nouveau, PostToolUse ne réagit plus qu’aux éditions de livrables suivis. Leur nouvelle revue de confiance sera nécessaire.
 - Répartition des capacités alignée sur l’ordre d’AIDD, d’Impeccable et de marketing-skills, avec une source unique par contexte ; contrôlée par des tests sur le modèle.
-- Schémas Mermaid déplacés dans `docs/schemas/` : leur contenu est régénéré et contrôlé, mais le rendu avec `tools/verify_mermaid.cjs` n’a pas été relancé depuis le déplacement.
+- Schémas Mermaid refaits avec `aidd-context:09-mermaid` (plan confirmé, conventions AIDD) dans `docs/schemas/` : phases, étapes, plugins et agents nommés, couleurs par rôle. Les 21 schémas ont été analysés et rendus sans erreur avec Mermaid 10.9.5 dans le navigateur intégré ; `tools/verify_mermaid.cjs` n’a pas été relancé faute de Playwright.
 - Installation depuis GitHub, décrite dans le README : non encore essayée ; les essais du 26 octobre portent sur le ZIP.
 
 Les chiffres des sections précédentes (51 vues, 68 tests, 65 fichiers, quatre hooks) décrivent l’état du 26 octobre.

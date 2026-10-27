@@ -2,26 +2,96 @@
 title: "S50 — Concevoir le parcours et l’interface utiles"
 ---
 flowchart TB
-  Entree["Entrée : cadre, mvp"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Concevoir le parcours et l’interface utiles"]
-  Plugins["Impeccable : init, shape<br/>Marketing : copywriting*, site-architecture*"]
-  Sortie["Sortie : parcours"]
-  Preuve["Preuves : parcours coherent, direction confirmee"]
-  Controle["Contrôle indépendant : verificateur, relecteur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S51"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeMvp["Contrat du MVP"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Concevoir le parcours et l’interface utiles"]
+    direction TB
+    Etape1["1. Réutiliser une direction existante cohérente …"]
+    Etape2["2. Cartographier entrée, actions, résultat et états nécessaires"]
+    Etape3["3. Confirmer le brief shape puis une direction avant la réalisation du …"]
+    Etape4["4. Consigner l’autorité de design sans recopier une seconde définition du …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsImpeccable["Impeccable : init, shape"]
+  end
+  subgraph PluginsCas["Plugins selon le cas"]
+    direction TB
+    PluginsCasMarketing["Marketing : copywriting, site-architecture"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieParcours["Parcours et contexte produit"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveParcoursCoherent["Le parcours couvre les critères du MVP et les états importants"]
+    PreuveDirectionConfirmee["Le brief et la direction sont confirmés, ou une direction existante est explicitement réutilisée"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+    AgentRelecteur["flow_aidd_relecteur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS51["S51 · Éprouver le parcours avant de le généraliser"]
+  VersS61["S61 · Choisir une architecture suffisante"]
+  VersS50["S50 · reprendre cette séquence"]
+  VersS40["S40 · Fixer le parcours du MVP et ses critères"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action -. "selon le cas" .-> PluginsCas
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS51 ~~~ VersS61
+  VersS61 ~~~ VersS50
+  VersS50 ~~~ VersS40
+  VersS40 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide" ==> VersS51
+  Validation -- "non applicable" --> VersS61
+  Validation -- "à préciser" --> VersS50
+  Validation -- "modifier le périmètre" --> VersS40
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef impeccable fill:#ffe8cc,stroke:#d9822b,color:#3d2600
+  classDef marketing fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeMvp entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsImpeccable impeccable
+  class PluginsCasMarketing marketing
+  class SortieParcours sortie
+  class PreuveParcoursCoherent,PreuveDirectionConfirmee preuve
+  class AgentVerificateur,AgentRelecteur controle
+  class Validation validation
+  class VersS51 ok
+  class VersS61,VersS50,VersS40 retour
+  class VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style PluginsCas fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

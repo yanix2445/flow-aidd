@@ -2,26 +2,98 @@
 title: "S30 — Choisir la promesse et sa viabilité"
 ---
 flowchart TB
-  Entree["Entrée : cadre, idee, besoin"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Choisir la promesse et sa viabilité"]
-  Plugins["AIDD : pm/06-product-brief<br/>Marketing : product-marketing, launch, pricing*, offers*, marketing-psychology"]
-  Sortie["Sortie : brief"]
-  Preuve["Preuves : opportunite approuvee"]
-  Controle["Contrôle indépendant : verificateur, relecteur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S40"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeIdee["Note d’intention"]
+    EntreeBesoin["Preuves du besoin"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Choisir la promesse et sa viabilité"]
+    direction TB
+    Etape1["1. Choisir le cas d’usage et le bénéfice prioritaire par rapport à …"]
+    Etape2["2. Pour un projet commercial, éclairer payeur, coût et hypothèse de revenu …"]
+    Etape3["3. Identifier le premier accès aux utilisateurs si un public externe est …"]
+    Etape4["4. Conserver la décision, ses limites et la condition d’arrêt dans une …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsAidd["AIDD : pm/06-product-brief"]
+    PluginsMarketing["Marketing : product-marketing, launch, marketing-psychology"]
+  end
+  subgraph PluginsCas["Plugins selon le cas"]
+    direction TB
+    PluginsCasMarketing["Marketing : pricing, offers"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieBrief["Brief produit"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveOpportuniteApprouvee["Le porteur approuve la promesse, les contraintes de viabilité et la façon de l’éprouver"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+    AgentRelecteur["flow_aidd_relecteur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS40["S40 · Fixer le parcours du MVP et ses critères"]
+  VersS20["S20 · Éclairer le besoin avec des observations"]
+  VersS30["S30 · reprendre cette séquence"]
+  VersS60["S60 · Lever une inconnue technique déterminante"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  PluginsAidd ~~~ PluginsMarketing
+  Action -. "selon le cas" .-> PluginsCas
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS40 ~~~ VersS20
+  VersS20 ~~~ VersS30
+  VersS30 ~~~ VersS60
+  VersS60 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide" ==> VersS40
+  Validation -- "réorienter" --> VersS20
+  Validation -- "à préciser" --> VersS30
+  Validation -- "risque technique" --> VersS60
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef aidd fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554
+  classDef marketing fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeIdee,EntreeBesoin entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsAidd aidd
+  class PluginsMarketing,PluginsCasMarketing marketing
+  class SortieBrief sortie
+  class PreuveOpportuniteApprouvee preuve
+  class AgentVerificateur,AgentRelecteur controle
+  class Validation validation
+  class VersS40 ok
+  class VersS20,VersS30,VersS60 retour
+  class VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style PluginsCas fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

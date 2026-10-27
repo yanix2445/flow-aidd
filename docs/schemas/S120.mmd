@@ -2,26 +2,96 @@
 title: "S120 — Observer les usages sur la fenêtre prévue"
 ---
 flowchart TB
-  Entree["Entrée : cadre, mvp, ouverture, acces"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Observer les usages sur la fenêtre prévue"]
-  Plugins["Marketing : customer-research, analytics, attribution*, cro<br/>Outils du projet : mesure du projet"]
-  Sortie["Sortie : observations"]
-  Preuve["Preuves : usage date, limites mesure"]
-  Controle["Contrôle indépendant : verificateur"]
-  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S121"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeMvp["Contrat du MVP"]
+    EntreeOuverture["Préparation de l’ouverture"]
+    EntreeAcces["Première population accueillie"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Observer les usages sur la fenêtre prévue"]
+    direction TB
+    Etape1["1. Vérifier la fenêtre, les définitions et le bon fonctionnement de la …"]
+    Etape2["2. Recueillir réussites, blocages, abandons et retours avec leur contexte"]
+    Etape3["3. Distinguer zéro usage réellement mesuré d’une absence de données ou …"]
+    Etape4["4. Rester à S120 en attente si les éléments ne permettent pas encore la décision …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsMarketing["Marketing : customer-research, analytics, cro"]
+    PluginsOutil["Outils du projet : mesure du projet"]
+  end
+  subgraph PluginsCas["Plugins selon le cas"]
+    direction TB
+    PluginsCasMarketing["Marketing : attribution"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieObservations["Premiers usages"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveUsageDate["La fenêtre, la source, les définitions et les observations réelles sont conservées, y compris un zéro usage …"]
+    PreuveLimitesMesure["Les biais, l’échantillon et les limites de la mesure sont examinés avant de proposer une décision"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+  end
+  Validation{"7 · Validation par verificateur"}
+  VersS121["S121 · Décider de la prochaine priorité ou de l’arrêt"]
+  VersWAIT_INFO["Attendre une information"]
+  VersWAIT_ACCESS["Attendre un accès"]
+  VersS120["S120 · reprendre cette séquence"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  PluginsMarketing ~~~ PluginsOutil
+  Action -. "selon le cas" .-> PluginsCas
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS121 ~~~ VersS120
+  VersS120 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersWAIT_ACCESS
+  VersWAIT_ACCESS ~~~ VersSTOP
+  Validation == "valide" ==> VersS121
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "attendre un accès" --> VersWAIT_ACCESS
+  Validation -- "réparer" --> VersS120
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef marketing fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320
+  classDef outil fill:#ececec,stroke:#8c8c8c,color:#262626
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeMvp,EntreeOuverture,EntreeAcces entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsMarketing,PluginsCasMarketing marketing
+  class PluginsOutil outil
+  class SortieObservations sortie
+  class PreuveUsageDate,PreuveLimitesMesure preuve
+  class AgentVerificateur controle
+  class Validation validation
+  class VersS121 ok
+  class VersWAIT_INFO,VersWAIT_ACCESS attente
+  class VersS120 retour
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style PluginsCas fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

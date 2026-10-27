@@ -2,26 +2,81 @@
 title: "S71 — Conserver le contexte réellement vérifié"
 ---
 flowchart TB
-  Entree["Entrée : cadre, architecture, socle"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Conserver le contexte réellement vérifié"]
-  Plugins["AIDD : context/02-project-memory"]
-  Sortie["Sortie : memoire"]
-  Preuve["Preuves : contexte lisible"]
-  Controle["Contrôle indépendant : verificateur"]
-  Validation{"Validation par coordinateur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S90"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeArchitecture["Choix techniques"]
+    EntreeSocle["Socle vérifié"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Conserver le contexte réellement vérifié"]
+    direction TB
+    Etape1["1. Recenser les commandes et conventions qui viennent d’être vérifiées"]
+    Etape2["2. Lier les sources produit, design et architecture sans dupliquer leurs décisions …"]
+    Etape3["3. Résoudre les emplacements de mémoire avec le skill courant et conserver …"]
+    Etape4["4. Mettre à jour l’état du flow avec la prochaine séquence utile"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsAidd["AIDD : context/02-project-memory"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieMemoire["Contexte réel du projet"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveContexteLisible["Les fichiers écrits sont relus et leurs liens pointent vers les sources réellement pertinentes"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+  end
+  Validation{"7 · Validation par coordinateur"}
+  VersS90["S90 · Livrer une tranche avec le SDLC natif"]
+  VersS71["S71 · reprendre cette séquence"]
+  VersWAIT_ACCESS["Attendre un accès"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS90 ~~~ VersS71
+  VersS71 ~~~ VersWAIT_ACCESS
+  VersWAIT_ACCESS ~~~ VersSTOP
+  Validation == "valide" ==> VersS90
+  Validation -- "à préciser" --> VersS71
+  Validation -- "attendre un accès" --> VersWAIT_ACCESS
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef aidd fill:#e4e1ff,stroke:#5b4fc7,color:#1d1554
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeArchitecture,EntreeSocle entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsAidd aidd
+  class SortieMemoire sortie
+  class PreuveContexteLisible preuve
+  class AgentVerificateur controle
+  class Validation validation
+  class VersS90 ok
+  class VersS71 retour
+  class VersWAIT_ACCESS attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

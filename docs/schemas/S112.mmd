@@ -2,26 +2,102 @@
 title: "S112 — Ouvrir l’accès à la première population"
 ---
 flowchart TB
-  Entree["Entrée : cadre, mvp, ouverture, deploiement"]
-  Responsable["Responsable : exploitation"]
-  Action["Action : Ouvrir l’accès à la première population"]
-  Plugins["Marketing : launch, analytics, onboarding, emails, social, directory-submissions*<br/>Outils du projet : acces et support du projet"]
-  Sortie["Sortie : acces"]
-  Preuve["Preuves : population acces, premier parcours, mesure operationnelle"]
-  Controle["Contrôle indépendant : verificateur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S120"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeMvp["Contrat du MVP"]
+    EntreeOuverture["Préparation de l’ouverture"]
+    EntreeDeploiement["Version livrée vérifiée"]
+  end
+  Responsable["2 · Responsable : exploitation"]
+  subgraph Action["3 · Action : Ouvrir l’accès à la première population"]
+    direction TB
+    Etape1["1. Appliquer l’accès ou les invitations effectivement autorisés …"]
+    Etape2["2. Vérifier le premier usage et l’accessibilité du support"]
+    Etape3["3. Contrôler que l’action de valeur peut être observée sans comptage …"]
+    Etape4["4. Consigner la livraison du premier MVP et la prochaine fenêtre …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsMarketing1["Marketing (1/2) : launch, analytics, onboarding, emails"]
+    PluginsMarketing2["Marketing (2/2) : social"]
+    PluginsOutil["Outils du projet : acces et support du projet"]
+  end
+  subgraph PluginsCas["Plugins selon le cas"]
+    direction TB
+    PluginsCasMarketing["Marketing : directory-submissions"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieAcces["Première population accueillie"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuvePopulationAcces["L’accès de la population prévue est vérifié dans le périmètre autorisé"]
+    PreuvePremierParcours["Le premier parcours et la possibilité de remonter un problème sont constatés"]
+    PreuveMesureOperationnelle["La mesure ou le protocole d’observation prévu fonctionne ; ses limites sont connues"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS120["S120 · Observer les usages sur la fenêtre prévue"]
+  VersS111["S111 · Déployer puis contrôler l’adresse réellement livrée"]
+  VersS110["S110 · Préparer l’ouverture, le support et la mesure"]
+  VersWAIT_ACCESS["Attendre un accès"]
+  VersWAIT_APPROVAL["Attendre une décision"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  PluginsMarketing1 ~~~ PluginsMarketing2
+  PluginsMarketing2 ~~~ PluginsOutil
+  Action -. "selon le cas" .-> PluginsCas
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS120 ~~~ VersS111
+  VersS111 ~~~ VersS110
+  VersS110 ~~~ VersWAIT_ACCESS
+  VersWAIT_ACCESS ~~~ VersWAIT_APPROVAL
+  VersWAIT_APPROVAL ~~~ VersSTOP
+  Validation == "valide" ==> VersS120
+  Validation -- "réparer" --> VersS111
+  Validation -- "à préciser" --> VersS110
+  Validation -- "attendre un accès" --> VersWAIT_ACCESS
+  Validation -- "attendre une décision" --> VersWAIT_APPROVAL
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef marketing fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320
+  classDef outil fill:#ececec,stroke:#8c8c8c,color:#262626
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeMvp,EntreeOuverture,EntreeDeploiement entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsMarketing1,PluginsMarketing2,PluginsCasMarketing marketing
+  class PluginsOutil outil
+  class SortieAcces sortie
+  class PreuvePopulationAcces,PreuvePremierParcours,PreuveMesureOperationnelle preuve
+  class AgentVerificateur controle
+  class Validation validation
+  class VersS120 ok
+  class VersS111,VersS110 retour
+  class VersWAIT_ACCESS,VersWAIT_APPROVAL attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style PluginsCas fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1

@@ -2,26 +2,85 @@
 title: "S20 — Éclairer le besoin avec des observations"
 ---
 flowchart TB
-  Entree["Entrée : cadre, idee"]
-  Responsable["Responsable : coordinateur"]
-  Action["Action : Éclairer le besoin avec des observations"]
-  Plugins["Marketing : product-marketing, customer-research, competitor-profiling"]
-  Sortie["Sortie : besoin"]
-  Preuve["Preuves : sources, decision besoin"]
-  Controle["Contrôle indépendant : verificateur, relecteur"]
-  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
-  Destination["Suite validée : S30"]
-  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
-  Entree --> Responsable
-  Responsable --> Action
-  Action --> Plugins
-  Plugins --> Sortie
-  Sortie --> Preuve
-  Preuve --> Controle
+  subgraph Entrees["1 · Entrées"]
+    EntreeCadre["Cadrage du projet"]
+    EntreeIdee["Note d’intention"]
+  end
+  Responsable["2 · Responsable : coordinateur"]
+  subgraph Action["3 · Action : Éclairer le besoin avec des observations"]
+    direction TB
+    Etape1["1. Fixer la question de recherche …"]
+    Etape2["2. Pour un usage personnel, observer une tâche réelle du porteur …"]
+    Etape3["3. Conserver source, date, contexte, limites et contradictions des …"]
+    Etape4["4. Décider de poursuivre, de réorienter ou d’attendre des éléments …"]
+  end
+  subgraph Plugins["Plugins mobilisés"]
+    direction TB
+    PluginsMarketing["Marketing : product-marketing, customer-research, competitor-profiling"]
+  end
+  subgraph Sortie["4 · Sortie"]
+    SortieBesoin["Preuves du besoin"]
+  end
+  subgraph Preuves["5 · Preuves"]
+    PreuveSources["Les observations et leurs sources sont accessibles, datées et qualifiées …"]
+    PreuveDecisionBesoin["La poursuite repose sur les faits présentés ou sur un risque accepté avec responsable et prochaine …"]
+  end
+  subgraph Controle["6 · Contrôle indépendant"]
+    AgentVerificateur["flow_aidd_verificateur"]
+    AgentRelecteur["flow_aidd_relecteur"]
+  end
+  Validation{"7 · Validation par porteur"}
+  VersS30["S30 · Choisir la promesse et sa viabilité"]
+  VersS10["S10 · Transformer l’idée en intention claire"]
+  VersS20["S20 · reprendre cette séquence"]
+  VersWAIT_INFO["Attendre une information"]
+  VersSTOP["Arrêter la branche"]
+  Entrees --> Responsable
+  Responsable -- "conduit" --> Action
+  Etape1 --> Etape2
+  Etape2 --> Etape3
+  Etape3 --> Etape4
+  Action -- "mobilise" --> Plugins
+  Action --> Sortie
+  Sortie --> Preuves
+  Preuves --> Controle
   Controle --> Validation
-  Validation -- "Oui" --> Destination
-  Validation -- "Non ou inconnu" --> AutreIssue
-  classDef plugins fill:#eef3fb,stroke:#7f9cc7
-  class Plugins plugins
-  classDef controle fill:#f6f0e6,stroke:#b08a4f
-  class Controle controle
+  VersS30 ~~~ VersS10
+  VersS10 ~~~ VersS20
+  VersS20 ~~~ VersWAIT_INFO
+  VersWAIT_INFO ~~~ VersSTOP
+  Validation == "valide" ==> VersS30
+  Validation -- "réorienter" --> VersS10
+  Validation -- "à préciser" --> VersS20
+  Validation -- "attendre une information" --> VersWAIT_INFO
+  Validation -- "arrêter" --> VersSTOP
+  classDef entree fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef responsable fill:#f3f4f6,stroke:#9ca3af,color:#1f2933
+  classDef etape fill:#e0ecff,stroke:#4a78c2,color:#10243f
+  classDef marketing fill:#dcf5e3,stroke:#3c9a5f,color:#0f3320
+  classDef sortie fill:#e6f4ff,stroke:#3b82c4,color:#0b2a44
+  classDef preuve fill:#f1e6ff,stroke:#8b5cc7,color:#2b1247
+  classDef controle fill:#f6efe3,stroke:#b08a4f,color:#3a2a10
+  classDef validation fill:#fff4c2,stroke:#c9a227,color:#3a2e00
+  classDef ok fill:#d6f5d6,stroke:#2f8f46,color:#0d3318
+  classDef retour fill:#eef2f7,stroke:#8a9bb0,color:#1f2933
+  classDef attente fill:#fff0d6,stroke:#c98a2b,color:#3a2600
+  classDef stop fill:#ffe0e0,stroke:#c24a4a,color:#3d0f0f
+  class EntreeCadre,EntreeIdee entree
+  class Responsable responsable
+  class Etape1,Etape2,Etape3,Etape4 etape
+  class PluginsMarketing marketing
+  class SortieBesoin sortie
+  class PreuveSources,PreuveDecisionBesoin preuve
+  class AgentVerificateur,AgentRelecteur controle
+  class Validation validation
+  class VersS30 ok
+  class VersS10,VersS20 retour
+  class VersWAIT_INFO attente
+  class VersSTOP stop
+  style Entrees fill:#fbfcfe,stroke:#cbd5e1
+  style Action fill:#fbfcfe,stroke:#cbd5e1
+  style Plugins fill:#fbfcfe,stroke:#cbd5e1
+  style Sortie fill:#fbfcfe,stroke:#cbd5e1
+  style Preuves fill:#fbfcfe,stroke:#cbd5e1
+  style Controle fill:#fbfcfe,stroke:#cbd5e1
