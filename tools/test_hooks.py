@@ -43,7 +43,8 @@ class HookTests(unittest.TestCase):
         test_guided.awaiting_s00(self)
         before = self.state_path().read_bytes()
         start = self.hook('SessionStart')
-        self.assertIn('Accord de passage encore attendu', start['hookSpecificOutput']['additionalContext'])
+        self.assertIn('Accord attendu sur', start['hookSpecificOutput']['additionalContext'])
+        self.assertIn('references/checkpoint.md', start['hookSpecificOutput']['additionalContext'])
         for event in ['PostToolUse', 'Stop', 'Interrupt']:
             self.assertEqual(self.hook(event), {})
         self.assertEqual(self.state_path().read_bytes(), before)

@@ -27,7 +27,7 @@ Un plugin pour **Codex** qui accompagne un projet de l’idée à une première 
 | Reprendre demain         | Relire l’état du projet et reprendre au point conservé.                     |
 | Revoir une décision     | Conserver le retour et réexaminer les résultats concernés.                  |
 
-Le plugin embarque un **modèle de 12 phases et 20 séquences**, des fiches de conduite, un glossaire, des exemples et des helpers Python. Le guidage se déroule dans Codex, avec les fichiers du projet.
+Le plugin embarque un **modèle de 12 phases et 20 séquences**, une fiche par séquence, une référence par commande, deux agents de contrôle (vérificateur et relecteur) et des helpers Python. Le guidage se déroule dans Codex, avec les fichiers du projet.
 
 ### Une séquence, une décision
 
@@ -70,12 +70,12 @@ Ce sont des **capacités à rendre disponibles selon le travail à effectuer**. 
 | `aidd-pm`           | Formaliser le besoin, le brief, les exigences et les tranches du produit.                                                                                                |
 | `aidd-context`      | Choisir un socle, conserver les conventions et préparer le contexte des outils.                                                                                         |
 | `aidd-orchestrator` | Conduire la livraison d’une tranche avec le SDLC natif.                                                                                                                 |
-| `aidd-dev`          | Planifier, réaliser, tester, auditer ou corriger le code.                                                                                                               |
-| `aidd-vcs`          | Conserver les changements et préparer commits, PR et versions.                                                                                                          |
-| `impeccable`        | **Le plugin de design de référence** : contexte produit, brief, prototype, critique, audit, finition et DESIGN.md (S50, S51, S71, S80, S100, S110).              |
+| `aidd-dev`          | Planifier, réaliser, contrôler et tester le socle et la recette ; dans la livraison, c’est le SDLC qui les emploie.                                                   |
+| `aidd-vcs`          | Initialiser le dépôt, ouvrir la PR en brouillon, résoudre un conflit et marquer une version.                                                                          |
+| `impeccable`        | **Le plugin de design de référence** : contexte produit, brief, prototype, critique, audit, finition et DESIGN.md tiré de l’interface réellement construite (S50, S51, S80, S91, S100, S110).              |
 | `marketing-skills`  | Public, concurrents, promesse, prix, contenus, mesure, lancement, acquisition et décision de croissance (S20, S30, S50, S110 à S121), chaque skill selon sa condition. |
 
-**Les plugins AIDD restent la chaîne principale.** Impeccable et marketing-skills nourrissent leurs artefacts (PRD, spec, mémoire) sans les dupliquer : Impeccable s’appuie sur `PRODUCT.md` et `DESIGN.md`, marketing-skills sur `.agents/product-marketing.md`.
+**Les plugins AIDD restent la chaîne principale**, dans l’ordre qu’ils prévoient eux-mêmes : brainstorm (S10), brief (S30), PRD (S40), stack (S61), mémoire du projet (S71), epic, stories et spec (S80), puis SDLC jusqu’à la PR en brouillon (S90). Chaque contexte a une seule source : brief et PRD pour le besoin, `.agents/product-marketing.md` pour le public et le ton, `PRODUCT.md` pour le contexte de design, `DESIGN.md` pour l’interface construite. Les autres la citent sans la recopier.
 
 **Le parcours de livraison prévu en S90 s’appuie sur `aidd-orchestrator:01-sdlc`**, qui pilote sa propre boucle Dev, Refine et VCS. Les autres capacités sont vérifiées au moment utile. Si une capacité nécessaire manque, le flow explique l’attente ; un autre moyen peut être utilisé lorsque le contrat de la séquence le permet.
 
@@ -285,21 +285,21 @@ Le parcours est adaptable : une interface graphique justifie les séquences de d
 
 <!-- Cette vue d’accueil résume le modèle. Les contrats et routages détaillés appartiennent à workflow.json. -->
 
-| Moment                   |      Séquences      | Résultat recherché                                                                |
-| :----------------------- | :------------------: | :---------------------------------------------------------------------------------- |
-| Cadrer (transversal)     |         S00         | Un objectif, des contraintes et une profondeur de travail.                          |
-| Clarifier l’idée       |         S10         | Une intention compréhensible.                                                      |
-| Observer le besoin       |         S20         | Des observations et des alternatives examinées.                                    |
-| Choisir la promesse      |         S30         | Une proposition de valeur et sa viabilité.                                         |
-| Définir le MVP          |         S40         | Le parcours central et ses critères.                                               |
-| Concevoir l’expérience |      S50 · S51      | Un parcours et une interface éprouvés, si applicables.                            |
-| Résoudre la technique   |      S60 · S61      | Les inconnues déterminantes et une architecture suffisante.                        |
-| Préparer le socle       |      S70 · S71      | Une base qui fonctionne et un contexte vérifié.                                   |
-| Préparer une tranche    |         S80         | Une prochaine unité de travail vérifiable.                                        |
-| Livrer et intégrer      |      S90 · S91      | Un candidat revu, puis intégré et vérifié.                                      |
-| Vérifier le MVP         |         S100         | Une décision sur le MVP intégré.                                                 |
-| Ouvrir le produit        | S110 · S111 · S112 | La préparation, le déploiement contrôlé et l’accès des premiers utilisateurs. |
-| Observer et décider     |     S120 · S121     | Des retours, puis une priorité, une nouvelle boucle ou un arrêt.                  |
+| Phase                                        |      Séquences      | Résultat recherché                                                                |
+| :------------------------------------------- | :------------------: | :---------------------------------------------------------------------------------- |
+| Cadrage transversal                          |         S00         | Un objectif, des contraintes et une profondeur de travail.                          |
+| 1 — Clarifier l’idée                         |         S10         | Une intention compréhensible.                                                      |
+| 2 — Comprendre le besoin                     |         S20         | Des observations et des alternatives examinées.                                    |
+| 3 — Choisir la promesse et la viabilité      |         S30         | Une proposition de valeur et sa viabilité.                                         |
+| 4 — Délimiter le MVP                         |         S40         | Le parcours central et ses critères.                                               |
+| 5 — Concevoir et éprouver l’expérience       |      S50 · S51      | Un parcours et une interface éprouvés, si applicables.                            |
+| 6 — Valider la faisabilité                   |      S60 · S61      | Les inconnues déterminantes et une architecture suffisante.                        |
+| 7 — Préparer les fondations                  |      S70 · S71      | Une base qui fonctionne et un contexte vérifié.                                   |
+| 8 — Préparer la prochaine tranche            |         S80         | Une prochaine unité de travail vérifiable.                                        |
+| 9 — Livrer et intégrer                       |      S90 · S91      | Un candidat revu, puis intégré et vérifié.                                      |
+| 10 — Valider le MVP intégré                  |         S100         | Une décision sur le MVP intégré.                                                 |
+| 11 — Ouvrir le MVP                           | S110 · S111 · S112 | La préparation, le déploiement contrôlé et l’accès des premiers utilisateurs. |
+| 12 — Observer et décider                     |     S120 · S121     | Des retours, puis une priorité, une nouvelle boucle ou un arrêt.                  |
 
 **Le MVP est considéré livré à S112** lorsque la population prévue peut utiliser la version vérifiée, accomplir la tâche centrale et remonter un problème. La première boucle se termine à S121 par une décision fondée sur les usages.
 
@@ -385,13 +385,17 @@ flow-aidd/
 ├── .codex-plugin/plugin.json       # Identité, accueil et hooks
 ├── .agents/plugins/marketplace.json
 ├── skills/flow-aidd/
-│   ├── SKILL.md                    # Conduite du coordinateur
+│   ├── SKILL.md                    # Principes, mise en route, commandes et agents
 │   ├── agents/openai.yaml          # Présentation du skill
+│   ├── agents/*.toml               # Vérificateur et relecteur, lancés avant chaque checkpoint
 │   ├── references/workflow.json    # Modèle unique du parcours
-│   ├── references/                 # Fiches, glossaire et exemples
+│   ├── references/<commande>.md    # init, status, record, checkpoint, rattacher, plus socle, entretien, capacites, hooks
+│   ├── references/degraded/        # Agents joués sans sous-agent, générés depuis agents/*.toml
+│   ├── references/parcours.md · glossaire.md · regles.md   # Vues générées
+│   ├── references/sequences/       # Une fiche générée par séquence
 │   └── scripts/                    # État, contrôle, reprise et hooks
 ├── hooks/hooks.json                # Événements du runtime Codex
-├── docs/                           # Conception, vérifications et visuel du README
+├── docs/                           # Conception, vérifications, visuel, schémas et exemple générés (hors skill)
 └── tools/                          # Génération, tests et export
 ```
 
@@ -423,9 +427,9 @@ Pour une contribution, garder un changement ciblé et fournir le comportement at
 
 ### Ce qui a été vérifié
 
-- [X] **68 tests** du modèle, du suivi, des hooks, de l’isolation et de l’export.
-- [X] **4 événements natifs** : SessionStart, PostToolUse, Stop et Interrupt.
-- [ ] **PreToolUse et nouveaux conseils de PostToolUse** : testés hors de Codex, à vérifier dans Codex après réinstallation.
+- [X] **94 tests** du modèle, du suivi, des hooks, des agents, des références, de l’isolation et de l’export (27 octobre 2026, hors Codex).
+- [X] **4 événements natifs** vérifiés dans Codex le 26 octobre : SessionStart, PostToolUse, Stop et Interrupt.
+- [ ] **Depuis :** PreToolUse, les nouveaux conseils de PostToolUse, les agents vérificateur et relecteur, et le tri des capacités sont testés hors de Codex ; à vérifier dans Codex après réinstallation.
 - [X] Initialisation et reprise dans des processus neufs, sur des projets d’essai.
 - [X] Reprise sans passage automatique et conservation de l’état pendant les essais.
 - [ ] Parcours complet jusqu’au MVP d’un **vrai produit** : reste à éprouver.
@@ -437,8 +441,8 @@ Ces résultats décrivent des essais du plugin. Le cas MiniRévisions est un exe
 | Je cherche…                          | Je lis…                                                                 |
 | :------------------------------------ | :----------------------------------------------------------------------- |
 | La première séquence                | [La fiche S00](skills/flow-aidd/references/sequences/S00.md)              |
-| La conduite et la reprise             | [Le guide d’orchestration](skills/flow-aidd/references/ORCHESTRATION.md) |
-| Les mots du parcours                  | [Le glossaire](skills/flow-aidd/references/GLOSSAIRE.md)                  |
+| La conduite et la reprise             | [Le socle](skills/flow-aidd/references/socle.md) et [les règles complètes](skills/flow-aidd/references/regles.md) |
+| Les mots du parcours                  | [Le glossaire](skills/flow-aidd/references/glossaire.md)                  |
 | Un cas expliqué                      | [MiniRévisions][exemple]                                                |
 | Les choix de fonctionnement           | [La conception](docs/conception.md)                                       |
 | Les contrôles réellement effectués | [Les vérifications][verification]                                       |
@@ -466,9 +470,9 @@ Pour rechercher un terme dans le navigateur : <kbd>Ctrl</kbd> + <kbd>F</kbd>, ou
     
 [^compatibilite]: Le choix de ce manifeste repose sur les essais décrits dans [verification.md][verification]. Sa prise en charge est documentée par [OpenAI][openai-plugins] ; elle ne prouve pas la compatibilité de tous les clients ou de toutes les versions.
     
-[carte]: skills/flow-aidd/references/FLOW.md
-[schemas]: skills/flow-aidd/references/MERMAID.md
-[exemple]: skills/flow-aidd/references/EXEMPLE.md
+[carte]: skills/flow-aidd/references/parcours.md
+[schemas]: docs/schemas/schemas.md
+[exemple]: docs/exemple/exemple.md
 [verification]: docs/verification.md
 [openai-plugins]: https://developers.openai.com/plugins/build/plugins
 [openai-hooks]: https://learn.chatgpt.com/docs/hooks

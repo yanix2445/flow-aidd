@@ -83,6 +83,20 @@ SessionStart a fourni le contexte `flow-aidd · project · S00 · a_faire.`. La 
 
 Dans ce runtime, réinstaller le ZIP après actualisation de sa documentation a replacé les quatre hooks à `modified`, alors que leurs commandes et handlers étaient inchangés. La revue de confiance doit donc intervenir après la dernière synchronisation du paquet. Ne pas réinstaller le plugin après cette revue pour simplement actualiser un compte rendu.
 
+## Depuis ce constat (27 octobre 2026)
+
+Les changements suivants sont vérifiés localement, hors de Codex, et restent à éprouver dans Codex après réinstallation d’un nouveau paquet :
+
+- **94 tests** réussis et génération sans divergence : 26 vues du skill et 25 pages de `docs/` (schémas et exemple, déplacés hors du skill).
+- Structure du skill sur le modèle d’Impeccable : SKILL.md court, une référence par commande, `socle.md`, `entretien.md`, et `status` qui renvoie `load`, `directives`, `capabilities` et `agents`.
+- Agents `flow_aidd_verificateur` et `flow_aidd_relecteur` (`skills/flow-aidd/agents/*.toml`) et leurs versions de secours générées ; leur chargement par Codex depuis le plugin n’est pas encore vérifié.
+- Cinq hooks déclarés : PreToolUse est nouveau, PostToolUse ne réagit plus qu’aux éditions de livrables suivis. Leur nouvelle revue de confiance sera nécessaire.
+- Répartition des capacités alignée sur l’ordre d’AIDD, d’Impeccable et de marketing-skills, avec une source unique par contexte ; contrôlée par des tests sur le modèle.
+- Schémas Mermaid déplacés dans `docs/schemas/` : leur contenu est régénéré et contrôlé, mais le rendu avec `tools/verify_mermaid.cjs` n’a pas été relancé depuis le déplacement.
+- Installation depuis GitHub, décrite dans le README : non encore essayée ; les essais du 26 octobre portent sur le ZIP.
+
+Les chiffres des sections précédentes (51 vues, 68 tests, 65 fichiers, quatre hooks) décrivent l’état du 26 octobre.
+
 ## Conservation et limites
 
 Une sauvegarde de **195 fichiers**, vérifiée par SHA-256 avant simplification, reste hors du dépôt :

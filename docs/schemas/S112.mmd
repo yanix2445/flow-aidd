@@ -1,0 +1,27 @@
+---
+title: "S112 — Ouvrir l’accès à la première population"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp, ouverture, deploiement"]
+  Responsable["Responsable : exploitation"]
+  Action["Action : Ouvrir l’accès à la première population"]
+  Plugins["Marketing : launch, analytics, onboarding, emails, social, directory-submissions*<br/>Outils du projet : acces et support du projet"]
+  Sortie["Sortie : acces"]
+  Preuve["Preuves : population acces, premier parcours, mesure operationnelle"]
+  Controle["Contrôle indépendant : verificateur"]
+  Validation{"Validation par porteur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S120"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

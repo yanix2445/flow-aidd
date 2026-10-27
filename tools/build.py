@@ -2,7 +2,7 @@
 import argparse
 import json
 
-from _paths import MODEL_ROOT
+from _paths import MODEL_ROOT, ROOT
 import flow
 from flow_docs import build
 
@@ -16,7 +16,7 @@ def main():
     if errors:
         print(json.dumps({'errors': errors}, ensure_ascii=False, indent=2))
         return 1
-    return build(model, MODEL_ROOT, check=args.check)
+    return build(model, MODEL_ROOT, check=args.check, docs_root=ROOT / 'docs')
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 """Derive every current guide and the labelled example from workflow.json."""
+from __future__ import annotations
 from pathlib import Path
 from copy import deepcopy
 import json
@@ -20,17 +21,90 @@ def artifact_lines(model, keys):
     return paragraph_list([f'**{key} — {model["artifacts"][key]["title"]}** : `{model["artifacts"][key]["path"]}` ({model["artifacts"][key]["origin"]}). {model["artifacts"][key]["description"]}' for key in keys])
 
 
+AGENTS_ROOT = Path(__file__).resolve().parents[1] / 'agents'
+DEGRADED_HEADER = ('<!-- Généré depuis agents/{codex}.toml par build.py. Ne pas modifier ; modifier la définition de l’agent. -->\n'
+                   'Cet environnement ne peut pas lancer de sous-agent : tu joues ce rôle toi-même. Sors complètement du travail '
+                   'qui vient d’être fait, n’applique que les consignes de ce fichier pour cette passe, et signale la substitution '
+                   'en une ligne au porteur. Là où le texte s’adresse au coordinateur, tu es les deux : rends d’abord le retour '
+                   'complet, puis applique-le.\n')
+
+
+def degraded_agents(model):
+    """Fallback instructions for harnesses without subagents, derived from the shipped agent definitions."""
+    import tomllib
+    files = {}
+    for agent in model.get('agents', {}).values():
+        definition = tomllib.loads((AGENTS_ROOT / f'{agent["codex"]}.toml').read_text(encoding='utf-8'))
+        relative = agent['degraded'].removeprefix('references/')
+        files[relative] = DEGRADED_HEADER.format(codex=agent['codex']) + definition['developer_instructions']
+    return files
+
+
+def capability_lines(model, capabilities):
+    """Group a sheet's capabilities the way `next` sorts them for a real project."""
+    def line(cap):
+        text = f'- `{cap["id"]}`' + (f' · `{cap["command"]}`' if cap.get('command') else '')
+        if cap.get('if_text'):
+            text += f' — *seulement si {cap["if_text"]}* : {cap["when"][:1].lower()}{cap["when"][1:]}'
+        else:
+            text += f' — {cap["when"]}'
+        return text
+    unconditional = [cap for cap in capabilities if not cap.get('if')]
+    if not capabilities:
+        return ['**Capacités à activer :**', '', '- Le coordinateur cadre le travail ; aucun skill spécialisé n’est imposé.']
+    lines = ['**Capacités à activer :**', ''] + [line(cap) for cap in unconditional] + [''] if unconditional else []
+    fields = {}
+    for cap in capabilities:
+        if cap.get('if'):
+            fields.setdefault((cap['if']['field'], cap['if']['equals']), []).append(cap)
+    for (field, equals), caps in fields.items():
+        question = model['context_fields'][field]['description']
+        lines += [f'**Si `{field}` = `{str(equals).lower()}`** ({question}) :', ''] + [line(cap) for cap in caps] + ['']
+    if fields:
+        lines += ['`next` et `status` trient ces capacités selon le contexte du projet ; une réponse encore inconnue les laisse à confirmer, jamais écartées.']
+    return lines[:-1] if lines and lines[-1] == '' else lines
+
+
+def plugin_groups(model, seq):
+    """Name the plugins a sequence relies on, grouped like the flow: AIDD first, then Impeccable, marketing, project tools."""
+    groups = {'AIDD': [], 'Impeccable': [], 'Marketing': [], 'Outils du projet': []}
+    for cap in seq['action']['capabilities']:
+        mark = '*' if cap.get('if') or cap.get('if_text') else ''
+        plugin, _, skill = cap['id'].partition(':')
+        if cap.get('external'):
+            groups['Outils du projet'].append(cap['id'].replace('_', ' '))
+        elif plugin.startswith('aidd-'):
+            groups['AIDD'].append(f'{plugin.removeprefix("aidd-")}/{skill}{mark}')
+        elif plugin == 'impeccable':
+            groups['Impeccable'].append((cap.get('command') or 'impeccable') + mark)
+        elif plugin == 'marketing-skills':
+            groups['Marketing'].append(skill + mark)
+    return [(name, items) for name, items in groups.items() if items]
+
+
 def sequence_mermaid(model, seq):
     sid = seq['id']
     title = json.dumps(f'{sid} — {seq["title"]}', ensure_ascii=False)
     success = seq['next'].get('valide', next(iter(seq['next'].values())))
     success_label = ', '.join(success) if isinstance(success, list) else success
+    groups = plugin_groups(model, seq)
+    agents = [name for name, agent in model.get('agents', {}).items() if sid in agent.get('sequences', [])]
     nodes = [
         ('Entree', 'Entrée : ' + (', '.join(seq['input']) or model['scope']['start'])),
         ('Responsable', 'Responsable : ' + seq['responsible']),
-        ('Action', 'Activer la capacité puis : ' + seq['title']),
+        ('Action', 'Action : ' + seq['title']),
+    ]
+    if groups:
+        nodes.append(('Plugins', '<br/>'.join(f'{name} : {", ".join(items)}' for name, items in groups)))
+    nodes += [
         ('Sortie', 'Sortie : ' + ', '.join(seq['output'])),
         ('Preuve', 'Preuves : ' + ', '.join(item['id'].replace('_', ' ') for item in seq['evidence'])),
+    ]
+    if agents:
+        nodes.append(('Controle', 'Contrôle indépendant : ' + ', '.join(agents)))
+    elif sid == 'S90':
+        nodes.append(('Controle', 'Contrôle indépendant : relecteur natif du SDLC'))
+    nodes += [
         ('Validation', 'Validation par ' + seq['validation']['by'] + ' : critères et preuves satisfaits ?'),
         ('Destination', 'Suite validée : ' + success_label),
         ('AutreIssue', 'Sinon : préciser, réparer ou attendre selon le tableau'),
@@ -39,7 +113,13 @@ def sequence_mermaid(model, seq):
     for name, label in nodes:
         quoted = json.dumps(label, ensure_ascii=False)
         out.append(f'  {name}{{{quoted}}}' if name == 'Validation' else f'  {name}[{quoted}]')
-    out += ['  Entree --> Responsable', '  Responsable --> Action', '  Action --> Sortie', '  Sortie --> Preuve', '  Preuve --> Validation', '  Validation -- "Oui" --> Destination', '  Validation -- "Non ou inconnu" --> AutreIssue']
+    chain = [name for name, _ in nodes if name not in ('Destination', 'AutreIssue')]
+    out += [f'  {a} --> {b}' for a, b in zip(chain, chain[1:])]
+    out += ['  Validation -- "Oui" --> Destination', '  Validation -- "Non ou inconnu" --> AutreIssue']
+    if groups:
+        out += ['  classDef plugins fill:#eef3fb,stroke:#7f9cc7', '  class Plugins plugins']
+    if agents or sid == 'S90':
+        out += ['  classDef controle fill:#f6f0e6,stroke:#b08a4f', '  class Controle controle']
     return '\n'.join(out) + '\n'
 
 
@@ -78,92 +158,139 @@ def example_state(model):
     return state
 
 
+def phase_label(model, seq):
+    title = next((phase['title'] for phase in model['phases'] if phase['id'] == seq['phase']), None)
+    return f'{seq["phase"]} — {title}' if title else 'Cadrage transversal'
+
+
+def scope_lines(model):
+    """Depth and adaptation guidance, read while framing the project at S00."""
+    scope = model['scope']
+    lines = ['## Adapter la profondeur au projet', '',
+             '**Objectif du flow :** ' + scope['purpose'], '', '**Point de départ :** ' + scope['start'], '',
+             '**MVP livré :** ' + scope['delivered'], '', '**Fin de la première boucle :** ' + scope['learning_end'], '',
+             '**Projets concernés :**', '', paragraph_list(scope['supported']), '',
+             '**Profondeur et adaptation :**', '', paragraph_list(scope['adaptation']), '',
+             '**Limites :**', '', paragraph_list(scope['boundaries']), '',
+             '**Informations à préciser progressivement.** Une inconnue peut rester ouverte pendant l’idéation ; l’aider à se résoudre au plus tard avant la séquence qui l’utilise, sans la transformer en réponse négative.', '']
+    lines += [f'- `{field}` — {definition["description"]} À résoudre avant : {", ".join(definition["required_at"])}.' for field, definition in model['context_fields'].items()]
+    return lines + ['']
+
+
 def documents(model):
+    """Views the skill loads at run time, relative to references/."""
     files = {}
     ids = [seq['id'] for seq in model['sequences']]
     generated = '> Généré depuis `workflow.json`. Modifier la source puis reconstruire les vues.\n\n'
-    scope = ['# Périmètre du flow', '', generated, '**Objectif :** '+model['scope']['purpose'], '', '**Point de départ :** '+model['scope']['start'], '', '**MVP livré :** '+model['scope']['delivered'], '', '**Fin de la première boucle :** '+model['scope']['learning_end'], '', '## Projets concernés', '', paragraph_list(model['scope']['supported']), '', '## Profondeur et adaptation', '', paragraph_list(model['scope']['adaptation']), '', '## Limites', '', paragraph_list(model['scope']['boundaries']), '', '## Responsabilités', '', paragraph_list([actor_label(model, role) for role in model['roles']]), '']
-    scope += ['## Informations à préciser progressivement', '', 'Une inconnue peut rester ouverte pendant l’idéation. Le coordinateur aide à la résoudre au plus tard avant la séquence qui l’utilise ; il ne transforme pas une inconnue en réponse négative.', '']
-    scope += [f'- {definition["description"]} À résoudre avant : {", ".join(definition["required_at"])}.' for definition in model['context_fields'].values()]
-    scope += ['']
-    files['SCOPE.md'] = '\n'.join(scope)
     glossary = ['# Glossaire', '', generated, 'Définitions pour lire le flow ; chaque exemple illustre un terme et ne constitue pas une preuve sur un projet réel.', '']
     for term in model['glossary']:
         glossary += [f'<a id="{term["id"]}"></a>', '', f'## {term["term"]}', '', term['definition'], '', '**Exemple :** '+term['example'], '']
-    files['GLOSSAIRE.md'] = '\n'.join(glossary)
-    index = ['# Carte du parcours', '', generated, f'{len(model["phases"])} phases de référence et {len(ids)} séquences. Le nombre d’actions varie ; le contrat de chaque séquence est stable.', '', '| Séquence | Phase | Intention | Prérequis |', '| --- | --- | --- | --- |']
+    glossary += ['<a id="roles"></a>', '', '## Rôles', '', paragraph_list([actor_label(model, role) for role in model['roles']]), '']
+    files['glossaire.md'] = '\n'.join(glossary)
+    index = ['# Parcours', '', generated, f'{len(model["phases"])} phases de référence et {len(ids)} séquences. Le nombre d’actions varie ; le contrat de chaque séquence est stable.', '', '| Séquence | Phase | Intention | Prérequis |', '| --- | --- | --- | --- |']
     for seq in model['sequences']:
-        index.append(f'| [{seq["id"]}](sequences/{seq["id"]}.md) | {seq["phase"] or "Transversal"} | {seq["title"]} | {", ".join(seq["requires"]) or "Intention ou état existant"} |')
-    index += ['', 'Les flèches de [MERMAID.md](MERMAID.md) montrent les prérequis. La table **Prochaine destination** de chaque fiche décide du routage selon le résultat. Une séquence ne se déduit pas terminée de l’existence d’un fichier.', '', 'Les séquences S50/S51 et S60 ont des conditions explicites. Une non-applicabilité est conservée avec sa raison et le cadrage approuvé ; un prérequis déjà satisfait peut être réutilisé avec une preuve actuelle.', '']
-    files['FLOW.md'] = '\n'.join(index)
-    orchestration = ['# Conduire et reprendre une séquence', '', generated, '## Règles de conduite', '']
-    orchestration += [f'{index}. {rule}' for index, rule in enumerate(model['policies'], 1)]
-    orchestration += ['', '## Statuts de l’instance', '', '| Statut | Sens |', '| --- | --- |']
-    orchestration += [f'| `{status}` | {description} |' for status, description in model['statuses'].items()]
-    orchestration += ['', '## Mise à jour de l’état', '', 'Le helper `project_flow.py init` prépare la nouvelle instance depuis le gabarit embarqué. Le coordinateur renseigne acteurs et cadrage à S00 avec `record` ; les autres éléments arrivent progressivement. Les utilisateurs n’éditent pas le JSON.', '', '- `artifacts` : emplacement réel et version du contenu propriétaire.', '- `evidence` : source, auteur, type, résultat, artefact et version ; une approbation est une preuve de décision, pas un simple oui sans référence.', '- `sequences` : statut, issue, versions utilisées et produites, preuves liées, validateur et date.', '- `current_sequence` : travail courant ; `resume_sequence` : travail à reprendre après un spike.', '- `history` : décisions et instantanés utiles avant une nouvelle itération. Ne pas écraser les preuves de l’itération précédente.', '', 'Une entrée modifiée rend ses validations dépendantes candidates à réexamen. Le coordinateur vérifie l’impact ; il peut réutiliser un livrable resté pertinent après revue, en conservant la nouvelle justification. Réexamen ne signifie pas reconstruction obligatoire.', '', '## Au début et à la fin d’une séance', '', 'Au début : lire l’état, contrôler les versions, puis la fiche courante et les seules sources nécessaires. S’il manque une information indispensable, la nommer et attendre ; les tâches indépendantes déjà autorisées peuvent continuer.', '', 'Avant interruption : conserver résultats et versions, les preuves disponibles, la décision ou l’attente précise, puis la prochaine action. Une nouvelle conversation peut ainsi reprendre à partir des fichiers plutôt que de l’historique du chat.', '', '## Boucles', '', 'Après S91, l’issue `autre_tranche` ouvre une nouvelle itération de S80 : conserver l’ancien état dans history, identifier la nouvelle demande et réexaminer les validations affectées. L’issue `mvp_integre` conduit à la recette S100.', '', 'À S120, une fenêtre incomplète conserve `attente_info`. Zéro usage mesuré sur une fenêtre complète est une observation possible ; une mesure absente ne vaut pas zéro usage.', '', 'Les contrôles locaux ne vérifient pas automatiquement les services distants ou la vérité d’un entretien. Le validateur compétent reste responsable de la preuve citée.', '']
-    files['ORCHESTRATION.md'] = '\n'.join(orchestration)
-    schema = ['# Les sept rubriques d’une séquence', '', generated, '| Rubrique | Ce qu’elle doit préciser |', '| --- | --- |']
-    schema += [f'| **{field}** | {description} |' for field, description in model['contract'].items()]
-    schema += ['', 'Le skill intervient dans **action** avant le dialogue ou l’analyse. Les questions et réponses acceptables présentes dans les fiches aident à construire la réponse ; elles ne sont pas déjà acquises.', '', 'Une validation recevable rattache le résultat à ses entrées et sorties versionnées, aux preuves, à la personne qui valide et à une issue du tableau de destinations.', '', 'Voir une fiche complète : [S40](sequences/S40.md). Voir un appel SDLC encodé explicitement : [S90](sequences/S90.md). Voir le cas complet : [EXEMPLE.md](EXEMPLE.md).', '', 'Les emplacements `natif_conditionnel` s’appliquent si le skill natif est invoqué. `propose` est une convention du guide et `a_resoudre` demande une résolution lors du travail réel. Ces gabarits ne sont pas des fichiers déjà créés.', '']
-    files['SCHEMA.md'] = '\n'.join(schema)
+        index.append(f'| [{seq["id"]}](sequences/{seq["id"]}.md) | {phase_label(model, seq)} | {seq["title"]} | {", ".join(seq["requires"]) or "Intention ou état existant"} |')
+    index += ['', 'Les prérequis indiquent l’ordre possible ; la table **Prochaine destination** de chaque fiche décide du routage selon le résultat. Une séquence ne se déduit pas terminée de l’existence d’un fichier.', '', 'Les séquences S50/S51 et S60 ont des conditions explicites. Une non-applicabilité est conservée avec sa raison et le cadrage approuvé ; un prérequis déjà satisfait peut être réutilisé avec une preuve actuelle.', '']
+    files['parcours.md'] = '\n'.join(index)
+    rules = ['# Règles complètes', '', generated, 'La liste exhaustive, pour le vérificateur et les cas de doute. En conduite courante, [socle.md](socle.md) et la référence de la commande suffisent.', '',
+             '<a id="rubriques"></a>', '', '## Les sept rubriques d’une séquence', '', '| Rubrique | Ce qu’elle doit préciser |', '| --- | --- |']
+    rules += [f'| **{field}** | {description} |' for field, description in model['contract'].items()]
+    rules += ['', 'Les emplacements `natif_conditionnel` s’appliquent si le skill natif est invoqué. `propose` est une convention du guide et `a_resoudre` demande une résolution lors du travail réel. Ces gabarits ne sont pas des fichiers déjà créés.', '',
+              '<a id="regles"></a>', '', '## Règles de conduite', '']
+    rules += [f'{number}. {rule}' for number, rule in enumerate(model['policies'], 1)]
+    rules += ['', '<a id="statuts"></a>', '', '## Statuts d’une séquence', '', '| Statut | Sens |', '| --- | --- |']
+    rules += [f'| `{status}` | {description} |' for status, description in model['statuses'].items()]
+    rules += ['', '<a id="boucles"></a>', '', '## Boucles', '', 'Après S91, l’issue `autre_tranche` ouvre une nouvelle itération de S80 : conserver l’ancien état dans history, identifier la nouvelle demande et réexaminer les validations affectées. L’issue `mvp_integre` conduit à la recette S100.', '', 'À S120, une fenêtre incomplète conserve `attente_info`. Zéro usage mesuré sur une fenêtre complète est une observation possible ; une mesure absente ne vaut pas zéro usage.', '', 'Une entrée modifiée rend ses validations dépendantes candidates à réexamen ; réexamen ne signifie pas reconstruction obligatoire. Les contrôles locaux ne vérifient pas les services distants ni la vérité d’un entretien.', '']
+    files['regles.md'] = '\n'.join(rules)
     for seq in model['sequences']:
         sid = seq['id']
-        text = [f'# {sid} — {seq["title"]}', '', '> Fiche générée depuis `workflow.json`. Les réponses et preuves du cas d’école restent illustratives.', '', f'**Phase :** {seq["phase"] or "Cadrage transversal"} · **Prérequis :** {", ".join(seq["requires"]) or "Aucun"}.', '']
+        text = [f'# {sid} — {seq["title"]}', '', '> Fiche générée depuis `workflow.json`. Les réponses et preuves du cas d’école restent illustratives.', '', f'**Phase :** {phase_label(model, seq)} · **Prérequis :** {", ".join(seq["requires"]) or "Aucun"}.', '']
         if seq.get('applicability'):
             condition = seq['applicability']
             text += [f'**Applicabilité :** `{condition["field"]} == {str(condition["equals"]).lower()}`. Une valeur inconnue exige une clarification ; une valeur fausse justifie une non-applicabilité tracée.', '']
         text += ['## 1. Entrée', '', artifact_lines(model, seq['input']) or model['scope']['start'], '']
         if seq.get('input_optional'):
             text += ['**À lire si disponible et pertinent :**', '', artifact_lines(model, seq['input_optional']), '']
-        text += ['## 2. Responsable', '', actor_label(model, seq['responsible']), '', f'**Validation par :** {actor_label(model, seq["validation"]["by"])}', '', '## 3. Action', '', seq['action']['summary'], '', '**Capacités à activer selon le besoin :**', '']
-        text += [f'- `{cap["id"]}`' + (f' · `{cap["command"]}`' if cap.get('command') else '') + f' — {cap["when"]}' for cap in seq['action']['capabilities']] or ['- Le coordinateur cadre le travail ; aucun skill spécialisé n’est imposé.']
+        text += ['## 2. Responsable', '', actor_label(model, seq['responsible']), '', f'**Validation par :** {actor_label(model, seq["validation"]["by"])}', '', '## 3. Action', '', seq['action']['summary'], '']
+        text += capability_lines(model, seq['action']['capabilities'])
         text += ['', '**Étapes :**', '']+[f'{index}. {step}' for index, step in enumerate(seq['action']['steps'], 1)]+['']
         for question in seq['action']['questions']:
             text += ['**Question :** '+question['question'], '', '**Réponse acceptable, illustrative :** '+question['acceptable'], '', '**Réponse insuffisante :** '+question['insufficient'], '']
+        if seq['validation']['by'] == 'porteur' or seq['action']['questions']:
+            text += ['**Cadence :** deux ou trois questions liées par tour, puis attendre la réponse. Partir de ce que le projet sait déjà, proposer la lecture la plus probable et la faire corriger ; la réponse illustrative montre le niveau de précision visé, jamais la réponse du porteur. Détail : [entretien.md](../entretien.md).', '']
         if seq['action'].get('invocation'):
             text += ['**Requête à compléter avec une source réelle avant tout appel :**', '', '```text', seq['action']['invocation']['template'], '```', '', 'Le premier mot est exactement `interactive`. Vérifier le mode et la version du skill au moment de l’appel ; cette fiche n’exécute pas la requête.', '']
+        if sid == 'S00':
+            text += scope_lines(model)
         text += ['## 4. Sortie', '', artifact_lines(model, seq['output']), '', '## 5. Preuve', '', paragraph_list([f'`{proof["id"]}` ({proof["kind"]}) — {proof["description"]}' for proof in seq['evidence']]), '', 'Chaque preuve indique sa source, son auteur et la version de l’artefact concerné. Un exemple ou une simulation ne valide pas une instance réelle.', '', '## 6. Validation', '', paragraph_list(seq['validation']['criteria']), '', 'Conserver le rôle et l’identité du validateur, la date, les versions et les preuves. Une réserve acceptée indique son manque, sa raison, son responsable et sa prochaine vérification.', '', '## 7. Prochaine destination', '', '| Issue observée ou décidée | Destination |', '| --- | --- |']
         for outcome, destinations in seq['next'].items():
             targets = destinations if isinstance(destinations, list) else [destinations]
             labels = [f'[{target}]({target}.md)' if target in ids else f'**{target}** — {model["special_targets"][target]}' for target in targets]
             text.append(f'| {outcome.replace("_", " ")} | {" ; ".join(labels)} |')
-        text += ['', '## Cas d’école', '', '**Illustration fictive :** '+seq['example'], '', f'[Schéma Mermaid](../mermaid/{sid}.mmd) · [Glossaire](../GLOSSAIRE.md) · [Carte](../FLOW.md)', '']
+        text += ['', '## Avant de terminer', '']
+        count = len(seq['validation']['criteria'])
+        text += ['- Le critère de la rubrique 6 est satisfait par une preuve nommée, pas seulement affirmé.' if count == 1
+                 else f'- Les {count} critères de la rubrique 6 sont satisfaits par une preuve nommée, pas seulement affirmés.']
+        text += ['- Preuves enregistrées avec leur source et la version exacte de l’artefact : ' + ', '.join(f'`{proof["id"]}`' for proof in seq['evidence']) + '.']
+        agents = [agent['codex'] for agent in model.get('agents', {}).values() if sid in agent.get('sequences', [])]
+        if agents:
+            text += ['- Verdict rendu par ' + ' et '.join(f'`{name}`' for name in agents) + ', ou leur absence dite au porteur.']
+        text += ['- Résultat, limites et suite présentés avec `checkpoint` ; rien n’est lancé pour la suite avant `approve` ([checkpoint.md](../checkpoint.md)).']
+        text += ['', '## Cas d’école', '', '**Illustration fictive :** '+seq['example'], '', '[Parcours](../parcours.md) · [Glossaire](../glossaire.md) · [Règles](../regles.md)', '']
         files[f'sequences/{sid}.md'] = '\n'.join(text)
-        files[f'mermaid/{sid}.mmd'] = sequence_mermaid(model, seq)
-    overview = overview_mermaid(model)
-    files['mermaid/00-prerequis.mmd'] = overview
-    mermaid = ['# Schémas des séquences', '', generated, 'Les flèches du premier schéma montrent les prérequis, pas une validation automatique. Pour une séquence conditionnelle, une non-applicabilité tracée peut satisfaire le prérequis. Les tables de chaque fiche portent les retours et attentes.', '', '```mermaid', overview.rstrip(), '```', '', '## Contrats détaillés', '']
-    for seq in model['sequences']:
-        mermaid += [f'### {seq["id"]} — {seq["title"]}', '', '```mermaid', files[f'mermaid/{seq["id"]}.mmd'].rstrip(), '```', '', f'Lire le [contrat complet](sequences/{seq["id"]}.md) pour les questions, capacités, critères de preuve et destinations.', '']
-    files['MERMAID.md'] = '\n'.join(mermaid)
     template = {'flow_version':model['version'],'mode':'reel','project':None,'current_sequence':'S00','resume_sequence':None,'context':{field:None for field in model['context_fields']},'actors':{role:None for role in model['roles']},'artifacts':{},'evidence':{},'sequences':{'S00':{'status':'a_faire'}},'history':[]}
     files['templates/etat.json'] = dump(template)
-    sample = example_state(model)
-    files['examples/minirevisions.etat.json'] = dump(sample)
-    example = ['# Exemple complet — MiniRévisions', '', generated, '**CAS FICTIF — AUCUNE PREUVE RÉELLE.** '+model['example']['premise'], '', '**Parcours critique :** '+model['example']['critical_task'], '', '**Exclusions :** '+', '.join(model['example']['exclusions'])+'.', '', '## Cadrage illustratif', '', '```json', dump(model['example']['context']).rstrip(), '```', '', 'Les emplacements `illustration://` du fichier d’état sont des identifiants de cas d’école. Ils ne représentent pas un service ou un fichier produit. Toutes ses preuves portent `simulated: true` et son mode est `illustration`.', '', '## Parcours de bout en bout', '']
-    for seq in model['sequences']:
-        record = sample['sequences'][seq['id']]
-        example += [f'### {seq["id"]} — {seq["title"]}', '', seq['example'], '', '| Rubrique | Dans le cas d’école |', '| --- | --- |', f'| Entrée | {", ".join(seq["input"]) or "Intention de départ"} |', f'| Responsable | {sample["actors"][seq["responsible"]]} |', f'| Action | {seq["action"]["summary"]} |', f'| Sortie | {", ".join(seq["output"]) if record["status"] != "non_applicable" else "Aucun livrable de spike ; justification de non-applicabilité"} |', f'| Preuve | {", ".join(record.get("evidence_ids", [])) or record["context_ref"]} — illustration uniquement |', f'| Validation | {record["status"]} dans la simulation ; aucune validation réelle |', f'| Destination | {seq["next"].get(record.get("outcome", "non_applicable"))} |', '']
-    example += ['## Variantes à comprendre', '', '- Si un test de code échoue à S90, conserver la séquence et réparer dans Deliver ; ne pas retourner arbitrairement au backlog.', '- Si la fenêtre d’observation n’est pas terminée, S120 reste en `attente_info` avec le manque nommé.', '- Si le MVP change de version, les séquences qui utilisaient l’ancienne version sont à réexaminer ; la note d’intention ne devient pas automatiquement fausse.', '- Si le projet n’a pas d’interface graphique, tracer les non-applicabilités S50 et S51 à partir du cadrage approuvé.', '- Si seule une PR en brouillon existe, S91 reste à faire et S100 ne peut pas être déclarée validée.', '', 'L’instance [examples/minirevisions.etat.json](examples/minirevisions.etat.json) illustre la structure de reprise. Un contrôle de cohérence de cet exemple ne prouve ni une livraison réelle ni la facilité du parcours pour un novice.', '']
-    example += ['## Livrables remplis', '', 'Lire les [notes et contrats renseignés](examples/minirevisions/livrables.md) : intention, périmètre avec critères, demande prête, différence entre sortie et preuve, puis reprise en attente.', '']
-    files['EXEMPLE.md'] = '\n'.join(example)
-    filled = ['# MiniRévisions — livrables renseignés', '', '**Exemple fictif, aucune exécution ni observation réelle du produit.** Les notes ci-dessous montrent le niveau de précision recherché ; elles ne constituent pas un projet lancé.', '']
-    for item in model['example']['deliverables']:
-        filled += [f'<a id="{item["id"]}"></a>', '', f'## {item["title"]}', '', paragraph_list(item['content']), '']
-    filled += ['[Revenir au parcours complet](../../EXEMPLE.md)', '']
-    files['examples/minirevisions/livrables.md'] = '\n'.join(filled)
+    files.update(degraded_agents(model))
     return files
 
 
-def build(model, root: Path, check=False):
-    files = documents(model)
-    changed = []
-    for relative, expected in files.items():
-        destination = root / relative
-        if not destination.is_file() or destination.read_text() != expected:
-            changed.append(relative)
-            if not check:
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_text(expected)
-    print(json.dumps({'mode':'verification' if check else 'generation','fichiers':len(files),'differences':changed,'source':'workflow.json'},ensure_ascii=False,indent=2))
+def doc_pages(model):
+    """Human-oriented pages kept in the repository docs/, outside the installed skill."""
+    files = {}
+    generated = '> Généré depuis `skills/flow-aidd/references/workflow.json` par `tools/build.py`. Ne pas modifier à la main.\n\n'
+    overview = overview_mermaid(model)
+    files['schemas/00-prerequis.mmd'] = overview
+    schemas = ['# Schémas des séquences', '', generated, 'Les flèches du premier schéma montrent les prérequis, pas une validation automatique. Pour une séquence conditionnelle, une non-applicabilité tracée peut satisfaire le prérequis. Les tables de chaque fiche portent les retours et attentes. Dans chaque contrat, le bloc bleu nomme les plugins mobilisés (AIDD, Impeccable, marketing-skills, outils du projet) et le bloc beige les agents de contrôle ; `*` signale une capacité activée seulement selon le contexte ou le cas.', '', '```mermaid', overview.rstrip(), '```', '', '## Contrats détaillés', '']
+    for seq in model['sequences']:
+        diagram = sequence_mermaid(model, seq)
+        files[f'schemas/{seq["id"]}.mmd'] = diagram
+        schemas += [f'### {seq["id"]} — {seq["title"]}', '', '```mermaid', diagram.rstrip(), '```', '', f'Lire le [contrat complet](../../skills/flow-aidd/references/sequences/{seq["id"]}.md) pour les questions, capacités, critères de preuve et destinations.', '']
+    files['schemas/schemas.md'] = '\n'.join(schemas)
+    sample = example_state(model)
+    files['exemple/minirevisions.etat.json'] = dump(sample)
+    example = ['# Exemple complet — MiniRévisions', '', generated, '**CAS FICTIF — AUCUNE PREUVE RÉELLE.** '+model['example']['premise'], '', '**Parcours critique :** '+model['example']['critical_task'], '', '**Exclusions :** '+', '.join(model['example']['exclusions'])+'.', '', '## Cadrage illustratif', '', '```json', dump(model['example']['context']).rstrip(), '```', '', 'Les emplacements `illustration://` du fichier d’état sont des identifiants de cas d’école. Ils ne représentent pas un service ou un fichier produit. Toutes ses preuves portent `simulated: true` et son mode est `illustration`.', '', '## Parcours de bout en bout', '']
+    from flow import capability_plan
+    for seq in model['sequences']:
+        record = sample['sequences'][seq['id']]
+        plan = capability_plan(model, seq, sample)
+        named = lambda entries: ', '.join(f'`{entry["id"]}`' + (f' · `{entry["command"]}`' if entry.get('command') else '') for entry in entries if not entry.get('external')) or '—'
+        controls = [agent['codex'] for agent in model.get('agents', {}).values() if seq['id'] in agent.get('sequences', [])]
+        example += [f'### {seq["id"]} — {seq["title"]}', '', seq['example'], '', '| Rubrique | Dans le cas d’école |', '| --- | --- |', f'| Entrée | {", ".join(seq["input"]) or "Intention de départ"} |', f'| Responsable | {sample["actors"][seq["responsible"]]} |', f'| Action | {seq["action"]["summary"]} |',
+                    f'| Capacités pour ce cas | {named(plan["utiliser"])} ; selon le cas : {named(plan["selon_le_cas"])} ; écartées : {named(plan["ecartees"])} |',
+                    f'| Contrôle indépendant | {", ".join(f"`{name}`" for name in controls) or "Relecteur natif du SDLC"} |', f'| Sortie | {", ".join(seq["output"]) if record["status"] != "non_applicable" else "Aucun livrable de spike ; justification de non-applicabilité"} |', f'| Preuve | {", ".join(record.get("evidence_ids", [])) or record["context_ref"]} — illustration uniquement |', f'| Validation | {record["status"]} dans la simulation ; aucune validation réelle |', f'| Destination | {seq["next"].get(record.get("outcome", "non_applicable"))} |', '']
+    example += ['## Variantes à comprendre', '', '- Si un test de code échoue à S90, conserver la séquence et réparer dans Deliver ; ne pas retourner arbitrairement au backlog.', '- Si la fenêtre d’observation n’est pas terminée, S120 reste en `attente_info` avec le manque nommé.', '- Si le MVP change de version, les séquences qui utilisaient l’ancienne version sont à réexaminer ; la note d’intention ne devient pas automatiquement fausse.', '- Si le projet n’a pas d’interface graphique, tracer les non-applicabilités S50 et S51 à partir du cadrage approuvé.', '- Si seule une PR en brouillon existe, S91 reste à faire et S100 ne peut pas être déclarée validée.', '', 'L’instance [minirevisions.etat.json](minirevisions.etat.json) illustre la structure de reprise. Un contrôle de cohérence de cet exemple ne prouve ni une livraison réelle ni la facilité du parcours pour un novice.', '']
+    example += ['## Livrables remplis', '', 'Lire les [notes et contrats renseignés](livrables.md) : intention, périmètre avec critères, demande prête, différence entre sortie et preuve, puis reprise en attente.', '']
+    files['exemple/exemple.md'] = '\n'.join(example)
+    filled = ['# MiniRévisions — livrables renseignés', '', '**Exemple fictif, aucune exécution ni observation réelle du produit.** Les notes ci-dessous montrent le niveau de précision recherché ; elles ne constituent pas un projet lancé.', '']
+    for item in model['example']['deliverables']:
+        filled += [f'<a id="{item["id"]}"></a>', '', f'## {item["title"]}', '', paragraph_list(item['content']), '']
+    filled += ['[Revenir au parcours complet](exemple.md)', '']
+    files['exemple/livrables.md'] = '\n'.join(filled)
+    return files
+
+
+def build(model, root: Path, check=False, docs_root: Path | None = None):
+    """Write or verify the skill views under root, and the human pages under docs_root when given."""
+    targets = [(root, documents(model))] + ([(docs_root, doc_pages(model))] if docs_root else [])
+    changed, count = [], 0
+    for base, files in targets:
+        count += len(files)
+        for relative, expected in files.items():
+            destination = base / relative
+            if not destination.is_file() or destination.read_text() != expected:
+                changed.append(str(destination.relative_to(base.parent)) if base is docs_root else relative)
+                if not check:
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    destination.write_text(expected)
+    print(json.dumps({'mode':'verification' if check else 'generation','fichiers':count,'differences':changed,'source':'workflow.json'},ensure_ascii=False,indent=2))
     return 1 if check and changed else 0

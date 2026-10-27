@@ -1,0 +1,27 @@
+---
+title: "S111 — Déployer puis contrôler l’adresse réellement livrée"
+---
+flowchart TB
+  Entree["Entrée : cadre, mvp, integration, recette, ouverture"]
+  Responsable["Responsable : exploitation"]
+  Action["Action : Déployer puis contrôler l’adresse réellement livrée"]
+  Plugins["AIDD : vcs/03-release-tag<br/>Marketing : analytics, seo-audit*<br/>Outils du projet : hebergeur du projet"]
+  Sortie["Sortie : deploiement"]
+  Preuve["Preuves : livraison executee, adresse finale"]
+  Controle["Contrôle indépendant : verificateur"]
+  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S112"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

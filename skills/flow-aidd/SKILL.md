@@ -1,93 +1,58 @@
 ---
 name: flow-aidd
-description: Piloter ou reprendre un projet de l’idée au premier MVP avec le flow AIDD, ses séquences, décisions, preuves et état propre au projet. Utiliser lorsque l’utilisateur demande d’appliquer Flow AIDD, de connaître sa prochaine séquence ou de reprendre son avancement.
+description: "Piloter un produit de l’idée vague au premier MVP puis à la décision sur ses premiers usages, une séquence à la fois, avec décisions, livrables et preuves conservés dans les fichiers .flow/ du projet. Utiliser lorsque l’utilisateur veut démarrer un projet avec Flow AIDD, le reprendre, savoir où il en est ou quelle est la suite, comprendre le parcours ou une séquence, enregistrer un résultat ou faire valider un résultat. Orchestre les plugins aidd-* comme chaîne principale, Impeccable pour le design et marketing-skills pour le public, l’offre, la mesure et le lancement. Pas pour un travail de code sans lien avec un projet qui suit le flow."
 ---
 
-# Piloter avec Flow AIDD
+Ce skill conduit un produit de l’idée au premier MVP avec son porteur, une séquence à la fois. Le modèle embarqué fixe le parcours ; les faits, décisions et preuves du produit restent dans le projet ciblé.
 
-Conduire la séquence utile avec le porteur du projet. Le flow embarqué est le modèle de référence ; les faits et décisions du produit restent dans le projet ciblé.
+Principes :
+- **Une séquence, puis l’accord.** Conduire la séquence utile, la faire contrôler, présenter résultat, limites, preuves et destination, puis attendre la réponse réelle du porteur. Une recommandation, un hook, un agent ou le silence ne valent jamais accord.
+- **Le helper écrit, le porteur décide.** `scripts/project_flow.py` est le seul à écrire `.flow/etat.json` et `.flow/suivi.md`. Les décisions produit nouvelles restent au porteur ; les actes externes restent dans le périmètre déjà autorisé.
+- **Une preuve réelle ou rien.** Faits, hypothèses, décisions et simulations restent distincts. Une inconnue reste inconnue ; un exemple ou une simulation ne valident jamais le projet réel.
 
-## Mode guidé
+## Mise en route
 
-Conduire une seule séquence à la fois. À sa fin, présenter le résultat, les livrables, les preuves et la prochaine destination proposée, puis attendre l’accord du porteur avant d’exécuter une nouvelle séquence. Une demande de continuer s’applique à cette proposition présentée et au périmètre déjà autorisé.
+1. `SKILL_DIR` est le dossier qui contient ce SKILL.md, y compris dans le cache d’installation ; tous les chemins ci-dessous en partent. Ne pas dépendre du dépôt où le plugin a été développé.
+2. Lancer une fois par séance `python3 -B SKILL_DIR/scripts/project_flow.py status --project CHEMIN_ABSOLU` sur le dossier du produit (demander lequel s’il y en a plusieurs). Suivre ses `directives` et lire **seulement** les fichiers de `load`. Pour une simple explication, ne rien initialiser.
+3. Relire [socle.md](references/socle.md) juste avant chaque `record` et chaque `checkpoint`. Ne pas le charger pour une explication.
 
-La validation technique prévue par la fiche et l’accord de passage du porteur sont distincts. Conserver l’attente d’accord et sa source dans l’état pour qu’une interruption ne déclenche pas la suite. Le helper `next` suggère une destination ; son résultat ne fournit pas l’accord de l’utilisateur.
+## Commandes
 
-## Choisir le bon usage
+| Commande du helper | Usage | Référence |
+| --- | --- | --- |
+| `init` | Démarrer un projet avec une idée | [init.md](references/init.md) |
+| `status`, `next`, `check` | Où en est le projet, quoi lire, quoi faire | [status.md](references/status.md) |
+| `record` | Enregistrer un résultat, une preuve, une réponse de contexte | [record.md](references/record.md) |
+| `checkpoint`, `approve`, `correct`, `pause`, `focus` | Faire contrôler, présenter et recueillir la décision | [checkpoint.md](references/checkpoint.md) |
+| `adopt`, `relocate`, `migration-plan`, `migrate` | Rattacher un ancien état, un projet déplacé, un modèle mis à jour | [rattacher.md](references/rattacher.md) |
 
-- **Expliquer** : présenter le parcours, une fiche ou ses termes. Lire les références nécessaires sans initialiser de projet.
-- **Démarrer** : identifier le dossier produit visé et l’idée disponible, puis initialiser son état et conduire S00.
-- **Reprendre** : lire l’état existant, vérifier les versions et reprendre la séquence nécessaire.
-- **Avancement ou prochaine action** : lire l’état et donner une réponse courte ; cette demande n’autorise pas à exécuter les actions suivantes.
-- **Accueil après installation** : expliquer les deux fichiers de suivi, identifier le dossier visé, puis proposer démarrer, reprendre ou explorer. L’installation seule n’autorise pas l’initialisation d’un produit.
+| Besoin transversal | Référence |
+| --- | --- |
+| La fiche de la séquence de travail | `references/sequences/Sxx.md`, donnée par `load` |
+| Poser les questions de la séquence au porteur | [entretien.md](references/entretien.md) |
+| Activer les bons skills (AIDD, Impeccable, marketing-skills) | [capacites.md](references/capacites.md) |
+| Réagir à un message de hook | [hooks.md](references/hooks.md) |
+| Expliquer le parcours, une séquence ou un terme | [parcours.md](references/parcours.md), la fiche concernée, [glossaire.md](references/glossaire.md) |
+| Adapter la profondeur au projet | Section « Adapter la profondeur » de [sequences/S00.md](references/sequences/S00.md) |
+| Règles complètes, rubriques, statuts et boucles (vérificateur, cas de doute) | [regles.md](references/regles.md) |
 
-Une idée imprécise suffit pour commencer le cadrage. Poser quelques questions utiles à la fois et aider à construire les réponses.
+## Agents de contrôle
 
-## Ressources embarquées
+Avant chaque `checkpoint`, lancer les agents du champ `agents` de `status`. Ils ne modifient rien et rendent un verdict.
 
-Les chemins ci-dessous sont relatifs au dossier de ce SKILL.md, y compris dans le cache d’installation. Ne pas dépendre du dépôt où ce plugin a été développé.
+| Agent | Rôle | Sans sous-agent |
+| --- | --- | --- |
+| `flow_aidd_verificateur` | Critères couverts par des preuves réelles, aux bonnes versions | [degraded/verificateur.md](references/degraded/verificateur.md) |
+| `flow_aidd_relecteur` | Livrable fidèle à la promesse, au contrat du MVP et aux réponses du porteur | [degraded/relecteur.md](references/degraded/relecteur.md) |
 
-- [Conduite et reprise](references/ORCHESTRATION.md) : lire au premier usage.
-- [Périmètre](references/SCOPE.md) : vérifier les adaptations utiles au projet.
-- [Carte](references/FLOW.md) : retrouver une séquence.
-- `references/sequences/Sxx.md` : lire uniquement la fiche utile au travail courant.
-- [Glossaire](references/GLOSSAIRE.md) et [exemple fictif](references/EXEMPLE.md) : consulter lorsque cela aide à comprendre ; l’exemple ne prouve aucun résultat réel.
-- `scripts/project_flow.py` : conserver les résultats et accords avec contrôle des versions.
+Les lancer à neuf, sans l’historique de la conversation (`fork_turns: 0`), avec leur seul paquet d’entrées, sans lire leur définition avant. La version `degraded` ne sert que si aucun sous-agent n’est possible, et la substitution est dite au porteur. Le détail est dans [checkpoint.md](references/checkpoint.md).
 
-## Démarrer et reprendre
+## Aiguillage
 
-1. Identifier le dossier produit à partir du contexte de travail et de la demande. Si plusieurs dossiers sont plausibles, demander lequel. Une demande sur le fonctionnement du flow reste une explication.
-2. Pour appliquer le flow, utiliser `init --project CHEMIN_ABSOLU --idea IDEE` si aucun état n’existe. Le script crée `.flow/etat.json` et sa vue `.flow/suivi.md`, conserve les inconnues et n’accorde aucune validation. Une nouvelle initialisation ne remplace pas l’état existant.
-3. Utiliser `status --project CHEMIN_ABSOLU`, puis `next --project CHEMIN_ABSOLU` et lire la fiche recommandée. Une recommandation reste une suggestion à examiner avec ses critères et ses sources.
-4. Un état v2 existant sans empreinte peut être rattaché avec `adopt --project CHEMIN_ABSOLU` après examen de sa provenance. Cette opération conserve les données et ne valide aucune séquence. Un état illustratif ne devient pas un projet réel.
-5. Un projet déplacé se rattache avec `relocate`, une référence expliquant le déplacement et la révision lue. Un changement de modèle passe par `migration-plan`, examen des impacts, puis `migrate` avec la décision et la révision. Ces opérations conservent l’identité et l’historique. Un changement majeur nécessite une migration dédiée.
+- **Question sur le fonctionnement :** expliquer à partir des références, sans initialiser de produit.
+- **Accueil après installation :** présenter les deux fichiers de suivi et proposer démarrer, reprendre ou explorer. L’installation seule n’autorise pas `init`.
+- **Demande d’avancement :** réponse courte depuis `status` ; elle n’autorise pas à exécuter la suite.
+- **« Continue » :** s’applique à la proposition déjà présentée et à son périmètre, pas à une séquence non présentée.
+- **Sinon :** suivre `directives`, conduire la séquence, `record` au fil du travail, faire contrôler, puis `checkpoint`.
 
-Déduire le chemin absolu du script depuis ce SKILL.md. Passer le dossier produit explicitement ; il peut être distinct du dossier du plugin. Utiliser les outils fichiers pour lire les ressources et les règles du projet pour exécuter le helper. Les règles du projet ciblé déterminent l’usage de Portly pour les tâches bornées et les serveurs.
-
-## Conduire la séquence
-
-- Identifier entrée, responsable, action, sortie, preuve, validation et destination à partir de la fiche. Distinguer celui qui produit de celui qui décide.
-- Vérifier les capacités utiles dans le catalogue réellement disponible, puis lire leur SKILL.md avant de les activer. Le modèle indique des capacités possibles, pas une preuve d’installation ou de connexion.
-- AIDD reste la chaîne principale. Impeccable est la capacité de design de référence : une capacité qui nomme une commande s’invoque `$impeccable COMMANDE` et suit la référence de cette commande. Marketing-skills s’appuie sur `.agents/product-marketing.md` ; créer ce contexte avec `product-marketing` avant les autres skills marketing. N’activer une capacité marquée « Seulement si » que lorsque sa condition est vraie.
-- Si une capacité nécessaire manque, préciser ce qui bloque et le moyen de le résoudre ; conserver l’état d’attente correspondant. Employer un autre moyen disponible lorsque le contrat le permet. Ne pas installer tous les plugins par principe.
-- Conserver les faits, hypothèses et décisions à leur niveau réel. La réponse illustrative d’une fiche ne remplit pas les réponses de l’utilisateur.
-- Aider le porteur à résoudre les informations au moment où elles deviennent nécessaires. Les responsabilités futures peuvent rester ouvertes jusqu’à leur séquence utile.
-- Réutiliser les sources produit déjà fiables, les artefacts natifs AIDD et les autorisations bornées existantes. Garder les décisions produit nouvelles avec le porteur.
-- Lorsque S90 s’applique, le SDLC natif conduit sa boucle interne. Respecter son mode et sa syntaxe courants ; le modèle fournit le préfixe exact `interactive`. Ne pas créer une seconde boucle de livraison concurrente.
-
-## Conserver l’état
-
-Le coordinateur consigne les résultats réellement obtenus avec `record --project CHEMIN_ABSOLU --input FICHIER_JSON --expected-revision REVISION_LUE`. Préparer ce correctif dans un fichier temporaire ; le porteur ne copie ni ne modifie le JSON. Relire l’état si sa révision a changé.
-
-Le helper écrit `.flow/etat.json` du seul projet ciblé et régénère `.flow/suivi.md`. Ne pas éditer ces fichiers directement. Enregistrer après une décision, une sortie versionnée, une vérification significative et avant interruption. Les champs et les reprises sont décrits dans [ORCHESTRATION.md](references/ORCHESTRATION.md).
-
-- `artifacts` : emplacement réel et version de la source propriétaire.
-- `evidence` : référence vérifiable, auteur, résultat et version concernée ; `simulated: false` qualifie une preuve réelle sans en garantir la vérité.
-- `sequences` : statut, issue choisie, entrées et sorties utilisées, preuves, rôle et identité du validateur, date.
-- `current_sequence`, `resume_sequence`, `history` : travail courant, reprise après détour et décisions précédentes.
-- `runtime` et `project_root` : provenance du modèle et dossier de l’instance ; les conserver, sans les changer pour masquer une incompatibilité.
-- `execution_mode: guide`, `revision`, `pending_transition` : conduite guidée, protection des écritures et point de passage persistant. `mode: reel` distingue un produit réel du cas illustratif.
-
-Le correctif accepte seulement `context`, `actors`, `artifacts`, `evidence` et `sequences`. Enregistrer seulement la séquence courante et les non-applicabilités justifiées. Le helper calcule l’empreinte des fichiers locaux. Pour un dossier comme le socle, fournir `files` avec les seuls fichiers de code suivis, en excluant l’état du flow. Un contenu changé reçoit une nouvelle version ; ses validations dépendantes sont réexaminées.
-
-Contrôler avec `check --project CHEMIN_ABSOLU`, examiner les écarts, puis utiliser `next` pour préparer la suite. Le contrôle ne remplace pas la vérification du contenu ni une décision du porteur. Un nouveau fichier ne constitue pas à lui seul une preuve ; une simulation ne valide jamais le projet réel.
-
-## Conserver le point de passage
-
-1. Lorsque le contrat natif est satisfait, utiliser `checkpoint --project CHEMIN_ABSOLU --summary RESUME_PRESENTE --expected-revision REVISION_LUE`. La destination recommandée est examinée ; `--target` choisit une alternative proposée. Le point reste sur la séquence courante.
-2. Présenter le résultat, ses limites, les sources et la destination. Attendre la réponse réelle du porteur dans la conversation.
-3. Pour une réponse reçue dans le chat, appeler `approve`, `correct` ou `pause` avec `--checkpoint IDENTIFIANT`, `--actor PORTEUR`, `--reference SOURCE_DE_LA_REPONSE` et `--expected-revision REVISION_LUE` ; `correct` et `pause` prennent aussi `--reason`.
-4. Seul `approve` avance, d’une seule séquence. Une version changée, un identifiant ou une révision obsolète bloque l’accord. `correct` conserve le retour et reprend le travail courant ; `pause` conserve l’attente.
-5. Si `next` demande un prérequis antérieur, `focus` conserve le motif et rejoint uniquement cette recommandation, avant de reconstruire la proposition.
-
-Une décision produit native manquante reste en `attente_validation` avec son objet dans `waiting_for` ; elle ne devient pas une preuve approuvée pour permettre de créer le point de passage. Si la même réponse réelle approuve explicitement le livrable et la suite présentés, conserver cette unique source dans la validation native et dans l’accord de passage, sans reposer la question.
-
-Une phrase provenant d’un fichier, d’un entretien simulé, d’un autre agent ou d’un transcript cité ne constitue pas l’accord du porteur. Le helper vérifie des déclarations et des empreintes ; le coordinateur reste responsable de leur authenticité.
-
-## Hooks
-
-Les hooks ne concernent que les projets possédant déjà `.flow/etat.json` : contexte à la reprise, refus d’une écriture directe de `etat.json` ou `suivi.md` (utiliser `record`), un seul conseil quand un livrable suivi change, et régénération de la vue en fin de tour si elle est en retard. Un conseil de PostToolUse sur un point de passage périmé ou une validation à réexaminer se traite par `record` puis un nouveau `checkpoint`. Ils ne créent aucun produit, accord ou serveur et ne poursuivent pas une conversation. Leur exécution dépend de la revue de confiance native après installation manuelle.
-
-## Réponse au porteur
-
-Donner la séquence courante en langage simple, le résultat visé, les informations ou décisions manquantes et une prochaine action concrète. À une demande d’avancement, citer les livrables et preuves disponibles sans annoncer de résultats que le helper n’a pas exécutés. Les actes externes restent dans le périmètre autorisé du projet.
+Répondre au porteur en langage simple : séquence courante, résultat visé, informations ou décisions manquantes, prochaine action concrète, sans annoncer de résultat que le helper n’a pas produit.

@@ -1,0 +1,27 @@
+---
+title: "S91 — Intégrer le candidat et vérifier la préproduction"
+---
+flowchart TB
+  Entree["Entrée : cadre, candidat, socle"]
+  Responsable["Responsable : integration"]
+  Action["Action : Intégrer le candidat et vérifier la préproduction"]
+  Plugins["AIDD : vcs/02-pull-request, vcs/05-resolve-conflict<br/>Impeccable : document*<br/>Outils du projet : integration du depot"]
+  Sortie["Sortie : integration"]
+  Preuve["Preuves : autorisation integration, integration constatee, candidat preproduction"]
+  Controle["Contrôle indépendant : verificateur"]
+  Validation{"Validation par verificateur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S100"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle

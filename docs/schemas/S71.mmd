@@ -1,0 +1,27 @@
+---
+title: "S71 — Conserver le contexte réellement vérifié"
+---
+flowchart TB
+  Entree["Entrée : cadre, architecture, socle"]
+  Responsable["Responsable : coordinateur"]
+  Action["Action : Conserver le contexte réellement vérifié"]
+  Plugins["AIDD : context/02-project-memory"]
+  Sortie["Sortie : memoire"]
+  Preuve["Preuves : contexte lisible"]
+  Controle["Contrôle indépendant : verificateur"]
+  Validation{"Validation par coordinateur : critères et preuves satisfaits ?"}
+  Destination["Suite validée : S90"]
+  AutreIssue["Sinon : préciser, réparer ou attendre selon le tableau"]
+  Entree --> Responsable
+  Responsable --> Action
+  Action --> Plugins
+  Plugins --> Sortie
+  Sortie --> Preuve
+  Preuve --> Controle
+  Controle --> Validation
+  Validation -- "Oui" --> Destination
+  Validation -- "Non ou inconnu" --> AutreIssue
+  classDef plugins fill:#eef3fb,stroke:#7f9cc7
+  class Plugins plugins
+  classDef controle fill:#f6f0e6,stroke:#b08a4f
+  class Controle controle
