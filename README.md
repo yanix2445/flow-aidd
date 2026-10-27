@@ -181,32 +181,35 @@ done
 
 #### marketing-skills
 
+La procédure Codex de l’éditeur passe par sa marketplace :
+
 ```bash
 codex plugin marketplace add coreyhaines31/marketingskills
 ```
 
-```bash
-codex plugin add marketing-skills@marketingskills
-```
-
-Vous pouvez aussi l’installer depuis une session Codex : tapez `/plugins` et choisissez **marketing-skills**.
+Puis, dans une session Codex, tapez `/plugins` et choisissez **marketing-skills** pour installer tous les skills. En ligne de commande, l’équivalent est `codex plugin add marketing-skills@marketingskills`. Pour récupérer les nouvelles versions plus tard : `codex plugin marketplace upgrade`.
 
 #### Impeccable, le plugin de design
 
-Impeccable figure dans l’annuaire officiel des plugins de Codex. Dans une session, tapez `/plugins`, cherchez **Impeccable** et installez-le.
-
-<details>
-<summary>Installer Impeccable sans l’annuaire</summary>
-
-Depuis le dossier du produit, l’installeur de l’éditeur installe le skill et son hook de projet :
+L’éditeur recommande son installeur. Depuis la racine du dossier du produit :
 
 ```bash
-npx impeccable install --providers=codex
+npx impeccable install
 ```
 
-Ouvrez ensuite `/hooks` dans Codex pour approuver le hook d’Impeccable.
+L’installeur détecte Codex et demande s’il installe dans le projet ou globalement ; `--providers=codex --scope=project` évite ces questions. Il installe le skill et le hook de design du projet. Rechargez ensuite Codex, ouvrez `/hooks` et approuvez le hook d’Impeccable : Codex ne l’active pas sans cette revue. Le skill s’appelle `$impeccable` dans une conversation.
+
+Le hook de design est propre à chaque projet : relancez l’installeur dans chaque nouveau dossier produit, ou installez le skill pour tous les projets avec `--scope=global` et ajoutez le hook projet par projet. Pour le mettre à jour : `npx impeccable update`, puis une nouvelle revue dans `/hooks`.
+
+<details>
+<summary>Sans Node, ou depuis l’annuaire de Codex</summary>
+
+- **Copie manuelle** depuis le [dépôt d’Impeccable](https://github.com/pbakaus/impeccable) : `dist/agents/.agents` dans le projet (ou `dist/agents/.agents/skills/*` dans `~/.agents/skills/` pour tous les projets), et `dist/codex/.codex/hooks.json` dans le `.codex/` de chaque projet où le hook doit tourner.
+- **Annuaire de Codex** : Impeccable peut aussi y apparaître sous `/plugins`. L’éditeur précise que le hook de design n’a pas de parcours d’installation par plugin dans Codex ; l’installeur reste la voie qui le pose.
 
 </details>
+
+Impeccable écrit des fichiers de travail dans `.impeccable/`. Son [README](https://github.com/pbakaus/impeccable#keeping-impeccable-out-of-git) donne le bloc `.gitignore` qui sépare les fichiers éphémères des fichiers à versionner.
 
 ### 2. Installer flow-aidd
 
@@ -251,7 +254,7 @@ Cherchez ces trois valeurs (les autres métadonnées sont omises ici) :
 
 Le skill s’appelle `flow-aidd:flow-aidd` ; dans une conversation, `$flow-aidd` suffit.
 
-Vérifiez aussi l’équipe avec `codex plugin list --json` : les six plugins `aidd-*@aidd-framework`, `marketing-skills@marketingskills` et Impeccable doivent apparaître installés et activés.
+Vérifiez aussi l’équipe avec `codex plugin list --json` : les six plugins `aidd-*@aidd-framework` et `marketing-skills@marketingskills` doivent apparaître installés et activés. Pour Impeccable, installé comme skill, vérifiez que `$impeccable` est proposé dans `/skills`.
 
 ### 4. Revoir les hooks
 
