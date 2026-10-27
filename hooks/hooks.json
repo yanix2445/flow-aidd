@@ -1,8 +1,9 @@
 {
-  "description": "Reprise et suivi des seuls projets déjà initialisés avec flow-aidd.",
+  "description": "Reprise et suivi des seuls projets déjà initialisés avec flow-aidd : protection des seuls fichiers tenus par le helper, conseils une fois par changement.",
   "hooks": {
     "SessionStart": [{"matcher": "startup|resume|compact|fork", "hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3, "additionalContextLimit": 600, "statusMessage": "Relecture du suivi flow-aidd"}]}],
-    "PostToolUse": [{"matcher": ".*", "hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3, "statusMessage": "Contrôle du suivi flow-aidd"}]}],
+    "PreToolUse": [{"matcher": "Bash|Edit|Write|apply_patch", "hooks": [{"type": "command", "command": "payload=$(cat); case \"$payload\" in *.flow/*) printf '%s' \"$payload\" | python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\" ;; esac", "timeout": 3}]}],
+    "PostToolUse": [{"matcher": "Edit|Write|apply_patch", "hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3}]}],
     "Stop": [{"hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3}]}],
     "Interrupt": [{"hooks": [{"type": "command", "command": "python3 -B \"${PLUGIN_ROOT}/skills/flow-aidd/scripts/hook.py\"", "timeout": 3}]}]
   }

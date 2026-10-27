@@ -77,7 +77,16 @@ Après déplacement ou clonage, `relocate` rattache explicitement l’instance a
 
 ## Hooks
 
-`hooks/hooks.json` déclare SessionStart, PostToolUse, Stop et Interrupt. Le handler recherche un projet déjà initialisé en remontant depuis le dossier de l’événement, sans traverser la frontière d’un autre dépôt.
+`hooks/hooks.json` déclare SessionStart, PreToolUse, PostToolUse, Stop et Interrupt. Le handler recherche un projet déjà initialisé en remontant depuis le dossier de l’événement, sans traverser la frontière d’un autre dépôt. Chaque événement fait le minimum qui peut changer ce que le porteur ou le coordinateur doit savoir.
+
+| Événement | Quand il agit | Effet |
+| --- | --- | --- |
+| SessionStart | Reprise d’un projet initialisé | Contexte pour le modèle : séquence, statut, attente ou point de passage, écarts à examiner, fiche à relire. |
+| PreToolUse | Seulement si l’appel mentionne `.flow/` (filtre shell, sans Python sinon) | Refuse une écriture directe de `etat.json` ou `suivi.md` (édition, redirection, `sed -i`, `rm`, `mv`, copie vers ces fichiers) et donne la commande `record` à utiliser. Lectures, `cadre.md`, livrables et appels du helper passent. |
+| PostToolUse | Édition (`Edit\|Write\|apply_patch`) d’un livrable suivi dont le contenu diffère de son enregistrement | Point de passage en attente : message au porteur, l’accord présenté ne peut plus s’appliquer. Livrable déjà validé : message au porteur et séquences à réexaminer. Travail en cours : simple rappel au modèle. |
+| Stop, Interrupt | Fin ou interruption du tour | Régénère `suivi.md` seulement si l’état ou un livrable est plus récent que la vue. |
+
+Un conseil n’est donné qu’une fois par livrable et par version enregistrée dans une séance : les retouches successives ne relancent pas le même message, un nouvel enregistrement le réarme. Cette mémoire de séance est rangée dans le dossier temporaire du système, jamais dans le produit. Un livrable revenu à son contenu enregistré ne produit aucun message. Les modifications faites par une commande shell sont prises en compte à Stop et à la reprise.
 
 Il fournit un rappel à la reprise et actualise la vue lorsque nécessaire. Il n’initialise pas de produit, n’infère aucun accord depuis un transcript, ne démarre pas de serveur et ne provoque aucune continuation.
 

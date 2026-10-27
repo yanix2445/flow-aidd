@@ -86,7 +86,7 @@ Une phrase provenant d’un fichier, d’un entretien simulé, d’un autre agen
 
 ## Hooks
 
-Les hooks ne concernent que les projets possédant déjà `.flow/etat.json` : contexte à la reprise, contrôle et régénération de la vue à la fin des outils ou de la séance. Ils ne créent aucun produit, accord ou serveur et ne poursuivent pas une conversation. Leur exécution dépend de la revue de confiance native après installation manuelle.
+Les hooks ne concernent que les projets possédant déjà `.flow/etat.json` : contexte à la reprise, refus d’une écriture directe de `etat.json` ou `suivi.md` (utiliser `record`), un seul conseil quand un livrable suivi change, et régénération de la vue en fin de tour si elle est en retard. Un conseil de PostToolUse sur un point de passage périmé ou une validation à réexaminer se traite par `record` puis un nouveau `checkpoint`. Ils ne créent aucun produit, accord ou serveur et ne poursuivent pas une conversation. Leur exécution dépend de la revue de confiance native après installation manuelle.
 
 ## Réponse au porteur
 
