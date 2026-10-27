@@ -109,7 +109,7 @@ Le handler est testé hors de Codex sur des données synthétiques. La découver
 
 ## Identité et distribution
 
-Le dépôt contient un seul manifeste, `.codex-plugin/plugin.json`, le skill `skills/flow-aidd/` et `hooks/`. Le catalogue `.agents/plugins/marketplace.json` pointe sur cette racine. Une seule icône SVG sert au manifeste et au skill.
+Le dépôt contient un seul manifeste, `.codex-plugin/plugin.json`, le skill `skills/flow-aidd/` et `hooks/`. Le catalogue `.agents/plugins/marketplace.json` pointe sur cette racine. Une seule icône, `skills/flow-aidd/assets/icon.png` (PNG 96 × 96 à fond transparent : une flèche orange qui revient sur une grille de points bleus), sert au manifeste et au skill ; sa couleur dominante donne `brandColor` (#E9A21C).
 
 Le format de compatibilité Codex est intentionnel : dans Codex 0.164.0-alpha.11.1, les variantes portables essayées chargent le skill mais ne déclarent aucun hook dans `plugin/read`. Le manifeste de compatibilité exposait bien les quatre événements alors déclarés ; PreToolUse, ajouté ensuite, reste à vérifier dans Codex. Ne pas ajouter un deuxième manifeste pour contourner ce constat.
 

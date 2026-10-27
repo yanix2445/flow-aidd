@@ -1,7 +1,7 @@
 interface:
   display_name: "flow-aidd"
   short_description: "Piloter un projet de l’idée au premier MVP"
-  icon_small: "./assets/icon.svg"
-  icon_large: "./assets/icon.svg"
-  brand_color: "#b9c9e5"
+  icon_small: "./assets/icon.png"
+  icon_large: "./assets/icon.png"
+  brand_color: "#E9A21C"
   default_prompt: "Utilise $flow-aidd pour démarrer ou reprendre le flow AIDD dans ce projet."

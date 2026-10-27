@@ -53,6 +53,14 @@ class PluginTests(unittest.TestCase):
         self.assertFalse((ROOT / 'plugin-src').exists())
         self.assertFalse((ROOT / 'plugins').exists())
 
+    def test_declared_icons_exist(self):
+        manifest = json.loads((ROOT / '.codex-plugin/plugin.json').read_text())
+        for key in ['composerIcon', 'logo']:
+            self.assertTrue((ROOT / manifest['interface'][key]).is_file(), key)
+        interface = (ROOT / 'skills/flow-aidd/agents/openai.yaml').read_text()
+        for path in re.findall(r'icon_(?:small|large): "([^"]+)"', interface):
+            self.assertTrue((ROOT / 'skills/flow-aidd/agents' / '..' / path).resolve().is_file(), path)
+
     def test_generating_references_cannot_overwrite_the_authored_readme(self):
         root = self.base / 'generation'
         root.mkdir()

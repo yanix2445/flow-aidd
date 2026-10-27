@@ -21,7 +21,7 @@ class ReleaseTests(unittest.TestCase):
             with zipfile.ZipFile(output) as archive:
                 self.assertIsNone(archive.testzip())
                 self.assertIn('hooks/hooks.json', archive.namelist())
-                self.assertIn('skills/flow-aidd/assets/icon.svg', archive.namelist())
+                self.assertIn('skills/flow-aidd/assets/icon.png', archive.namelist())
                 self.assertNotIn('tools/release.py', archive.namelist())
                 self.assertEqual([name for name in archive.namelist() if Path(name).name == 'plugin.json'],
                                  ['.codex-plugin/plugin.json'])

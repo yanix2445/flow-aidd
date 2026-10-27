@@ -18,8 +18,8 @@
       "Utilise $flow-aidd pour cadrer mon idée dans ce projet.",
       "Utilise $flow-aidd pour reprendre ce projet et montrer sa séquence courante."
     ],
-    "brandColor": "#b9c9e5",
-    "composerIcon": "./skills/flow-aidd/assets/icon.svg",
-    "logo": "./skills/flow-aidd/assets/icon.svg"
+    "brandColor": "#E9A21C",
+    "composerIcon": "./skills/flow-aidd/assets/icon.png",
+    "logo": "./skills/flow-aidd/assets/icon.png"
   }
 }
