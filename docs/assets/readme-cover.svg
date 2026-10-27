@@ -1,18 +1,81 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="224" viewBox="0 0 960 224" fill="none" role="img" aria-labelledby="title desc">
-  <title id="title">Idée, preuves, décision</title>
-  <desc id="desc">Un parcours guidé relie une idée à des preuves puis à une décision. Une boucle permet de revenir préciser le travail.</desc>
-  <rect x=".5" y=".5" width="959" height="223" rx="16" fill="#11151B" stroke="#303947"/>
-  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="44" font-weight="550" text-anchor="middle" fill="#E7EDF5">
-    <text x="108" y="79">Idée</text>
-    <text x="480" y="79">Preuves</text>
-    <text x="828" y="79">Décision</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Du ticket de caisse aux premiers usages</title>
+  <desc id="desc">Mardi, 23 h 04 : une idée notée sur un ticket de caisse devient une route de vingt et une séquences, du cadrage S00 à la décision S121, en passant par le MVP, la livraison et l’ouverture aux premiers utilisateurs.</desc>
+  <defs>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+    <linearGradient id="lamp" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2A2217"/>
+      <stop offset=".55" stop-color="#17140F"/>
+      <stop offset="1" stop-color="#110F0C"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="320" rx="18" fill="url(#lamp)"/>
+
+  <!-- Le ticket -->
+  <g transform="rotate(-4 150 160)" filter="url(#paper)">
+    <path d="M68 38h176v236l-11 8-11-8-11 8-11-8-11 8-11-8-11 8-11-8-11 8-11-8-11 8-11-8-11 8-11-8-11 8-11-8z" fill="#F3EBDD"/>
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#5C5244">
+      <text x="156" y="66" text-anchor="middle" letter-spacing="1.5">TICKET N° 0001</text>
+      <text x="156" y="84" text-anchor="middle">MARDI   23:04</text>
+      <path d="M84 96h144" stroke="#B5A88F" stroke-dasharray="3 3"/>
+      <text x="84" y="116">1 x idée floue</text>
+      <text x="84" y="134">1 x envie</text>
+      <text x="84" y="152">0 x plan</text>
+      <path d="M84 166h144" stroke="#B5A88F" stroke-dasharray="3 3"/>
+      <text x="84" y="186" font-weight="700" fill="#2E271E">TOTAL</text>
+    </g>
+    <g font-family="'Segoe Print', 'Bradley Hand', 'Comic Neue', cursive" font-size="17" fill="#B4520F">
+      <text x="86" y="214">une appli pour</text>
+      <text x="96" y="238">réviser ?</text>
+    </g>
+    <path d="M88 248c40 6 90 4 128-6" stroke="#B4520F" stroke-width="1.6" stroke-linecap="round"/>
   </g>
-  <path d="M108 127H828" stroke="#56657A" stroke-width="2"/>
-  <path d="m290 120 8 7-8 7m348-14 8 7-8 7" stroke="#B9C9E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="108" cy="127" r="12" fill="#B9C9E5"/>
-  <circle cx="480" cy="127" r="12" fill="#11151B" stroke="#B9C9E5" stroke-width="2"/>
-  <circle cx="828" cy="127" r="12" fill="#11151B" stroke="#B9C9E5" stroke-width="2"/>
-  <path d="m822 127 4 4 8-9" stroke="#E7EDF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M828 148v12c0 18-10 28-28 28H507c-18 0-27-9-27-27v-12" stroke="#56657A" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="m473 157 7-8 7 8" stroke="#B9C9E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- La route : S00 puis les 20 séquences -->
+  <g transform="translate(20 0)">
+  <path id="route" d="M268 214C330 214 352 120 420 120S512 222 584 222 676 104 748 104 842 176 900 150" stroke="#E9A21C" stroke-opacity=".35" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round"/>
+
+  <g fill="#E9A21C">
+    <circle cx="268" cy="214" r="7"/>
+    <circle cx="310" cy="198" r="3.5"/>
+    <circle cx="343" cy="166" r="3.5"/>
+    <circle cx="377" cy="134" r="3.5"/>
+    <circle cx="420" cy="120" r="7"/>
+    <circle cx="444" cy="125" r="3.5"/>
+    <circle cx="466" cy="137" r="3.5"/>
+    <circle cx="484" cy="154" r="3.5"/>
+    <circle cx="501" cy="172" r="3.5"/>
+    <circle cx="519" cy="190" r="3.5"/>
+    <circle cx="538" cy="206" r="3.5"/>
+    <circle cx="560" cy="218" r="3.5"/>
+    <circle cx="584" cy="222" r="7"/>
+    <circle cx="623" cy="209" r="3.5"/>
+    <circle cx="653" cy="179" r="3.5"/>
+    <circle cx="679" cy="146" r="3.5"/>
+    <circle cx="709" cy="117" r="3.5"/>
+    <circle cx="748" cy="104" r="7"/>
+    <circle cx="824" cy="133" r="3.5"/>
+  </g>
+  <circle cx="900" cy="150" r="9" fill="#110F0C" stroke="#E9A21C" stroke-width="2.5"/>
+  <circle cx="900" cy="150" r="3.5" fill="#F3EBDD"/>
+
+  <g font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#EDE4D3">
+    <text x="268" y="246" text-anchor="middle" font-weight="650">S00</text>
+    <text x="268" y="263" text-anchor="middle" fill="#B3A68F">cadrer</text>
+    <text x="420" y="92" text-anchor="middle" font-weight="650">S40</text>
+    <text x="420" y="76" text-anchor="middle" fill="#B3A68F">le MVP</text>
+    <text x="584" y="254" text-anchor="middle" font-weight="650">S90</text>
+    <text x="584" y="271" text-anchor="middle" fill="#B3A68F">livrer</text>
+    <text x="748" y="76" text-anchor="middle" font-weight="650">S112</text>
+    <text x="748" y="60" text-anchor="middle" fill="#B3A68F">ouvrir</text>
+    <text x="900" y="186" text-anchor="middle" font-weight="650">S121</text>
+    <text x="900" y="203" text-anchor="middle" fill="#B3A68F">décider</text>
+  </g>
+
+  </g>
+
+  <text x="930" y="296" text-anchor="end" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#8C8070" letter-spacing=".5">une séquence à la fois · votre accord entre chaque</text>
 </svg>
